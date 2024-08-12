@@ -1,0 +1,431 @@
+<template>
+  <div class="buy-car">
+    <div class="page-title">项目 清单</div>
+    <div class="buy-car-wrap">
+      <div class="all-products">
+        <div class="prod-operate">
+          <div class="selected-all">
+            <el-checkbox v-model="selectAll" @change="checkChange"
+              >全选</el-checkbox
+            >
+          </div>
+          <div class="delete-selected">
+            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+              >删除所选</el-button
+            >
+          </div>
+        </div>
+        <el-table
+          ref="multipleTable"
+          :data="prodList"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="100"></el-table-column>
+          <el-table-column label="项目名称">
+            <template slot-scope="scope">
+              <div class="product-info">
+                <div class="prodcut-pic">
+                  <img
+                    src="http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280"
+                    alt=""
+                  />
+                </div>
+                <div class="product-name">
+                  <div>{{ scope?.row?.productName }}</div>
+                  <div class="name">{{ scope?.row?.productNo }}</div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="价格" width="300">
+            <template slot-scope="scope">
+              <div class="product-price">￥ 167.00</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="200">
+            <template slot-scope="scope">
+              <div class="moveto-favorites">
+                <!-- @click="handleEdit(scope.$index, scope.row)" -->
+                移入收藏夹
+              </div>
+              <div class="delete-btn">删除</div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="buy-cost">
+        <div class="title">
+          结算清单
+          <span>已选 3 项</span>
+        </div>
+        <div class="coupon-discount">
+          <div class="discount-item total-money">
+            <span class="label">商品总价</span>
+            <span class="value">￥ 317.00</span>
+          </div>
+          <div class="discount-item total-jian">
+            <span class="label">共减</span>
+            <span class="value">减 ￥ 17.00</span>
+          </div>
+          <div class="discount-item man-jian">
+            <span class="label">满减</span>
+            <span class="value">减 ￥ 10.00</span>
+          </div>
+          <div class="discount-item zhe-kou">
+            <span class="label">购物节折扣</span>
+            <span class="value">减 ￥ 7.00</span>
+          </div>
+        </div>
+        <div class="total-info">
+          <div class="pay-info">
+            <div class="pay-money"><span>合计:</span> ￥ 300.00</div>
+            <div class="discount-money">共减 ￥ 17.00</div>
+          </div>
+          <div class="submit-btn">结算</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      prodList: [
+        {
+          productCode: "1",
+          productName: "超越维度  3D B类写实人物",
+          productNo: "SD_A_LiuYS_F_504",
+          date: "2016-05-03",
+          price: "￥ 167.00",
+        },
+        {
+          productCode: "2",
+          productName: "超越维度  3D B类写实人物",
+          productNo: "SD_A_LiuYS_F_504",
+          date: "2016-05-02",
+          price: "￥ 167.00",
+        },
+        {
+          productCode: "3",
+          productName: "超越维度  3D B类写实人物",
+          productNo: "SD_A_LiuYS_F_504",
+          date: "2016-05-04",
+          price: "￥ 167.00",
+        },
+        {
+          productCode: "4",
+          productName: "超越维度  3D B类写实人物",
+          productNo: "SD_A_LiuYS_F_504",
+          date: "2016-05-01",
+          price: "￥ 167.00",
+        },
+      ],
+      selectAll: false,
+      selectedList: [],
+    };
+  },
+  methods: {
+    checkChange(val) {
+      console.log("checkChange>>>>>>>>", val);
+      if (val) {
+        this.$refs.multipleTable.toggleAllSelection();
+      }
+      this.$refs.multipleTable.clearSelection();
+    },
+    handleSelectionChange(val) {
+      this.selectedList = val;
+      this.selectAll = false;
+      if (this.selectedList.length === this.prodList.length) {
+        this.selectAll = true;
+      }
+    },
+  },
+};
+</script>
+<style lang="less" scoped>
+.buy-car {
+  height: calc(100vh - 100px);
+  padding: 45px;
+  background-color: #f3f3f3;
+  overflow: auto;
+  .page-title {
+    margin-bottom: 15px;
+    font-family: Inter, Inter;
+    font-size: 40px;
+    color: #000;
+    line-height: 47px;
+  }
+  .buy-car-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    .all-products {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 22px 22px 22px 22px;
+      overflow: hidden;
+      .prod-operate {
+        display: flex;
+        align-items: center;
+        height: 60px;
+        padding-left: 30px;
+        .selected-all {
+          /deep/ .el-checkbox {
+            color: #000;
+          }
+          /deep/ .el-checkbox__input.is-checked .el-checkbox__inner {
+            background-color: #ed6336;
+            border-color: #ed6336;
+          }
+          /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
+            color: #ed6336;
+          }
+          /deep/ .el-checkbox__input.is-focus .el-checkbox__inner {
+            border-color: #ed6336;
+            &:hover,
+            &:focus {
+              border-color: #ed6336;
+            }
+          }
+          /deep/ .el-checkbox__inner {
+            width: 20px;
+            height: 20px;
+            &::after {
+              content: "";
+              left: 7px;
+              top: 4px;
+            }
+            &:hover,
+            &:focus {
+              border-color: #ed6336;
+            }
+          }
+        }
+        .delete-selected {
+          margin-left: 30px;
+          cursor: pointer;
+          /deep/ .el-button:hover,
+          /deep/ .el-button:focus {
+            color: #ed6336;
+            background-color: initial;
+            border-color: initial;
+          }
+        }
+      }
+      /deep/ .el-table thead {
+        tr {
+          height: 45px;
+          background: #ddd;
+        }
+        th.el-table__cell {
+          padding: 0;
+          font-family: Inter, Inter;
+          font-weight: 400;
+          font-size: 18px;
+          color: #000;
+          text-align: left;
+          background: #ddd;
+          &:nth-child(1) {
+            position: relative;
+            z-index: -1;
+          }
+          &:nth-child(2) {
+            padding-left: 145px;
+          }
+        }
+      }
+      /deep/ .el-table tbody tr {
+        .el-table__cell:nth-child(1) {
+          .cell {
+            padding-left: 30px;
+          }
+          .el-checkbox__inner {
+            width: 20px;
+            height: 20px;
+            &::after {
+              content: "";
+              left: 7px;
+              top: 4px;
+            }
+          }
+          .el-checkbox__input.is-checked .el-checkbox__inner {
+            background-color: #ed6336;
+            border-color: #ed6336;
+          }
+          .el-checkbox__input.is-checked + .el-checkbox__label {
+            color: #ed6336;
+          }
+          .el-checkbox__input.is-focus .el-checkbox__inner {
+            border-color: #ed6336;
+            &:hover,
+            &:focus {
+              border-color: #ed6336;
+            }
+          }
+          .el-checkbox__inner {
+            &:hover,
+            &:focus {
+              border-color: #ed6336;
+            }
+          }
+        }
+      }
+      .product-info {
+        display: flex;
+        align-items: center;
+        .prodcut-pic {
+          width: 87px;
+          cursor: pointer;
+          img {
+            display: block;
+            width: 100%;
+          }
+        }
+        .product-name {
+          margin-left: 55px;
+          font-family: Inter, Inter;
+          font-weight: 400;
+          font-size: 16px;
+          color: #000;
+          line-height: 28px;
+          .name {
+            margin-top: 20px;
+          }
+        }
+      }
+      .product-price {
+        font-weight: 400;
+        font-size: 24px;
+        color: #ed6336;
+        line-height: 35px;
+      }
+      .moveto-favorites {
+        color: #000;
+        font-size: 16px;
+        cursor: pointer;
+        &:hover {
+          color: #ed6336;
+        }
+      }
+      .delete-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 32px;
+        margin-top: 15px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: #ed6336;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    }
+    .buy-cost {
+      width: 450px;
+      margin-left: 50px;
+      background: #fff;
+      border-radius: 22px 22px 22px 22px;
+      .title {
+        padding: 30px 35px;
+        font-weight: bold;
+        font-size: 36px;
+        color: #000;
+        line-height: 42px;
+        border-bottom: 1px solid #ddd;
+        span {
+          margin-left: 50px;
+          font-weight: 400;
+          font-size: 24px;
+          line-height: 28px;
+        }
+      }
+      .coupon-discount {
+        padding: 30px 35px 60px;
+        .discount-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-weight: 400;
+        }
+        .total-money,
+        .total-jian {
+          font-size: 24px;
+          color: #000;
+          line-height: 28px;
+          .value {
+            font-size: 30px;
+            line-height: 35px;
+          }
+        }
+        .total-jian {
+          margin-top: 40px;
+          .value {
+            color: #ed6336;
+            font-size: 24px;
+          }
+        }
+        .man-jian,
+        .zhe-kou {
+          font-size: 15px;
+          color: #787878;
+          line-height: 18px;
+          .value {
+            color: #ed6336;
+          }
+        }
+        .man-jian {
+          margin-top: 15px;
+        }
+        .zhe-kou {
+          margin-top: 5px;
+        }
+      }
+      .total-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 35px;
+        border-top: 1px solid #ddd;
+        font-weight: 400;
+        .pay-money {
+          display: flex;
+          align-items: center;
+          font-size: 24px;
+          color: #ed6336;
+          line-height: 28px;
+          span {
+            font-weight: bold;
+            font-size: 30px;
+            color: #000;
+            line-height: 35px;
+          }
+        }
+        .discount-money {
+          margin-top: 5px;
+          font-size: 15px;
+          color: #ed6336;
+          line-height: 18px;
+        }
+        .submit-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 48px;
+          padding: 0 35px;
+          font-weight: bold;
+          font-size: 20px;
+          color: #fff;
+          text-align: center;
+          background: #ed6336;
+          border-radius: 4px 4px 4px 4px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+</style>
