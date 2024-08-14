@@ -53,7 +53,7 @@
             >
               <span>{{ item?.label }}</span>
               <template v-if="item?.tagList">
-                <a v-for="tag in item?.tagList" :key="tag">{{ tag }}</a>
+                <a v-for="tag in detail?.tags" :key="tag?.id">{{ tag?.[`name${$i18n.locale}`] }}</a>
               </template>
               <span v-else class="value" :class="item?.class">{{
                 detail?.[`${item?.key}${$i18n.locale}`] ||
@@ -124,7 +124,7 @@ export default {
           text: "点击查看授权信息",
           class: "color-ed6336",
         },
-        { id: "11", label: "标签：", text: "", tagList: ["tag1", "tag2"] },
+        { id: "11", label: "标签：", text: "", tagList: [], key: 'tags' },
       ],
     };
   },
