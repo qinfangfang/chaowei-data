@@ -99,7 +99,7 @@ export default {
       ],
       detail: {},
       attributesList: [
-        { id: "1", label: "面片数：", text: "--", key: "" },
+        { id: "1", label: "面片数：", text: "--", uniqueKey: "geometry" },
         { id: "2", label: "布线类型：", text: "--", key: "type" },
         {
           id: "3",
@@ -117,7 +117,7 @@ export default {
         },
         { id: "7", label: "贴图类型：", text: "---", key: "mapType" },
         { id: "8", label: "模型大小：", text: "--", uniqueKey: "modelSize" },
-        { id: "9", label: "UV状态：", text: "--", key: "" },
+        // { id: "9", label: "UV状态：", text: "--", key: "" },
         {
           id: "10",
           label: "法律信息：",
