@@ -61,7 +61,7 @@
         </div>
       </div>
     </div>
-    <div class="model-product">
+    <div class="model-product-wrap">
       <!-- <div class="model-search">
         <el-input
           id="search-input"
@@ -99,6 +99,7 @@
             </div>
           </div>
         </div>
+        <el-empty v-if="!modelList.length" :image-size="200"></el-empty>
       </div>
     </div>
   </div>
@@ -109,123 +110,125 @@ import {
   getModelCategory,
   getModelTagGroup,
   getModelList,
+  getModelFreeList
 } from "@/api/index.js";
 export default {
   data() {
     return {
+      loading: false,
       modelList: [
-        {
-          id: 1,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["折", "新"],
-        },
-        {
-          id: 2,
-          prodPicUrl:
-            "http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["折", "新"],
-        },
-        {
-          id: 3,
-          prodPicUrl:
-            "http://gips2.baidu.com/it/u=295419831,2920259701&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["折", "新"],
-        },
-        {
-          id: 4,
-          prodPicUrl:
-            "http://gips3.baidu.com/it/u=1537137094,335954266&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["折", "新"],
-        },
-        {
-          id: 5,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["折", "新"],
-        },
-        {
-          id: 6,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["新"],
-        },
-        {
-          id: 7,
-          prodPicUrl:
-            "http://gips3.baidu.com/it/u=1537137094,335954266&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          productName: "全身姿态模型",
-          price: "¥ 200",
-          // : ["新"],
-        },
-        {
-          id: 8,
-          prodPicUrl:
-            "http://gips2.baidu.com/it/u=295419831,2920259701&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-          // : ["新"],
-        },
-        {
-          id: 9,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=1647344915,1746921568&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-        },
-        {
-          id: 10,
-          prodPicUrl:
-            "http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-        },
-        {
-          id: 11,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-        },
-        {
-          id: 12,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=1647344915,1746921568&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-        },
-        {
-          id: 13,
-          prodPicUrl:
-            "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-          prodCode: "Pose d1234",
-          price: "¥ 200",
-          productName: "全身姿态模型",
-        },
+        // {
+        //   id: 1,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["折", "新"],
+        // },
+        // {
+        //   id: 2,
+        //   prodPicUrl:
+        //     "http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["折", "新"],
+        // },
+        // {
+        //   id: 3,
+        //   prodPicUrl:
+        //     "http://gips2.baidu.com/it/u=295419831,2920259701&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["折", "新"],
+        // },
+        // {
+        //   id: 4,
+        //   prodPicUrl:
+        //     "http://gips3.baidu.com/it/u=1537137094,335954266&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["折", "新"],
+        // },
+        // {
+        //   id: 5,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["折", "新"],
+        // },
+        // {
+        //   id: 6,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["新"],
+        // },
+        // {
+        //   id: 7,
+        //   prodPicUrl:
+        //     "http://gips3.baidu.com/it/u=1537137094,335954266&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   productName: "全身姿态模型",
+        //   price: "¥ 200",
+        //   // : ["新"],
+        // },
+        // {
+        //   id: 8,
+        //   prodPicUrl:
+        //     "http://gips2.baidu.com/it/u=295419831,2920259701&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        //   // : ["新"],
+        // },
+        // {
+        //   id: 9,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=1647344915,1746921568&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        // },
+        // {
+        //   id: 10,
+        //   prodPicUrl:
+        //     "http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        // },
+        // {
+        //   id: 11,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        // },
+        // {
+        //   id: 12,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=1647344915,1746921568&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        // },
+        // {
+        //   id: 13,
+        //   prodPicUrl:
+        //     "http://gips1.baidu.com/it/u=3874647369,3220417986&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
+        //   prodCode: "Pose d1234",
+        //   price: "¥ 200",
+        //   productName: "全身姿态模型",
+        // },
       ],
       modelTypeList: [
         { categoryId: "1", name: "全身姿态 模型", count: 200 },
@@ -273,6 +276,7 @@ export default {
     $route(to) {
       console.log("to>>>>>>", to);
       this.form.modelType = to.query?.modelType || "";
+      this.getModelListData();
     },
     form: {
       handler: (val) => {
@@ -492,6 +496,9 @@ export default {
       }
     }
   }
+  .model-product-wrap {
+    flex: 1;
+  }
   .model-search {
     height: 60px;
     display: flex;
@@ -522,6 +529,9 @@ export default {
     // height: calc(100% - 70px); // 60(搜索框高度60) + 10(margin)
     overflow-x: hidden;
     overflow-y: auto;
+    /deep/ .el-empty {
+      margin: 0 auto;
+    }
     &::-webkit-scrollbar {
       width: 0;
     }
