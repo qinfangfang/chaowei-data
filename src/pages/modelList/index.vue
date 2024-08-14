@@ -77,7 +77,7 @@
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
             <div class="model-pic">
-              <img :src="item?.prodPicUrl" alt="模型图片" />
+              <img :src="item?.fortyFiveView || item?.fullView" alt="" />
               <div class="tag-list">
                 <div
                   class="tag-item"
@@ -89,8 +89,13 @@
               </div>
             </div>
             <div class="model-product">
-              <div class="product-code">{{ item?.productName }}</div>
-              <div class="product-price">{{ item?.price }}</div>
+              <div class="product-code">
+                {{ item?.[`name${$i18n.locale}`] }}
+              </div>
+              <div class="product-price">
+                {{ $i18n.locale == "Zh" ? "¥ " : "$ " }}
+                {{ item?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
+              </div>
             </div>
           </div>
         </div>
@@ -100,7 +105,11 @@
 </template>
 
 <script>
-import { getModelCategory, getModelTagGroup } from "@/api/index.js";
+import {
+  getModelCategory,
+  getModelTagGroup,
+  getModelList,
+} from "@/api/index.js";
 export default {
   data() {
     return {
@@ -304,16 +313,37 @@ export default {
         this.$set(this.form, _key, []);
       });
     },
+    // 获取标签列表
     async getModelTagGroupData() {
       const res = await getModelTagGroup();
       this.styleInfo.list = [...res];
       this.initFilter(res);
       console.log("getModelTagGroup>>>>>>>", res);
     },
+    // 获取收费模型列表
+    async getModelListData() {
+      const query = this.$route.query;
+      let res = [];
+      if (query?.isFree === "1") {
+        res = await getModelFreeList({
+          pageNum: 1,
+          pageSize: 10,
+        });
+      } else {
+        res = await getModelList({
+          pageNum: 1,
+          pageSize: 10,
+          // categoryId: 0,
+        });
+      }
+      this.modelList = res?.data || [];
+      console.log("getModelListData>>>>>>>", res);
+    },
   },
   created() {
     this.initPageQuery();
     this.getModelTagGroupData();
+    this.getModelListData();
   },
 };
 </script>

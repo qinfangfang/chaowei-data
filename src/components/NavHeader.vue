@@ -111,7 +111,7 @@ const menuList = [
     id: 2,
     name: "免费案例",
     with: "188px",
-    path: "/modelList?isFree=0",
+    path: "/modelList?isFree=1",
     subMenuList: [
       {
         id: "2.1",
@@ -119,12 +119,12 @@ const menuList = [
           {
             id: "2.1.1",
             name: "全身姿态模型",
-            path: "/modelList?modelType=1&isFree=0",
+            path: "/modelList?modelType=1&isFree=1",
           },
           {
             id: "2.1.2",
             name: "全身 A-pose模型",
-            path: "/modelList?modelType=3&isFree=0",
+            path: "/modelList?modelType=3&isFree=1",
           },
         ],
       },
@@ -171,7 +171,7 @@ export default {
         localStorage.setItem("lang", "En");
         this.language = "En";
       }
-      console.log("i18n>>>>>>>", this.language);
+      // console.log("i18n>>>>>>>", this.language);
     },
     async getModelCategoryData() {
       const res = await getModelCategory();

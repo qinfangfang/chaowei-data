@@ -51,7 +51,7 @@ export const getModelList = (data = {}) => {
 };
 
 /**
- * 收费模型列表
+ * 免模型列表
  * {
   "pageSize": 0,
   "pageNum": 0,

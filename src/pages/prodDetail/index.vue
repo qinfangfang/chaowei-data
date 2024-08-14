@@ -5,10 +5,11 @@
         <div class="preview-swiper">
           <el-carousel
             ref="previewSwiper"
-            :interval='5000'
+            :interval="5000"
             :autoplay="true"
             indicator-position="none"
             arrow="always"
+            @change="changeSlide"
           >
             <el-carousel-item v-for="item in previewList" :key="item?.imageUrl">
               <div class="slider-item">
@@ -20,9 +21,10 @@
         <div class="preview-list">
           <div
             class="preview-item"
-            v-for="(item, index) in previewList"
+            v-for="(item, idx) in previewList"
             :key="item?.imageUrl"
-            @click="previewClick(item, index)"
+            @click="previewClick(item, idx)"
+            :class="`${idx === index ? 'active' : ''}`"
           >
             <img :src="item?.imageUrl" alt="" />
           </div>
@@ -30,9 +32,12 @@
       </div>
       <div class="product-info">
         <div class="product-price">
-          <div class="name">超越维度 3D A类写实人物</div>
-          <div class="code">SD_A_LiuYS_F_504</div>
-          <div class="price">售价：￥ 200.00</div>
+          <div class="name">{{ detail?.[`name${$i18n.locale}`] }}</div>
+          <div class="code">{{ detail?.code }}</div>
+          <div class="price">
+            售价：{{ $i18n.locale == "Zh" ? "¥ " : "$ " }}
+            {{ detail?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
+          </div>
           <div class="operate-btn">
             <div class="operate-item">直接购买</div>
             <div class="operate-item add-car">加入购物车</div>
@@ -51,24 +56,25 @@
                 <a v-for="tag in item?.tagList" :key="tag">{{ tag }}</a>
               </template>
               <span v-else class="value" :class="item?.class">{{
+                detail?.[`${item?.key}${$i18n.locale}`] ||
+                detail?.[item?.uniqueKey] ||
                 item?.text
               }}</span>
             </div>
           </div>
-          <div class="product-desc">
-            此3D人物模型是由专业的“人体成像3D扫描阵列”在扫描真实模特后由专业人士处理完成。模型完整，造型生动、写实。配置了三万和十万面的两种模型，以应对不同的需求。文件包含的纹理贴图，法线贴图精度高、细节丰富，为了更方便的对贴图选区进行修改，我们还配置了遮罩贴图。
-            您可以专注于你的建筑渲染、视觉特效或是游戏项目，释放你的想象力，不必为找不到合适的素材烦恼。
-          </div>
+          <div class="product-desc">{{ detail?.[`desc${$i18n.locale}`] }}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { getModelDetailById } from "@/api/index.js";
+
 export default {
   data() {
     return {
-      index: 2,
+      index: 0,
       previewList: [
         {
           id: 1,
@@ -91,16 +97,27 @@ export default {
             "http://gips3.baidu.com/it/u=1537137094,335954266&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
         },
       ],
+      detail: {},
       attributesList: [
-        { id: "1", label: "面片数：", text: "十万面 和 三万面" },
-        { id: "2", label: "布线类型：", text: "三角面" },
-        { id: "3", label: "单位：", text: "厘米" },
-        { id: "4", label: "文件格式：", text: "OBJ FBX" },
-        { id: "5", label: "贴图大小：", text: "2048 × 2048" },
-        { id: "6", label: "贴图格式：", text: "JPG PNG" },
-        { id: "7", label: "贴图类型：", text: "颜色贴图 法线贴图 遮罩贴图" },
-        { id: "8", label: "模型大小：", text: "100M_200M" },
-        { id: "9", label: "UV状态：", text: "已展开 不重叠" },
+        { id: "1", label: "面片数：", text: "--", key: "" },
+        { id: "2", label: "布线类型：", text: "--", key: "type" },
+        {
+          id: "3",
+          label: "单位：",
+          text: "--",
+          key: `unit`,
+        },
+        { id: "4", label: "文件格式：", text: "--", uniqueKey: "format" },
+        { id: "5", label: "贴图大小：", text: "--", uniqueKey: "mapSize" },
+        {
+          id: "6",
+          label: "贴图格式：",
+          text: "--",
+          uniqueKey: "previewFormat",
+        },
+        { id: "7", label: "贴图类型：", text: "---", key: "mapType" },
+        { id: "8", label: "模型大小：", text: "--", uniqueKey: "modelSize" },
+        { id: "9", label: "UV状态：", text: "--", key: "" },
         {
           id: "10",
           label: "法律信息：",
@@ -112,9 +129,36 @@ export default {
     };
   },
   methods: {
+    changeSlide(val, idx) {
+      // console.log("changeSlide>>>>>>", val, idx);
+      this.index = val;
+    },
     previewClick(item, index) {
+      this.index = index;
       this.$refs.previewSwiper.setActiveItem(index);
     },
+
+    // 处理轮播图展示
+    handleSwiperData(data = {}) {
+      const keyList = ["frontView", "fortyFiveView", "sideView", "grayView"];
+      this.previewList = keyList.map((item, idx) => {
+        return {
+          id: idx,
+          imageUrl: data?.[item],
+        };
+      });
+    },
+    // 获取模型详情数据
+    async getModelDetailByIdData() {
+      const params = this.$route.params;
+      const res = await getModelDetailById({ id: params?.id });
+      console.log("getModelDetailById>>>>>>>>", res);
+      this.detail = res || {};
+      this.handleSwiperData(res);
+    },
+  },
+  created() {
+    this.getModelDetailByIdData();
   },
 };
 </script>
@@ -134,7 +178,7 @@ export default {
   .preview-module {
     width: 520px;
     .preview-swiper {
-      height: 600px;
+      height: 930px;
       background-color: #ddd;
       border-radius: 7px;
       overflow: hidden;
@@ -145,9 +189,17 @@ export default {
         height: 100%;
       }
       .slider-item {
+        height: 930px;
         img {
           display: block;
           width: 100%;
+        }
+      }
+      /deep/ .el-carousel__arrow {
+        width: 50px;
+        height: 50px;
+        i {
+          font-size: 24px;
         }
       }
     }
@@ -164,6 +216,10 @@ export default {
       border-radius: 4px;
       cursor: pointer;
       overflow: hidden;
+      border: 2px solid transparent;
+      &.active {
+        border-color: #ed6336;
+      }
       &:nth-child(3n) {
         margin-right: 0;
       }
@@ -272,7 +328,7 @@ export default {
         font-size: 16px;
         color: #666;
         line-height: 28px;
-        text-indent: 35px;
+        // text-indent: 35px;
       }
     }
   }
