@@ -31,16 +31,26 @@
           <div
             v-for="(item, idx) in styleInfo?.list"
             :key="item?.id"
-            :class="`style-item ${idx === 1 ? 'active' : ''}`"
+            :class="`style-item ${
+              activeNames.includes(`${idx + 1}`) &&
+              form?.[item.uniqueKey]?.length
+                ? 'active'
+                : ''
+            }`"
           >
             <el-collapse v-model="activeNames" @change="handleChange">
-              <el-collapse-item :title="item?.name" :name="item?.value">
-                <el-checkbox-group v-model="form.sex">
+              <el-collapse-item
+                :title="item?.[`name${$i18n.locale}`]"
+                :name="`${item?.id}`"
+                :key="item?.id"
+              >
+                <el-checkbox-group v-model="form[item?.uniqueKey]">
                   <el-checkbox
-                    v-for="child in item?.filters"
+                    v-for="child in item?.tags"
                     :key="child?.id"
-                    :label="child?.name"
-                  ></el-checkbox>
+                    :label="`${child?.id}`"
+                    >{{ child?.[`name${$i18n.locale}`] }}</el-checkbox
+                  >
                 </el-checkbox-group>
                 <!-- <div v-for="child in item?.filters" :key="child?.id">
                   {{ child?.name }}
@@ -90,6 +100,7 @@
 </template>
 
 <script>
+import { getModelCategory, getModelTagGroup } from "@/api/index.js";
 export default {
   data() {
     return {
@@ -234,19 +245,31 @@ export default {
         ],
       },
       form: {
-        searchVal: "",
+        // searchVal: "",
         filterSearch: "",
         modelType: "",
-        sex: [],
+        tpye: [],
+        gender: [],
+        age: [],
+        activity: [],
+        clothing: [],
+        accessorise: [],
+        area: [],
       },
-      activeNames: ["2"],
+      tagKeys: [],
+      activeNames: [],
     };
   },
   watch: {
     $route(to) {
       console.log("to>>>>>>", to);
       this.form.modelType = to.query?.modelType || "";
-      console.log("this.form>>>>", this.form.modelType);
+    },
+    form: {
+      handler: (val) => {
+        console.log("this.form>>>>", val);
+      },
+      deep: true,
     },
   },
   methods: {
@@ -265,15 +288,32 @@ export default {
     },
     handleChange(val) {
       console.log("val>>>>>>>>>>", val);
+      this.activeNames = val;
     },
     initPageQuery() {
       const query = this.$route.query;
       this.form.modelType = query?.modelType || "";
-      console.log("this.form>>>>", this.form.modelType);
+    },
+    // 处理筛选条件
+    initFilter(res = []) {
+      res.forEach((item) => {
+        let _key = item?.nameEn?.toLocaleLowerCase();
+        item.uniqueKey = _key;
+        this.tagKeys.push(_key);
+        // this.form[_key] = [];
+        this.$set(this.form, _key, []);
+      });
+    },
+    async getModelTagGroupData() {
+      const res = await getModelTagGroup();
+      this.styleInfo.list = [...res];
+      this.initFilter(res);
+      console.log("getModelTagGroup>>>>>>>", res);
     },
   },
   created() {
     this.initPageQuery();
+    this.getModelTagGroupData();
   },
 };
 </script>

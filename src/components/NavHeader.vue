@@ -38,9 +38,9 @@
     </div>
     <div class="nav-right">
       <div class="right-item language-icon" @click="changeLangEvent">
-        {{ language === "ZH" ? "中文" : ""
+        {{ language === "Zh" ? "中文" : ""
         }}<img
-          v-if="language === 'EN'"
+          v-if="language === 'En'"
           src="@/assets/imgs/navOrFooter/language_icon.png"
           alt=""
         />
@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { getModelCategory } from "@/api/index.js";
+
 const menuList = [
   {
     id: 1,
@@ -138,9 +140,7 @@ export default {
   data() {
     return {
       menuList,
-      language: localStorage.getItem("lang") || "EN",
-      languageText:
-        (localStorage.getItem("lang") || "EN") === "EN" ? "英文" : "中文",
+      language: localStorage.getItem("lang") || "En"
     };
   },
   methods: {
@@ -160,22 +160,27 @@ export default {
     },
     // 切换语言
     changeLangEvent() {
-      if (this.language == "EN") {
-        localStorage.setItem("locale", "zh");
+      if (this.language == "En") {
+        localStorage.setItem("locale", "Zh");
         this.$i18n.locale = localStorage.getItem("locale");
-        localStorage.setItem("lang", "ZH");
-        this.language = "ZH";
-        this.languageText = "中文";
-      } else if (this.language == "ZH") {
-        localStorage.setItem("locale", "en");
+        localStorage.setItem("lang", "Zh");
+        this.language = "Zh";
+      } else if (this.language == "Zh") {
+        localStorage.setItem("locale", "En");
         this.$i18n.locale = localStorage.getItem("locale");
-        localStorage.setItem("lang", "EN");
-        this.language = "EN";
-        this.languageText = "英文";
+        localStorage.setItem("lang", "En");
+        this.language = "En";
       }
-      console.log("i18n>>>>>>>", this.language, this.languageText);
+      console.log("i18n>>>>>>>", this.language);
+    },
+    async getModelCategoryData() {
+      const res = await getModelCategory();
+      console.log('getModelCategory>>>>>>>', res);
     },
   },
+  created() {
+    this.getModelCategoryData();
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -222,6 +227,11 @@ export default {
       span {
         font-size: 28px;
         padding: 5px 20px;
+      }
+      @media screen and (max-width: 1420px) {
+        span {
+          font-size: 22px;
+        }
       }
       &:last-child {
         margin-right: 0;
