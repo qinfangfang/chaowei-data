@@ -26,25 +26,28 @@
     <div class="chaowei-partner">
       <div class="partner-title">主要服务客户 （优质合作伙伴）</div>
       <div class="partner-pic">
-        <img src="@/assets/imgs/home/home_6.png" alt="">
+        <img src="@/assets/imgs/home/home_6.png" alt="" />
       </div>
     </div>
     <Footer></Footer>
+    <Login :visible="visible" />
   </div>
 </template>
 
 <script>
-import Footer from '@/components/Footer.vue';
+import Footer from "@/components/Footer.vue";
 import Home1 from "@/assets/imgs/home/home_1.png";
 import Home2 from "@/assets/imgs/home/home_2.png";
 import Home3 from "@/assets/imgs/home/home_3.png";
 import Home4 from "@/assets/imgs/home/home_4.png";
 import Home5 from "@/assets/imgs/home/home_5.png";
+import Login from "@/components/Login.vue";
 
 export default {
   name: "homePage",
   data() {
     return {
+      visible: true,
       modelList: [
         {
           id: "1",
@@ -99,7 +102,8 @@ export default {
     };
   },
   components: {
-    Footer
+    Footer,
+    Login,
   },
   methods: {},
   created() {

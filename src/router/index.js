@@ -52,6 +52,22 @@ export default new VueRouter({
       },
     },
     {
+      path: "/register",
+      name: "register",
+      component: () => import("../pages/register/index.vue"),
+      meta: {
+        title: "注册",
+      },
+    },
+    {
+      path: "/forgetPassword",
+      name: "forgetPassword",
+      component: () => import("../pages/forgetPassword/index.vue"),
+      meta: {
+        title: "忘记密码",
+      },
+    },
+    {
       // 重定向到首页
       path: "/:pathMatch(.*)",
       redirect: "/home",
