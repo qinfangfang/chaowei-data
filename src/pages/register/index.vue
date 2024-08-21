@@ -34,15 +34,15 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="form.code"
-          prop="code"
+          v-if="form.emailCode"
+          prop="emailCode"
           label="验证码"
           :rules="[
             { required: true, message: '请输入验证码', trigger: 'blur' },
           ]"
         >
           <el-input
-            v-model="form.code"
+            v-model="form.emailCode"
             placeholder="请输入验证码"
             :autocomplete="true"
           ></el-input>
@@ -62,24 +62,24 @@ export default {
       form: {
         email: "",
         password: "",
-        code: "",
+        emailCode: "",
       },
     };
   },
   created() {
-    this.form.code = this.$route.query?.code;
+    this.form.emailCode = this.$route.query?.emailCode;
   }
 };
 </script>
 <style lang="less" scoped>
 .register-module {
-  height: calc(100vh - 100px);
+  height: 100vh;
   background-color: #fff;
   max-width: 1200px;
   margin: 0 auto;
-  padding-top: 100px;
+  padding-top: 150px;
   .title {
-    width: 600px;
+    width: 480px;
     margin: 0 auto;
     color: #000;
     font-size: 24px;
@@ -87,7 +87,7 @@ export default {
     text-align: center;
   }
   .register-wrap {
-    width: 600px;
+    width: 480px;
     margin: 60px auto 0;
     /deep/ .el-form-item {
       margin-bottom: 50px;
@@ -109,7 +109,7 @@ export default {
     justify-content: center;
     height: 44px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 50px;
     background: #ed6336;
     border-radius: 12px 12px 12px 12px;
     font-weight: 500;

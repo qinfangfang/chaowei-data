@@ -56,6 +56,7 @@ export default new VueRouter({
       name: "register",
       component: () => import("../pages/register/index.vue"),
       meta: {
+        hideNavBar: true,
         title: "注册",
       },
     },
@@ -64,7 +65,16 @@ export default new VueRouter({
       name: "forgetPassword",
       component: () => import("../pages/forgetPassword/index.vue"),
       meta: {
+        hideNavBar: true,
         title: "忘记密码",
+      },
+    },
+    {
+      path: "/myAccount",
+      name: "myAccount",
+      component: () => import("../pages/myAccount/index.vue"),
+      meta: {
+        title: "我的账户",
       },
     },
     {

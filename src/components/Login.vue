@@ -40,8 +40,8 @@
       <div slot="footer" class="login-footer">
         <div class="login-btn" @click="login">登录</div>
         <div class="forget-password">
-          <span class="password">忘记密码?</span>
-          <span class="register">去注册>></span>
+          <span class="password" @click="forgetPassword">忘记密码?</span>
+          <span class="register" @click="register">去注册>></span>
         </div>
       </div>
     </el-dialog>
@@ -73,6 +73,16 @@ export default {
     login() {
       console.log("去登录");
     },
+    register() {
+      this.$router.push({
+        path: '/register'
+      });
+    },
+    forgetPassword() {
+      this.$router.push({
+        path: '/forgetPassword'
+      })
+    }
   },
 };
 </script>
