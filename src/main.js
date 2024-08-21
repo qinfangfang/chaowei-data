@@ -10,6 +10,10 @@ import "element-ui/lib/theme-chalk/index.css";
 Vue.use(VueI18n);
 Vue.use(VueRouter);
 Vue.use(ElementUI);
+
+window.MessageBox = ElementUI.MessageBox;
+
+// console.log('ElementUI>>>>>>>>>', ElementUI, window);
 // 1、创建中文语言包对象
 const zh = {
   username: "用户名",

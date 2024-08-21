@@ -1,6 +1,6 @@
 <template>
   <div class="login-module">
-    <el-dialog :visible="show" width="480px" center :show-close="false">
+    <el-dialog :visible="show" width="480px" center :show-close="true">
       <div class="login-wrap">
         <el-form
           :model="form"
@@ -55,17 +55,13 @@ export default {
         email: "",
         password: "",
       },
+      visible: true,
     };
   },
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  props: ['a', 'b'],
   computed: {
     show() {
-      console.log(11, this);
+      console.log(11, this.visible);
       return this.visible;
     },
   },
@@ -75,14 +71,17 @@ export default {
     },
     register() {
       this.$router.push({
-        path: '/register'
+        path: "/register",
       });
     },
     forgetPassword() {
       this.$router.push({
-        path: '/forgetPassword'
-      })
-    }
+        path: "/forgetPassword",
+      });
+    },
+  },
+  created() {
+    console.log("login>>>>>>>>", this);
   },
 };
 </script>

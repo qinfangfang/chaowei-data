@@ -30,7 +30,7 @@
       </div>
     </div>
     <Footer></Footer>
-    <Login :visible="visible" />
+    <!-- <Login :visible="visible" /> -->
   </div>
 </template>
 
@@ -42,6 +42,7 @@ import Home3 from "@/assets/imgs/home/home_3.png";
 import Home4 from "@/assets/imgs/home/home_4.png";
 import Home5 from "@/assets/imgs/home/home_5.png";
 import Login from "@/components/Login.vue";
+import { goLogin } from "@/utils/messageBox.js";
 
 export default {
   name: "homePage",
@@ -108,6 +109,7 @@ export default {
   methods: {},
   created() {
     console.log("this.$router", this.$router);
+    // goLogin();
   },
 };
 </script>
