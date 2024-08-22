@@ -42,7 +42,7 @@ import Home3 from "@/assets/imgs/home/home_3.png";
 import Home4 from "@/assets/imgs/home/home_4.png";
 import Home5 from "@/assets/imgs/home/home_5.png";
 import Login from "@/components/Login.vue";
-import { goLogin } from "@/utils/messageBox.js";
+import { goLogin, getToken } from "@/utils/index.js";
 
 export default {
   name: "homePage",
@@ -109,7 +109,7 @@ export default {
   methods: {},
   created() {
     console.log("this.$router", this.$router);
-    // goLogin();
+    goLogin({ router: this.$router });
   },
 };
 </script>

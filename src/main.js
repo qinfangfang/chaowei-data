@@ -13,7 +13,7 @@ Vue.use(ElementUI);
 
 window.MessageBox = ElementUI.MessageBox;
 
-// console.log('ElementUI>>>>>>>>>', ElementUI, window);
+console.log('ElementUI>>>>>>>>>', ElementUI, window);
 // 1、创建中文语言包对象
 const zh = {
   username: "用户名",

@@ -38,7 +38,13 @@
         </el-form>
       </div>
       <div slot="footer" class="login-footer">
-        <div class="login-btn" @click="login">登录</div>
+        <div
+          class="login-btn"
+          :class="`${loading ? 'disabled' : ''}`"
+          @click="login"
+        >
+          登录
+        </div>
         <div class="forget-password">
           <span class="password" @click="forgetPassword">忘记密码?</span>
           <span class="register" @click="register">去注册>></span>
@@ -48,6 +54,10 @@
   </div>
 </template>
 <script>
+import { emailLogin } from "@/api/user.js";
+import { closeLogin } from "@/utils/login.js";
+import Cookies from "js-cookie";
+
 export default {
   data() {
     return {
@@ -56,9 +66,10 @@ export default {
         password: "",
       },
       visible: true,
+      loading: false,
     };
   },
-  props: ['a', 'b'],
+  props: ["router"],
   computed: {
     show() {
       console.log(11, this.visible);
@@ -66,16 +77,26 @@ export default {
     },
   },
   methods: {
-    login() {
-      console.log("去登录");
+    async login() {
+      this.loading = true;
+      const res = await emailLogin(this.form).finally(() => (this.loading = false));
+      console.log("去登录>>>>>>", res);
+      if (res?.token) {
+        closeLogin();
+        Cookies.set("token", res?.token, { expires: 10 });  // 10天过期
+        this.$message.success("登录成功");
+      }
     },
     register() {
-      this.$router.push({
+      console.log("router>>>>>>>", this.router);
+      closeLogin();
+      this.router.push({
         path: "/register",
       });
     },
     forgetPassword() {
-      this.$router.push({
+      closeLogin();
+      this.router.push({
         path: "/forgetPassword",
       });
     },
@@ -136,6 +157,10 @@ export default {
     font-size: 16px;
     color: #fff;
     cursor: pointer;
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
   .forget-password {
     margin-top: 30px;

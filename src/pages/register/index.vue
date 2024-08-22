@@ -9,6 +9,19 @@
         class="demo-dynamic"
       >
         <el-form-item
+          v-if="!form.emailCode"
+          label="昵称"
+          prop="nickname"
+          :rules="[{ required: true, message: '请输入昵称', trigger: 'blur' }]"
+        >
+          <el-input
+            v-model="form.nickname"
+            autocomplete="off"
+            placeholder="请输入昵称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="!form.emailCode"
           prop="email"
           label="邮箱"
           :rules="[
@@ -22,6 +35,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
+          v-if="form.emailCode"
           label="密码"
           prop="password"
           :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]"
@@ -34,7 +48,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="form.emailCode"
+          v-if="false && form.emailCode"
           prop="emailCode"
           label="验证码"
           :rules="[
@@ -48,27 +62,69 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <div class="submit-btn">注册</div>
+          <div class="submit-btn" @click="registerClick">注册</div>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
 <script>
+import { sendEmailRegister, emailRegister, emailLogin } from "@/api/user.js";
+import Cookies from "js-cookie";
 export default {
-  name: 'register',
+  name: "register",
   data() {
     return {
       form: {
         email: "",
+        nickname: "",
         password: "",
         emailCode: "",
       },
     };
   },
+  methods: {
+    async registerClick() {
+      const { email, nickname, emailCode, password } = this.form;
+      if (!this.form.emailCode) {
+        // 发送邮件注册
+        const res = await sendEmailRegister({
+          email,
+          nickname,
+        });
+        console.log("发送邮件注册>>>>>>", res);
+        // localStorage.setItem("email", email);
+      } else if (this.form.emailCode) {
+        const res = await emailRegister({
+          password,
+          emailCode,
+          gender: 0,
+        });
+        console.log("注册>>>>>>", res);
+        if (res?.code != "0") {
+          this.$message.error(res?.msg);
+          return;
+        }
+        if (_data?.token) {
+          this.$router.push("/home");
+        }
+        // if (localStorage.getItem("email")) {
+        //   const _data = await emailLogin({
+        //     email: localStorage.getItem("email"),
+        //     password,
+        //   });
+        //   _data?.token && Cookies.set("token", _data?.token, { expires: 1 });
+        //   console.log("登录>>>>>>>>>",  _data?.token);
+        //   if(_data?.token) {
+        //     this.$router.push('/home');
+        //   }
+        // }
+      }
+    },
+  },
   created() {
-    this.form.emailCode = this.$route.query?.emailCode;
-  }
+    this.form.emailCode = this.$route.query?.code;
+  },
 };
 </script>
 <style lang="less" scoped>

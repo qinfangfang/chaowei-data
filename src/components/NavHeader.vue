@@ -59,6 +59,7 @@
 
 <script>
 import { getModelCategory } from "@/api/index.js";
+import { getUserInfo } from "@/api/user.js";
 
 const menuList = [
   {

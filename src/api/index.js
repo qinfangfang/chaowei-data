@@ -1,14 +1,4 @@
 import request from "@/request/index.js";
-
-/**
- * 查询用户信息
- */
-export const getUserInfo = (data = {}) => {
-  return request({
-    url: "/user/info",
-    data,
-  });
-};
 /**
  * 标签分组列表(包含标签信息) - 不分页
  */

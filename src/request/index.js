@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "@/utils";
 
 const IS_DEV = process.env.NODE_ENV;
 /**
@@ -47,7 +48,8 @@ const request = ({
  */
 service.interceptors.request.use(
   (config) => {
-    console.log("request--start", config.url, config.data);
+    console.log("request--start",config, config.url, config.data);
+    config.headers.token = getToken();
     return config;
   },
   (e) => {
@@ -66,9 +68,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   async (res) => {
     // 兼容各种服务端响应体
-    // const resCode = res.data?.code;
-    const resData = res.data?.data;
-    return resData;
+    const resCode = res?.data?.code;
+    const resData = res?.data?.data;
+    if (resCode == "0") {
+      return resData;
+    }
+    return res?.data;
   },
   (error) => {
     console.error(

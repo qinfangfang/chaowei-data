@@ -604,11 +604,11 @@ export default {
           }
         }
         .model-product {
-          padding: 20px 0 20px 12px;
+          padding: 20px 12px;
           background-color: #e8e8e8;
           font-weight: 500;
           .product-code {
-            font-size: 16px;
+            font-size: 14px;
             color: #222;
           }
           .product-price {
