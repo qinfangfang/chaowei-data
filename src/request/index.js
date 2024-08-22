@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "@/utils";
+import { getToken, getLocale } from "@/utils";
 
 const IS_DEV = process.env.NODE_ENV;
 /**
@@ -49,7 +49,8 @@ const request = ({
 service.interceptors.request.use(
   (config) => {
     console.log("request--start",config, config.url, config.data);
-    config.headers.token = getToken();
+    config.headers['X-Token'] = getToken();
+    config.headers['X-Language'] = getLocale();
     return config;
   },
   (e) => {
