@@ -45,12 +45,20 @@
           alt=""
         />
       </div>
-      <div class="right-item personal-icon" @click="showPersonalMenu">
+      <div class="right-item personal-icon" @click.stop="showPersonalMenu">
         <img src="@/assets/imgs/navOrFooter/personal_icon.png" alt="" />
-        <div class="personal-menu" :class="`${showMenu ? 'show' : ''}`">
-          <div class="personal-menu-item personal-name">{{userInfo.nickname}}</div>
+        <div
+          class="personal-menu"
+          :class="`${showMenu ? 'show' : ''}`"
+          @click="(e) => e.stopPropagation()"
+        >
+          <div class="personal-menu-item personal-name">
+            {{ userInfo.nickname }}
+          </div>
           <!-- <div class="personal-menu-item personal-email">{{userInfo.email}}</div> -->
-          <div class="personal-menu-item pad-top8" @click="changePassword">修改密码</div>
+          <div class="personal-menu-item pad-top8" @click="changePassword">
+            修改密码
+          </div>
           <div class="personal-menu-item" @click="loginOut">退出</div>
         </div>
       </div>
@@ -65,8 +73,9 @@
 
 <script>
 import { getModelCategory } from "@/api/index.js";
-import { getUserInfo } from "@/api/user.js";
+import { getUserInfo, logOut } from "@/api/user.js";
 import { goLogin, getToken } from "@/utils/index.js";
+import Cookies from "js-cookie";
 
 const menuList = [
   {
@@ -155,16 +164,23 @@ export default {
   },
   methods: {
     // 退出
-    async loginOut() {},
+    async loginOut() {
+      const res = await logOut();
+      console.log("退出>>>>>", res);
+      if (!res?.code) {
+        Cookies.set("token", "");
+        window.location.replace("/home"); // TODO
+      }
+    },
     // 修改密码
     async changePassword() {
-      this.$router.push('/changePassword');
+      this.$router.push("/changePassword");
     },
     // 展示个人中心菜单
     showPersonalMenu(e) {
       e.stopPropagation();
       if (!getToken()) {
-        goLogin();
+        goLogin({ router: this.$router });  // TODO
         return;
       }
       this.showMenu = !this.showMenu;

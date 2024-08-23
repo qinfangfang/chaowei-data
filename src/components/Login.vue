@@ -1,6 +1,6 @@
 <template>
   <div class="login-module">
-    <el-dialog :visible="show" width="480px" center :show-close="true">
+    <el-dialog :visible="show" width="480px" center :show-close="true" :destroy-on-close="true" @close="close">
       <div class="login-wrap">
         <el-form
           :model="form"
@@ -69,7 +69,7 @@ export default {
       loading: false,
     };
   },
-  props: ["router"],
+  props: ["router", "id"],
   computed: {
     show() {
       console.log(11, this.visible);
@@ -77,6 +77,9 @@ export default {
     },
   },
   methods: {
+    close() {
+      closeLogin();
+    },
     async login() {
       this.loading = true;
       const res = await emailLogin(this.form).finally(() => (this.loading = false));

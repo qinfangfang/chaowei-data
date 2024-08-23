@@ -89,6 +89,8 @@
   </div>
 </template>
 <script>
+import { orderCartList } from "@/api/buyCar.js";
+
 export default {
   data() {
     return {
@@ -141,7 +143,15 @@ export default {
         this.selectAll = true;
       }
     },
+    // 获取购物车数据
+    async getOrderList() {
+      const prodList = await orderCartList();
+      console.log("购物车数据>>>>>", prodList);
+    },
   },
+  created() {
+    this.getOrderList();
+  }
 };
 </script>
 <style lang="less" scoped>

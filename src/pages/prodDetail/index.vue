@@ -1,6 +1,6 @@
 <template>
   <div class="prod-detail">
-    <div class="prod-detail-wrap">
+    <div class="prod-detail-wrap" v-if="isExist">
       <div class="preview-module">
         <div class="preview-swiper">
           <el-carousel
@@ -41,7 +41,7 @@
           <div class="operate-btn">
             <div v-if="showDownload" class="operate-item">下载模板</div>
             <div v-if="!showDownload" class="operate-item">直接购买</div>
-            <div class="operate-item add-car">加入购物车</div>
+            <div class="operate-item add-car" @click="addBuyCar">加入购物车</div>
           </div>
         </div>
         <div class="product-attributes">
@@ -67,15 +67,21 @@
         </div>
       </div>
     </div>
+    <div class="empty-wrap" v-else>
+      <el-empty :image-size="200" :description="description"></el-empty>
+    </div>
   </div>
 </template>
 <script>
 import { getModelDetailById } from "@/api/index.js";
+import { addModelToCarById } from "@/api/buyCar.js";
 
 export default {
   data() {
     return {
       index: 0,
+      isExist: true,
+      description: '产品已下架或者不存在',
       previewList: [
         {
           id: 1,
@@ -135,6 +141,12 @@ export default {
     }
   },
   methods: {
+    // 添加购物车
+    async addBuyCar() {
+      const params = this.$route.params;
+      const res = await addModelToCarById({id: params?.id});
+      console.log('添加购物车>>>>>>>>>>', res);
+    },
     changeSlide(val, idx) {
       // console.log("changeSlide>>>>>>", val, idx);
       this.index = val;
@@ -159,6 +171,11 @@ export default {
       const params = this.$route.params;
       const res = await getModelDetailById({ id: params?.id });
       console.log("getModelDetailById>>>>>>>>", res);
+      if(res?.code == '3000') {
+        this.isExist = false;
+        this.description = res?.msg || '产品已下架或者不存在';
+        return;
+      }
       this.detail = res || {};
       this.handleSwiperData(res);
     },
@@ -174,6 +191,9 @@ export default {
   padding-top: 40px;
   background-color: #f3f3f3;
   overflow: auto;
+  .empty-wrap {
+    padding-top: 100px;
+  }
   .prod-detail-wrap {
     display: flex;
     justify-content: space-between;

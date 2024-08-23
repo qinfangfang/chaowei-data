@@ -43,7 +43,7 @@ export const emailCodeUserInfo = (data = {}) => {
 /**
  * 退出登录(无参数 header加上token调用即可)
  */
-export const logout = (data = {}) => {
+export const logOut = (data = {}) => {
   return request({
     url: "/auth/logout",
     data,
