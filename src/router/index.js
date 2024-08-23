@@ -70,6 +70,15 @@ export default new VueRouter({
       },
     },
     {
+      path: "/changePassword",
+      name: "changePassword",
+      component: () => import("../pages/changePassword/index.vue"),
+      meta: {
+        hideNavBar: true,
+        title: "修改密码",
+      },
+    },
+    {
       path: "/myAccount",
       name: "myAccount",
       component: () => import("../pages/myAccount/index.vue"),

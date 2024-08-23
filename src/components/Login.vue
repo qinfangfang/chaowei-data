@@ -85,6 +85,7 @@ export default {
         closeLogin();
         Cookies.set("token", res?.token, { expires: 10 });  // 10天过期
         this.$message.success("登录成功");
+        window.location.reload();
       }
     },
     register() {

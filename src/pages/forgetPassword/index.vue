@@ -9,6 +9,7 @@
         class="demo-dynamic"
       >
         <el-form-item
+        v-if="!form.emailCode"
           prop="email"
           label="邮箱"
           :rules="[
@@ -23,6 +24,19 @@
         </el-form-item>
         <el-form-item
           v-if="form.emailCode"
+          label="密码"
+          prop="password"
+          :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]"
+        >
+          <el-input
+            type="password"
+            v-model="form.password"
+            autocomplete="off"
+            placeholder="请输入密码"
+          ></el-input>
+        </el-form-item>
+        <!-- <el-form-item
+          v-if="form.emailCode"
           prop="emailCode"
           label="验证码"
           :rules="[
@@ -34,28 +48,54 @@
             placeholder="请输入验证码"
             :autocomplete="true"
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
-          <div class="submit-btn">提交</div>
+          <div class="submit-btn" @click="submit">提交</div>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
 <script>
+import { emailForgotPwd, emailResetPwd } from "@/api/user.js";
+
 export default {
-  name: 'forgetPassword',
+  name: "forgetPassword",
   data() {
     return {
       form: {
         email: "",
+        password: "",
         emailCode: "",
       },
     };
   },
+  methods: {
+    async submit() {
+      const { email, password, emailCode } = this.form;
+      if (emailCode) {
+        const res = await emailResetPwd({ emailCode, password });
+        if(res?.code) {
+          res?.msg && this.$message.error(res?.msg);
+        }else {
+          this.$message.success('设置成功');
+          this.$router.push('/home');
+        }
+        console.log("通过邮件重置密码>>>>>>>>>", res);
+      } else {
+        const res = await emailForgotPwd({ email });
+        if(res?.code) {
+          res?.msg && this.$message.error(res?.msg);
+        } else {
+          this.$message.success('发送成功');
+        }
+        console.log("忘记密码邮件>>>>>>>>>发送邮件", res);
+      }
+    },
+  },
   created() {
-    this.form.emailCode = this.$route.query?.emailCode;
-  }
+    this.form.emailCode = this.$route.query?.code;
+  },
 };
 </script>
 <style lang="less" scoped>

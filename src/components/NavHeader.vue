@@ -45,8 +45,14 @@
           alt=""
         />
       </div>
-      <div class="right-item personal-icon">
+      <div class="right-item personal-icon" @click="showPersonalMenu">
         <img src="@/assets/imgs/navOrFooter/personal_icon.png" alt="" />
+        <div class="personal-menu" :class="`${showMenu ? 'show' : ''}`">
+          <div class="personal-menu-item personal-name">{{userInfo.nickname}}</div>
+          <!-- <div class="personal-menu-item personal-email">{{userInfo.email}}</div> -->
+          <div class="personal-menu-item pad-top8" @click="changePassword">修改密码</div>
+          <div class="personal-menu-item" @click="loginOut">退出</div>
+        </div>
       </div>
       <div class="right-item buy-car" @click="buyCar">
         <img src="@/assets/imgs/navOrFooter/buy_car_icon.png" alt="" /><span
@@ -60,6 +66,7 @@
 <script>
 import { getModelCategory } from "@/api/index.js";
 import { getUserInfo } from "@/api/user.js";
+import { goLogin, getToken } from "@/utils/index.js";
 
 const menuList = [
   {
@@ -140,11 +147,28 @@ export default {
   name: "NavHeader",
   data() {
     return {
+      showMenu: false,
+      userInfo: {},
       menuList,
-      language: localStorage.getItem("lang") || "En"
+      language: localStorage.getItem("lang") || "En",
     };
   },
   methods: {
+    // 退出
+    async loginOut() {},
+    // 修改密码
+    async changePassword() {
+      this.$router.push('/changePassword');
+    },
+    // 展示个人中心菜单
+    showPersonalMenu(e) {
+      e.stopPropagation();
+      if (!getToken()) {
+        goLogin();
+        return;
+      }
+      this.showMenu = !this.showMenu;
+    },
     // 购物车
     buyCar() {
       this.$router.push("/buyCar");
@@ -176,12 +200,22 @@ export default {
     },
     async getModelCategoryData() {
       const res = await getModelCategory();
-      console.log('getModelCategory>>>>>>>', res);
+      console.log("getModelCategory>>>>>>>", res);
+    },
+    // 获取用户信息
+    async getUserInfoData() {
+      if (!getToken()) return;
+      this.userInfo = await getUserInfo();
+      console.log("用户信息>>>>>>>>", this.userInfo);
     },
   },
   created() {
+    this.getUserInfoData();
     this.getModelCategoryData();
-  }
+    document.addEventListener("click", () => {
+      this.showMenu = false;
+    });
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -312,6 +346,7 @@ export default {
     align-items: center;
     font-size: 20px;
     .right-item {
+      position: relative;
       display: flex;
       align-items: center;
       margin-right: 32px;
@@ -330,6 +365,41 @@ export default {
         img {
           width: 36px;
           height: 35px;
+        }
+        .personal-menu {
+          display: none;
+          position: absolute;
+          width: 150px;
+          top: 80px;
+          left: 50%;
+          padding: 10px 0;
+          border-radius: 4px;
+          transform: translateX(-50%);
+          background-color: rgba(236, 236, 236, 0.98);
+          z-index: 5;
+          &.show {
+            display: block;
+          }
+          .personal-menu-item {
+            position: relative;
+            color: #000;
+            font-size: 14px;
+            line-height: 36px;
+            text-align: center;
+            &.pad-top8 {
+              padding-top: 8px;
+            }
+            &:hover {
+              color: #ed6336;
+            }
+            &.personal-name {
+              margin: 0 15px;
+              padding-bottom: 8px;
+              line-height: 28px;
+              color: #666;
+              border-bottom: 1px solid #aaa;
+            }
+          }
         }
       }
       &.buy-car {

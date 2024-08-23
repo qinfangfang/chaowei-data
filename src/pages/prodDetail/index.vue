@@ -39,7 +39,8 @@
             {{ detail?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
           </div>
           <div class="operate-btn">
-            <div class="operate-item">直接购买</div>
+            <div v-if="showDownload" class="operate-item">下载模板</div>
+            <div v-if="!showDownload" class="operate-item">直接购买</div>
             <div class="operate-item add-car">加入购物车</div>
           </div>
         </div>
@@ -127,6 +128,11 @@ export default {
         { id: "11", label: "标签：", text: "", tagList: [], key: 'tags' },
       ],
     };
+  },
+  computed: {
+    showDownload() {
+      return this.detail?.free === true ? true : (this.default?.owned === true ? true : false);
+    }
   },
   methods: {
     changeSlide(val, idx) {
