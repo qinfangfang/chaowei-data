@@ -1,10 +1,12 @@
 <template>
   <div class="model-list-wrapper">
     <div class="model-sidebar">
-      <div class="reset-btn">复位选项</div>
+      <div class="reset-btn">{{ isZh ? "复位选项" : "Reset Options" }}</div>
       <div class="model-type-list">
-        <div class="model-type-title">模型种类</div>
-        <div
+        <div class="model-type-title">
+          {{ isZh ? "模型种类" : "Model Categories" }}
+        </div>
+        <!-- <div
           v-for="(item, idx) in modelTypeList"
           :class="`model-type-item ${
             `${idx + 1}` === form?.modelType ? 'active' : ''
@@ -15,10 +17,43 @@
           <div class="model-type-text">
             {{ `${item?.name} （${item?.count}）` }}
           </div>
+        </div> -->
+        <div class="style-list">
+          <div
+            v-for="(item, idx) in modelTypeList"
+            :key="item?.id"
+            :class="`style-item ${
+              activeModelNames.includes(`${idx + 1}`) &&
+              modelForm?.[item?.id]?.length
+                ? 'active'
+                : ''
+            }`"
+          >
+            <div class="model-size">（{{ item?.modelSize }}）</div>
+            <el-collapse v-model="activeModelNames" @change="handleModelChange">
+              <el-collapse-item
+                :title="item?.[`name${$i18n.locale}`]"
+                :name="`${item?.id}`"
+                :key="item?.id"
+              >
+                <!-- <span>（{{ item?.modelSize }}）</span> -->
+                <el-checkbox-group v-model="modelForm[item?.id]">
+                  <el-checkbox
+                    v-for="child in item?.childCategories"
+                    :key="child?.id"
+                    :label="`${child?.id}`"
+                    >{{ child?.[`name${$i18n.locale}`] }}</el-checkbox
+                  >
+                </el-checkbox-group>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
         </div>
       </div>
       <div class="style-wrap">
-        <div class="style-title">{{ styleInfo?.title }}</div>
+        <div class="style-title">
+          {{ styleInfo?.[`title${isZh ? "Zh" : "En"}`] }}
+        </div>
         <div class="style-search">
           <el-input
             placeholder="输入关键词进行搜索"
@@ -32,13 +67,13 @@
             v-for="(item, idx) in styleInfo?.list"
             :key="item?.id"
             :class="`style-item ${
-              activeNames.includes(`${idx + 1}`) &&
+              activeTagsNames.includes(`${idx + 1}`) &&
               form?.[item.uniqueKey]?.length
                 ? 'active'
                 : ''
             }`"
           >
-            <el-collapse v-model="activeNames" @change="handleChange">
+            <el-collapse v-model="activeTagsNames" @change="handleChange">
               <el-collapse-item
                 :title="item?.[`name${$i18n.locale}`]"
                 :name="`${item?.id}`"
@@ -110,7 +145,7 @@ import {
   getModelCategory,
   getModelTagGroup,
   getModelList,
-  getModelFreeList
+  getModelFreeList,
 } from "@/api/index.js";
 export default {
   data() {
@@ -237,24 +272,22 @@ export default {
         { categoryId: "4", name: "全身 微动态模型", count: 100 },
       ],
       styleInfo: {
-        title: "风格筛选",
+        titleZh: "风格筛选",
+        titleEn: "Style filtering",
         list: [
           { id: "1", value: "1", name: "群组", filters: [] },
-          {
-            id: "2",
-            value: "2",
-            name: "性别",
-            type: "checkbox",
-            filters: [
-              { id: "2-1", value: "1", name: "男性", count: 808 },
-              { id: "2-2", value: "2", name: "女性", count: 909 },
-            ],
-          },
+          { id: "2", value: "2", name: "性别", filters: [] },
           { id: "3", value: "3", name: "年龄", filters: [] },
           { id: "4", value: "4", name: "场景", filters: [] },
           { id: "5", value: "5", name: "姿态", filters: [] },
           { id: "6", value: "6", name: "风格", filters: [] },
         ],
+      },
+      modelForm: {
+        1: [],
+        2: [],
+        3: [],
+        4: [],
       },
       form: {
         // searchVal: "",
@@ -268,8 +301,8 @@ export default {
         accessorise: [],
         area: [],
       },
-      tagKeys: [],
-      activeNames: [],
+      activeModelNames: [],
+      activeTagsNames: [],
     };
   },
   watch: {
@@ -284,11 +317,27 @@ export default {
       },
       deep: true,
     },
+    modelForm: {
+      handler: (val) => {
+        console.log("this.modelForm>>>>", val);
+      },
+      deep: true,
+    },
+  },
+  computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
   },
   methods: {
     // 获取图片展示
     getProdImageUrl(item) {
-      return item?.["frontView"] || item?.["fortyFiveView"] || item?.["sideView"] || item?.["grayView"];
+      return (
+        item?.["frontView"] ||
+        item?.["fortyFiveView"] ||
+        item?.["sideView"] ||
+        item?.["grayView"]
+      );
     },
     // 去商品详情
     goDetail(item) {
@@ -303,9 +352,13 @@ export default {
     searchClick() {
       console.log("搜索点击");
     },
+    handleModelChange(val) {
+      console.log("val>>>>>>>>>>", val);
+      this.activeModelNames = val;
+    },
     handleChange(val) {
       console.log("val>>>>>>>>>>", val);
-      this.activeNames = val;
+      this.activeTagsNames = val;
     },
     initPageQuery() {
       const query = this.$route.query;
@@ -316,8 +369,6 @@ export default {
       res.forEach((item) => {
         let _key = item?.nameEn?.toLocaleLowerCase();
         item.uniqueKey = _key;
-        this.tagKeys.push(_key);
-        // this.form[_key] = [];
         this.$set(this.form, _key, []);
       });
     },
@@ -347,11 +398,21 @@ export default {
       this.modelList = res?.data || [];
       console.log("getModelListData>>>>>>>", res);
     },
+    // 模型分类
+    modelTypeHandler() {
+      const modelCategory_data = localStorage.getItem("modelCategory_data");
+      if (modelCategory_data) {
+        this.modelTypeList = JSON.parse(modelCategory_data);
+      }
+    },
   },
   created() {
     this.initPageQuery();
     this.getModelTagGroupData();
     this.getModelListData();
+  },
+  mounted() {
+    this.modelTypeHandler();
   },
 };
 </script>
@@ -439,62 +500,69 @@ export default {
           color: #000;
         }
       }
-      .style-list {
-        margin-top: 10px;
-        .style-item {
-          margin-bottom: 10px;
-          background: #e5e5e5;
+    }
+    .style-list {
+      margin-top: 10px;
+      .style-item {
+        position: relative;
+        margin-bottom: 10px;
+        background: #e5e5e5;
+        border-radius: 4px 4px 4px 4px;
+        .model-size {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+        /deep/ .el-collapse {
+          border-top: none;
+          border-bottom: none;
+        }
+        /deep/ .el-collapse-item__header {
+          padding: 0 26px 0 21px;
+          color: #000;
+          font-size: 15px;
+          font-weight: 400;
+          background-color: transparent;
+        }
+        /deep/ .el-collapse-item__arrow {
+          display: none;
+        }
+        /deep/ .el-collapse-item__content {
+          margin-top: 10px;
+          padding: 15px 15px;
+          background: #ffffff;
           border-radius: 4px 4px 4px 4px;
-          /deep/ .el-collapse {
-            border-top: none;
-            border-bottom: none;
+          border: 1px solid #000000;
+        }
+        /deep/ .el-checkbox__input.is-checked .el-checkbox__inner {
+          background-color: #ed6336;
+          border-color: #ed6336;
+        }
+        /deep/ .el-checkbox__input.is-focus .el-checkbox__inner {
+          border-color: #ed6336;
+          &:hover,
+          &:focus {
+            border-color: #ed6336;
           }
+        }
+        /deep/ .el-checkbox__inner {
+          &:hover,
+          &:focus {
+            border-color: #ed6336;
+          }
+        }
+        /deep/ .el-checkbox__label {
+          color: #000;
+          font-weight: 400;
+          font-size: 15px;
+        }
+        /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
+          color: #000;
+        }
+        &.active {
           /deep/ .el-collapse-item__header {
-            padding: 0 26px 0 21px;
-            color: #000;
-            font-size: 15px;
-            font-weight: 400;
-            background-color: transparent;
-          }
-          /deep/ .el-collapse-item__arrow {
-            display: none;
-          }
-          /deep/ .el-collapse-item__content {
-            margin-top: 10px;
-            padding: 15px 15px;
-            background: #ffffff;
-            border-radius: 4px 4px 4px 4px;
-            border: 1px solid #000000;
-          }
-          /deep/ .el-checkbox__input.is-checked .el-checkbox__inner {
-            background-color: #ed6336;
-            border-color: #ed6336;
-          }
-          /deep/ .el-checkbox__input.is-focus .el-checkbox__inner {
-            border-color: #ed6336;
-            &:hover,
-            &:focus {
-              border-color: #ed6336;
-            }
-          }
-          /deep/ .el-checkbox__inner {
-            &:hover,
-            &:focus {
-              border-color: #ed6336;
-            }
-          }
-          /deep/ .el-checkbox__label {
-            color: #000;
-            font-weight: 400;
-            font-size: 15px;
-          }
-          /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
-            color: #000;
-          }
-          &.active {
-            /deep/ .el-collapse-item__header {
-              color: #ed6336;
-            }
+            color: #ed6336;
           }
         }
       }

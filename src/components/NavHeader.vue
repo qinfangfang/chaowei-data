@@ -6,49 +6,68 @@
     <div class="nav-center">
       <div
         class="menu-item"
-        v-for="item in menuList"
+        v-for="(item, index) in menuList"
         :key="item.id"
-        @click="jumpTo(item)"
+        @click.stop="jumpTo(item)"
       >
-        <span>{{ item.name }}</span>
+        <span>{{ item?.[`name${$i18n?.locale}`] }}</span>
         <div
           class="sub-menu-wrap"
           v-if="item?.subMenuList"
           :style="{ width: item?.with }"
         >
+          <!-- <div
+          class="sub-menu-wrap"
+          v-if="item?.subMenuList"
+          :style="{ width: item?.with, display: index === 1 ? 'flex' : 'none' }"
+        > -->
           <div
             class="sub-menu-list"
             v-for="child in item?.subMenuList"
             :key="child?.id"
           >
-            <div class="sub-menu-title" v-if="child?.title">
-              {{ child?.title }}
+            <div
+              class="sub-menu-title"
+              v-if="child?.[`name${locale}`]"
+            >
+              {{ child?.[`name${locale}`] }}
             </div>
             <div
               class="sub-menu-item"
-              v-for="subItem in child?.list"
+              v-for="(subItem, idx) in child?.list"
               :key="subItem?.id"
-              @click="jumpTo(subItem)"
+              @click.stop="
+                jumpTo(subItem, Boolean(subItem?.childCategories?.length))
+              "
             >
               <a>
                 {{
                   subItem?.label ||
-                  subItem?.[`name${$i18n.locale == "En" ? "En" : "Zh"}`]
+                  subItem?.[`name${locale}`]
                 }}
+                <i
+                  v-if="subItem?.childCategories?.length"
+                  class="el-icon-arrow-right"
+                ></i>
               </a>
-              <!-- <div
+              <!-- <el-collapse-transition> -->
+              <div
                 class="sub-menu-item-wrap"
-                :style="{
-                  display:
-                    idx === 0 && subItem?.childCategories?.length
-                      ? 'block'
-                      : 'none',
-                }"
+                v-show="
+                  activeChildId == subItem.id &&
+                  subItem?.childCategories?.length
+                "
               >
-                <div class="sub-menu-item-wrap-item">11</div>
-                <div class="sub-menu-item-wrap-item">22</div>
-                <div class="sub-menu-item-wrap-item">33</div>
-              </div> -->
+                <div
+                  class="sub-menu-item-wrap-item"
+                  v-for="childItem in subItem?.childCategories"
+                  :key="childItem?.id"
+                  @click.stop="jumpTo(subItem)"
+                >
+                  {{ childItem?.[`name${$i18n.locale}`] }}
+                </div>
+              </div>
+              <!-- </el-collapse-transition> -->
             </div>
           </div>
         </div>
@@ -56,9 +75,9 @@
     </div>
     <div class="nav-right">
       <div class="right-item language-icon" @click="changeLangEvent">
-        {{ language === "Zh" ? "中文" : ""
+        {{ locale === "Zh" ? "中文" : ""
         }}<img
-          v-if="language === 'En'"
+          v-if="locale === 'En'"
           src="@/assets/imgs/navOrFooter/language_icon.png"
           alt=""
         />
@@ -75,14 +94,16 @@
           </div>
           <!-- <div class="personal-menu-item personal-email">{{userInfo.email}}</div> -->
           <div class="personal-menu-item pad-top8" @click="changePassword">
-            修改密码
+            {{ locale === "Zh" ? "修改密码" : "Change password" }}
           </div>
-          <div class="personal-menu-item" @click="loginOut">退出</div>
+          <div class="personal-menu-item" @click="loginOut">
+            {{ locale === "Zh" ? "退出" : "Exit" }}
+          </div>
         </div>
       </div>
       <div class="right-item buy-car" @click="buyCar">
         <img src="@/assets/imgs/navOrFooter/buy_car_icon.png" alt="" /><span
-          >{{ $i18n.locale == "Zh" ? "¥ " : "$ "
+          >{{ locale == "Zh" ? "¥ " : "$ "
           }}{{ $globalState.productTotalMoney }}</span
         >
       </div>
@@ -99,62 +120,61 @@ import Cookies from "js-cookie";
 const menuList = [
   {
     id: 1,
-    name: "模型库",
+    nameZh: "模型库",
+    nameEn: "Model Library",
     with: "490px",
     path: "/modelList",
     subMenuList: [
       {
         id: "1.1",
-        title: "模型分类",
+        nameZh: "模型分类",
+        nameEn: "Model Categories",
         list: [
           {
             id: "1.1.1",
             name: "所有全身模型",
             path: "/modelList",
-            subList: [],
           },
           {
             id: "1.1.2",
             name: "全身姿态 模型",
             path: "/modelList?modelType=1",
-            subList: [],
           },
           {
             id: "1.1.3",
             name: "全身姿态 高精度模型",
             path: "/modelList?modelType=2",
-            subList: [],
           },
           {
             id: "1.1.4",
             name: "全身 A-pose模型",
             path: "/modelList?modelType=3",
-            subList: [],
           },
           {
             id: "1.1.5",
             name: "全身 微动态模型",
             path: "/modelList?modelType=4",
-            subList: [],
           },
         ],
       },
       {
         id: "1.2",
-        title: "场景分类",
+        nameZh: "场景分类",
+        nameEn: "Scene Categories",
         list: [
-          { id: "1.2.1", nameEn: "休闲", nameZh: "休闲" },
-          { id: "1.2.2", nameEn: "商务", nameZh: "商务" },
-          { id: "1.2.3", nameEn: "购物", nameZh: "购物" },
-          { id: "1.2.4", nameEn: "工装", nameZh: "工装" },
-          { id: "1.2.5", nameEn: "民族服饰", nameZh: "民族服饰" },
+          { id: "1.2.1", nameEn: "Casual", nameZh: "休闲" },
+          { id: "1.2.2", nameEn: "Business", nameZh: "商务" },
+          { id: "1.2.3", nameEn: "Shopping", nameZh: "购物" },
+          { id: "1.2.4", nameEn: "Workwear", nameZh: "工装" },
+          { id: "1.2.5", nameEn: "National Costume", nameZh: "民族服饰" },
         ],
       },
     ],
   },
   {
     id: 2,
-    name: "免费案例",
+    nameZh: "免费案例",
+    nameEn: "Free Model",
     with: "188px",
     path: "/modelList?isFree=1",
     subMenuList: [
@@ -177,9 +197,9 @@ const menuList = [
       },
     ],
   },
-  { id: 3, name: "常见问题", path: "/questionList" },
-  { id: 4, name: "教程" },
-  { id: 5, name: "联系我们", path: "/contactUs" },
+  { id: 3, nameZh: "常见问题", nameEn: "Q&A", path: "/questionList" },
+  { id: 4, nameZh: "教程", nameEn: "Tutorials" },
+  { id: 5, nameZh: "联系我们", nameEn: "Contact us", path: "/contactUs" },
 ];
 
 export default {
@@ -190,7 +210,13 @@ export default {
       userInfo: {},
       menuList,
       language: localStorage.getItem("lang") || "En",
+      activeChildId: "",
     };
+  },
+  computed: {
+    locale() {
+      return this.$i18n.locale == 'Zh' ? 'Zh' : 'En';
+    }
   },
   methods: {
     // 退出
@@ -229,10 +255,17 @@ export default {
       this.$router.push("/home");
     },
     // 联系我们
-    jumpTo(item) {
+    jumpTo(item, flag) {
+      if (flag) {
+        // 有子节点
+        this.activeChildId =
+          item?.id && this.activeChildId != item?.id ? item?.id : "";
+        return;
+      }
       if (item?.path) {
         this.$router.push(item.path);
       }
+      this.$router.push("/modelList");
     },
     // 切换语言
     changeLangEvent() {
@@ -259,7 +292,8 @@ export default {
     async getModelCategoryData() {
       const res = await getModelCategory();
       console.log("getModelCategory>>>>>>>", res);
-      this.getModelSubMenu(res);
+      this.getModelSubMenu(res || []);
+      localStorage.setItem("modelCategory_data", JSON.stringify(res || []));
     },
     // 获取用户信息
     async getUserInfoData() {
@@ -321,6 +355,7 @@ export default {
       span {
         font-size: 26px;
         padding: 5px 20px;
+        white-space: nowrap;
       }
       @media screen and (max-width: 1420px) {
         span {
@@ -351,7 +386,7 @@ export default {
         top: 95px;
         display: none;
         flex: 1;
-        padding: 30px 26px 80px;
+        padding: 30px 26px 30px;
         // width: 493px;
         // height: 359px;
         background: rgba(236, 236, 236, 0.98);
@@ -393,11 +428,37 @@ export default {
         .sub-menu-list {
           flex: 1;
           .sub-menu-item {
-            height: 18px;
+            // height: 18px;
             margin-bottom: 20px;
             font-size: 15px;
-            &:hover {
+            a:hover {
               color: #ed6336;
+            }
+            .sub-menu-item-wrap {
+              margin-top: 10px;
+              padding: 10px;
+              background-color: rgba(255, 255, 255, 0.4);
+              border-radius: 4px;
+              width: 174px;
+              // &.show {
+              //   display: block;
+              // }
+              .sub-menu-item-wrap-item {
+                line-height: 18px;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #e5e5e5;
+                font-size: 14px;
+                color: #333;
+                &:last-child {
+                  border-bottom-color: transparent;
+                  padding-bottom: 0;
+                  margin-bottom: 0;
+                }
+                &:hover {
+                  color: #ed6336;
+                }
+              }
             }
           }
         }
@@ -483,6 +544,7 @@ export default {
           padding: 0 8px 0;
           background: #ed6336;
           border-radius: 12px 12px 12px 12px;
+          white-space: nowrap;
         }
       }
     }
