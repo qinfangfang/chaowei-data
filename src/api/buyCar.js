@@ -23,10 +23,11 @@ export const orderCartList = (data = {}) => {
 
 /**
  * 删除购物车
+ * cartIds: cartId[]
  */
 export const orderCartDeleteById = (data = {}) => {
   return request({
-    url: `/orderCart/del/${data?.id}`,
+    url: `/orderCart/del`,
     data,
   });
 };

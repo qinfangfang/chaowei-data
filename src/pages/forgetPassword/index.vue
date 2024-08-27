@@ -19,7 +19,6 @@
           <el-input
             v-model="form.email"
             placeholder="请输入邮箱"
-            :autocomplete="true"
           ></el-input>
         </el-form-item>
         <el-form-item

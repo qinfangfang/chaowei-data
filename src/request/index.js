@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken, getLocale } from "@/utils";
+import { getToken, getLocale, goLogin, goLoginNew } from "@/utils";
 import Cookies from "js-cookie";
 
 const IS_DEV = process.env.NODE_ENV;
@@ -49,9 +49,9 @@ const request = ({
  */
 service.interceptors.request.use(
   (config) => {
-    console.log("request--start",config, config.url, config.data);
-    config.headers['X-Token'] = getToken();
-    config.headers['X-Language'] = getLocale();
+    console.log("request--start", config, config.url, config.data);
+    config.headers["X-Token"] = getToken();
+    config.headers["X-Language"] = getLocale();
     return config;
   },
   (e) => {
@@ -72,8 +72,10 @@ service.interceptors.response.use(
     // 兼容各种服务端响应体
     const resCode = res?.data?.code;
     const resData = res?.data?.data;
-    if([2001,2002,2003].includes(resCode)) {  // 2001(其他地方登录被挤掉)、2002(token已过期)、2003(token无效)都需要重新登录
-      Cookies.set("token", '');  // 清除token
+    if ([1005, 2001, 2002, 2003].includes(resCode)) {
+      // 2001(其他地方登录被挤掉)、2002(token已过期)、2003(token无效)都需要重新登录
+      Cookies.set("token", ""); // 清除token
+      goLoginNew(); // 登录弹窗
     }
     if (resCode == "0") {
       return resData;

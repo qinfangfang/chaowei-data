@@ -109,7 +109,6 @@ export default {
   methods: {},
   created() {
     console.log("this.$router", this.$router);
-    goLogin({ router: this.$router });
   },
 };
 </script>

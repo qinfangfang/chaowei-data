@@ -6,6 +6,7 @@ import VueI18n from "vue-i18n";
 import ElementUI from "element-ui";
 import "./assets/style/normalize.less";
 import "element-ui/lib/theme-chalk/index.css";
+import "./assets/style/reset.less";
 
 Vue.use(VueI18n);
 Vue.use(VueRouter);
@@ -13,7 +14,7 @@ Vue.use(ElementUI);
 
 window.MessageBox = ElementUI.MessageBox;
 
-console.log('ElementUI>>>>>>>>>', ElementUI, window);
+console.log("ElementUI>>>>>>>>>", ElementUI, window);
 // 1、创建中文语言包对象
 const zh = {
   username: "用户名",
@@ -36,9 +37,15 @@ const i18n = new VueI18n({
   messages,
   locale: "Zh",
 });
+
 Vue.config.productionTip = false;
+
+Vue.prototype.$globalState = Vue.observable({
+  productTotalMoney: 0,
+});
+
 // 5、挂载 i18n
-new Vue({
+window.instanceVue = new Vue({
   i18n,
   router,
   render: (h) => h(App),

@@ -1,15 +1,8 @@
 // 引入Vue的h函数
-import { h } from "vue";
+import Vue, { h } from "vue";
 import Login from "@/components/Login.vue";
 import { getToken } from "./index.js";
 
-
-const NewLogin = function(props) {
-  return {
-    template: "<Login />",
-    props
-  }
-}
 function renderFunction(props = {}) {
   // 使用h函数创建VNode
   console.log("props>>>>>", props);
@@ -32,14 +25,21 @@ export const goLogin = (config) => {
   });
 };
 
+// 去登录
+export const goLoginNew = (config) => {
+  if (getToken() || window.instanceMessageBox) return;
+  const constrcutor = Vue.extend(Login);
+  const instance = new constrcutor(config);
+  window.instanceMessageBox = instance;
+  instance.$mount();
+  document.body.appendChild(instance.$el);
+};
+
 // 关闭登录弹窗
 export const closeLogin = () => {
-  window.MessageBox.close();
   const modal = document.getElementsByClassName("v-modal")[0];
-  if (modal) modal.style.display = "none";
-  const wrapper = document.getElementsByClassName('el-message-box__wrapper')[0];
-  const body = document.getElementsByTagName('body')[0];
-  console.log('body>>>>>', body);
-  body.removeChild(modal);
-  body.removeChild(wrapper);
+  const wrapper = document.getElementsByClassName('login-module')[0];
+  document.body.removeChild(modal);
+  document.body.removeChild(wrapper);
+  window.instanceMessageBox = null;
 };

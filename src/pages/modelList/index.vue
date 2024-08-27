@@ -77,7 +77,7 @@
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
             <div class="model-pic">
-              <img :src="item?.fortyFiveView || item?.fullView" alt="" />
+              <img :src="getProdImageUrl(item)" alt="" />
               <div class="tag-list">
                 <div
                   class="tag-item"
@@ -286,6 +286,10 @@ export default {
     },
   },
   methods: {
+    // 获取图片展示
+    getProdImageUrl(item) {
+      return item?.["frontView"] || item?.["fortyFiveView"] || item?.["sideView"] || item?.["grayView"];
+    },
     // 去商品详情
     goDetail(item) {
       this.$router.push(`/prodDetail/${item?.id}`);

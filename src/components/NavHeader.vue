@@ -30,7 +30,25 @@
               :key="subItem?.id"
               @click="jumpTo(subItem)"
             >
-              {{ subItem?.name }}
+              <a>
+                {{
+                  subItem?.label ||
+                  subItem?.[`name${$i18n.locale == "En" ? "En" : "Zh"}`]
+                }}
+              </a>
+              <!-- <div
+                class="sub-menu-item-wrap"
+                :style="{
+                  display:
+                    idx === 0 && subItem?.childCategories?.length
+                      ? 'block'
+                      : 'none',
+                }"
+              >
+                <div class="sub-menu-item-wrap-item">11</div>
+                <div class="sub-menu-item-wrap-item">22</div>
+                <div class="sub-menu-item-wrap-item">33</div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -64,7 +82,8 @@
       </div>
       <div class="right-item buy-car" @click="buyCar">
         <img src="@/assets/imgs/navOrFooter/buy_car_icon.png" alt="" /><span
-          >￥300</span
+          >{{ $i18n.locale == "Zh" ? "¥ " : "$ "
+          }}{{ $globalState.productTotalMoney }}</span
         >
       </div>
     </div>
@@ -74,7 +93,7 @@
 <script>
 import { getModelCategory } from "@/api/index.js";
 import { getUserInfo, logOut } from "@/api/user.js";
-import { goLogin, getToken } from "@/utils/index.js";
+import { goLogin, goLoginNew, getToken } from "@/utils/index.js";
 import Cookies from "js-cookie";
 
 const menuList = [
@@ -88,26 +107,35 @@ const menuList = [
         id: "1.1",
         title: "模型分类",
         list: [
-          { id: "1.1.1", name: "所有全身模型", path: "/modelList" },
+          {
+            id: "1.1.1",
+            name: "所有全身模型",
+            path: "/modelList",
+            subList: [],
+          },
           {
             id: "1.1.2",
             name: "全身姿态 模型",
             path: "/modelList?modelType=1",
+            subList: [],
           },
           {
             id: "1.1.3",
             name: "全身姿态 高精度模型",
             path: "/modelList?modelType=2",
+            subList: [],
           },
           {
             id: "1.1.4",
             name: "全身 A-pose模型",
             path: "/modelList?modelType=3",
+            subList: [],
           },
           {
             id: "1.1.5",
             name: "全身 微动态模型",
             path: "/modelList?modelType=4",
+            subList: [],
           },
         ],
       },
@@ -115,11 +143,11 @@ const menuList = [
         id: "1.2",
         title: "场景分类",
         list: [
-          { id: "1.2.1", name: "休闲" },
-          { id: "1.2.2", name: "商务" },
-          { id: "1.2.3", name: "购物" },
-          { id: "1.2.4", name: "工装" },
-          { id: "1.2.5", name: "民族服饰" },
+          { id: "1.2.1", nameEn: "休闲", nameZh: "休闲" },
+          { id: "1.2.2", nameEn: "商务", nameZh: "商务" },
+          { id: "1.2.3", nameEn: "购物", nameZh: "购物" },
+          { id: "1.2.4", nameEn: "工装", nameZh: "工装" },
+          { id: "1.2.5", nameEn: "民族服饰", nameZh: "民族服饰" },
         ],
       },
     ],
@@ -135,12 +163,14 @@ const menuList = [
         list: [
           {
             id: "2.1.1",
-            name: "全身姿态模型",
+            nameEn: "全身姿态模型",
+            nameZh: "全身姿态模型",
             path: "/modelList?modelType=1&isFree=1",
           },
           {
             id: "2.1.2",
-            name: "全身 A-pose模型",
+            nameEn: "全身 A-pose模型",
+            nameZh: "全身 A-pose模型",
             path: "/modelList?modelType=3&isFree=1",
           },
         ],
@@ -180,13 +210,18 @@ export default {
     showPersonalMenu(e) {
       e.stopPropagation();
       if (!getToken()) {
-        goLogin({ router: this.$router });  // TODO
+        goLoginNew({ router: this.$router }); // TODO
         return;
       }
       this.showMenu = !this.showMenu;
     },
     // 购物车
-    buyCar() {
+    buyCar(e) {
+      e.stopPropagation();
+      if (!getToken()) {
+        goLoginNew({ router: this.$router }); // TODO
+        return;
+      }
       this.$router.push("/buyCar");
     },
     // 去首页
@@ -214,15 +249,23 @@ export default {
       }
       // console.log("i18n>>>>>>>", this.language);
     },
+    // 获取模型的子菜单
+    getModelSubMenu(data = []) {
+      const list = data || [];
+      this.$set(this.menuList?.[0]?.subMenuList?.[0], "list", list);
+      console.log("menuList>>>>>>>>", this.menuList);
+      // this.$forceUpdate();
+    },
     async getModelCategoryData() {
       const res = await getModelCategory();
       console.log("getModelCategory>>>>>>>", res);
+      this.getModelSubMenu(res);
     },
     // 获取用户信息
     async getUserInfoData() {
-      if (!getToken()) return;
+      // if (!getToken()) return;
       this.userInfo = await getUserInfo();
-      console.log("用户信息>>>>>>>>", this.userInfo);
+      console.log("用户信息>>>>>>>>", this.userInfo, this.$route);
     },
   },
   created() {
@@ -276,7 +319,7 @@ export default {
       height: 100%;
       cursor: pointer;
       span {
-        font-size: 28px;
+        font-size: 26px;
         padding: 5px 20px;
       }
       @media screen and (max-width: 1420px) {
@@ -304,8 +347,8 @@ export default {
       }
       .sub-menu-wrap {
         position: absolute;
-        right: 0;
-        top: 100px;
+        left: 50%;
+        top: 95px;
         display: none;
         flex: 1;
         padding: 30px 26px 80px;
@@ -321,6 +364,16 @@ export default {
         letter-spacing: 1px;
         text-align: left;
         z-index: 10;
+        transform: translateX(-50%);
+        &::after {
+          content: "";
+          position: absolute;
+          left: 48%;
+          top: -14px;
+          transform: rotate(-45deg) translateX(-50%);
+          border: 10px solid rgba(236, 236, 236, 0.98);
+          z-index: 11;
+        }
         .sub-menu-title {
           position: relative;
           font-weight: bold;
@@ -351,16 +404,16 @@ export default {
       }
     }
   }
+
   .nav-right {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    font-size: 20px;
+    display: flex;
     height: 100%;
     cursor: pointer;
-  }
-  .nav-right {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
+    width: 360px;
     .right-item {
       position: relative;
       display: flex;

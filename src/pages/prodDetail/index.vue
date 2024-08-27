@@ -145,6 +145,9 @@ export default {
     async addBuyCar() {
       const params = this.$route.params;
       const res = await addModelToCarById({id: params?.id});
+      if(!res?.code) {
+        this.$message.success('添加成功');
+      }
       console.log('添加购物车>>>>>>>>>>', res);
     },
     changeSlide(val, idx) {

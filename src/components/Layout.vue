@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="!$route.meta.hideNavBar" class="page-header">
+    <div v-if="showHeader" class="page-header">
       <Header></Header>
     </div>
     <div
       class="page-content"
-      :style="{ paddingTop: !$route.meta.hideNavBar ? '100px' : 0 }"
+      :style="{ paddingTop: showHeader ? '100px' : 0 }"
     >
       <router-view />
     </div>
@@ -17,14 +17,19 @@ import Header from "./NavHeader.vue";
 export default {
   name: "Layout",
   data() {
-    return {};
+    return {
+      showHeader: false,
+    };
   },
   components: {
     Header,
   },
-  created() {
-    console.log(333, this.$route);
-  },
+  watch: {
+    '$route'(val, oldVal) {
+      // console.log(8888, val, oldVal);
+      this.showHeader = !val.meta.hideNavBar;
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -10,7 +10,7 @@
             >
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            <el-button size="mini" @click="patchDeleteClick"
               >删除所选</el-button
             >
           </div>
@@ -22,34 +22,44 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="100"></el-table-column>
-          <el-table-column label="项目名称">
+          <el-table-column label="" width="130">
             <template slot-scope="scope">
               <div class="product-info">
                 <div class="prodcut-pic">
-                  <img
-                    src="http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280"
-                    alt=""
-                  />
+                  <img :src="scope?.row?.fortyFiveView" alt="" />
                 </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="项目名称">
+            <template slot-scope="scope">
+              <div class="product-info">
                 <div class="product-name">
-                  <div>{{ scope?.row?.productName }}</div>
-                  <div class="name">{{ scope?.row?.productNo }}</div>
+                  <div>{{ scope?.row?.[`name${$i18n.locale}`] }}</div>
+                  <div class="name">{{ scope?.row?.code }}</div>
                 </div>
               </div>
             </template>
           </el-table-column>
           <el-table-column label="价格" width="300">
             <template slot-scope="scope">
-              <div class="product-price">￥ 167.00</div>
+              <div class="product-price">
+                {{ unit }}
+                {{
+                  scope?.row?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`]
+                }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <div class="moveto-favorites">
-                <!-- @click="handleEdit(scope.$index, scope.row)" -->
-                移入收藏夹
+              <div class="moveto-favorites">移入收藏夹</div>
+              <div
+                class="delete-btn"
+                @click="deleteClick(scope.$index, scope.row)"
+              >
+                删除
               </div>
-              <div class="delete-btn">删除</div>
             </template>
           </el-table-column>
         </el-table>
@@ -57,78 +67,117 @@
       <div class="buy-cost">
         <div class="title">
           结算清单
-          <span>已选 3 项</span>
+          <span>已选 {{ totalCount }} 项</span>
         </div>
         <div class="coupon-discount">
           <div class="discount-item total-money">
             <span class="label">商品总价</span>
-            <span class="value">￥ 317.00</span>
+            <span class="value">{{ unit }} {{ productTotalMoney }}</span>
           </div>
           <div class="discount-item total-jian">
             <span class="label">共减</span>
-            <span class="value">减 ￥ 17.00</span>
+            <span class="value">减 {{ unit }} 17.00</span>
           </div>
           <div class="discount-item man-jian">
             <span class="label">满减</span>
-            <span class="value">减 ￥ 10.00</span>
+            <span class="value">减 {{ unit }} 10.00</span>
           </div>
           <div class="discount-item zhe-kou">
             <span class="label">购物节折扣</span>
-            <span class="value">减 ￥ 7.00</span>
+            <span class="value">减 {{ unit }} 7.00</span>
           </div>
         </div>
         <div class="total-info">
           <div class="pay-info">
-            <div class="pay-money"><span>合计:</span> ￥ 300.00</div>
-            <div class="discount-money">共减 ￥ 17.00</div>
+            <div class="pay-money">
+              <span>合计:&nbsp;</span> {{ unit }} {{ totalMoney }}
+            </div>
+            <div class="discount-money">共减 {{ unit }} 17.00</div>
           </div>
-          <div class="submit-btn">结算</div>
+          <div class="submit-btn" @click="submitBuyCar">结算</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { orderCartList } from "@/api/buyCar.js";
+import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
 
 export default {
   data() {
     return {
-      prodList: [
-        {
-          productCode: "1",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-03",
-          price: "￥ 167.00",
-        },
-        {
-          productCode: "2",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-02",
-          price: "￥ 167.00",
-        },
-        {
-          productCode: "3",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-04",
-          price: "￥ 167.00",
-        },
-        {
-          productCode: "4",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-01",
-          price: "￥ 167.00",
-        },
-      ],
+      prodList: [],
       selectAll: false,
       selectedList: [],
     };
   },
+  computed: {
+    unit() {
+      return this.$i18n.locale == "Zh" ? "¥ " : "$ ";
+    },
+    totalCount() {
+      return this.selectedList.length;
+    },
+    productTotalMoney() {
+      const price = this.selectedList.reduce((pre, cur) => {
+        return pre + cur?.[`price${this.$i18n.locale == "Zh" ? "Cny" : "Usd"}`];
+      }, 0);
+      // console.log('1111>>>>>>>>>>>', this.$globalState);
+      this.$globalState.productTotalMoney = price;
+      return price;
+    },
+    totalMoney() {
+      const price = this.selectedList.reduce((pre, cur) => {
+        return pre + cur?.[`price${this.$i18n.locale == "Zh" ? "Cny" : "Usd"}`];
+      }, 0);
+      return price;
+    },
+  },
   methods: {
+    // 提交购物车
+    submitBuyCar() {
+      console.log("提交购物车");
+    },
+    // 批量删除
+    patchDeleteClick() {
+      if(this.selectedList.length == 0) return;
+      this.$confirm(`确认要删除选择的${this.selectedList.length}个模型吗?`, "提醒", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        customClass: 'global-messag0eBox'
+      })
+        .then(async () => {
+          const cartIds = this.selectedList.map((item) => item?.cartId);
+          const res = await orderCartDeleteById({ cartIds });
+          if (!res?.code) {
+            this.$message.success("删除成功");
+            this.getOrderList();
+          } else {
+            res?.msg && this.$message.error(res?.msg);
+          }
+        })
+        .catch(() => {});
+    },
+    // 删除确认
+    deleteClick(idx, item) {
+      this.$confirm("确认要删除此模型吗?", "提醒", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        customClass: 'global-messag0eBox'
+      })
+        .then(async () => {
+          const res = await orderCartDeleteById({ cartIds: [item?.cartId] });
+          if (!res?.code) {
+            this.$message.success("删除成功");
+            this.getOrderList();
+          } else {
+            res?.msg && this.$message.error(res?.msg);
+          }
+        })
+        .catch(() => {});
+    },
     checkChange(val) {
       console.log("checkChange>>>>>>>>", val);
       if (val) {
@@ -145,13 +194,14 @@ export default {
     },
     // 获取购物车数据
     async getOrderList() {
-      const prodList = await orderCartList();
-      console.log("购物车数据>>>>>", prodList);
+      const res = await orderCartList();
+      console.log("购物车数据>>>>>", res);
+      this.prodList = res?.data || [];
     },
   },
   created() {
     this.getOrderList();
-  }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -163,7 +213,7 @@ export default {
   .page-title {
     margin-bottom: 15px;
     font-family: Inter, Inter;
-    font-size: 40px;
+    font-size: 32px;
     color: #000;
     line-height: 47px;
   }
@@ -242,7 +292,7 @@ export default {
             z-index: -1;
           }
           &:nth-child(2) {
-            padding-left: 145px;
+            // padding-left: 145px;
           }
         }
       }
@@ -294,7 +344,6 @@ export default {
           }
         }
         .product-name {
-          margin-left: 55px;
           font-family: Inter, Inter;
           font-weight: 400;
           font-size: 16px;
@@ -342,7 +391,7 @@ export default {
       .title {
         padding: 30px 35px;
         font-weight: bold;
-        font-size: 36px;
+        font-size: 30px;
         color: #000;
         line-height: 42px;
         border-bottom: 1px solid #ddd;

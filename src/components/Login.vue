@@ -92,15 +92,15 @@ export default {
       }
     },
     register() {
-      console.log("router>>>>>>>", this.router);
+      console.log("router>>>>>>>", window.instanceVue.$router);
       closeLogin();
-      this.router.push({
+      window.instanceVue.$router.push({
         path: "/register",
       });
     },
     forgetPassword() {
       closeLogin();
-      this.router.push({
+      window.instanceVue.$router.push({
         path: "/forgetPassword",
       });
     },
