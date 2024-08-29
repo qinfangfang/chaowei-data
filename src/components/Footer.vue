@@ -22,14 +22,14 @@
     </div>
     <div class="footer-item" v-for="item in footer?.list" :key="item?.id">
       <div class="footer-item-wrap">
-        <div class="item-title">{{ item?.title }}</div>
+        <div class="item-title">{{ item?.[`title${$i18n.locale}`] }}</div>
         <div class="sub-list">
           <div
             class="sub-item"
             v-for="subItem in item?.menuList"
             :key="subItem?.id"
           >
-            {{ subItem?.name }}
+            {{ subItem?.[`name${$i18n.locale}`] }}
           </div>
         </div>
       </div>
@@ -51,38 +51,111 @@ export default {
         list: [
           {
             id: "list-1",
-            title: "模型分类",
+            titleZh: "模型分类",
+            titleEn: 'Model Categories',
             menuList: [
-              { id: "list-1-1", name: "所有全身模型" },
-              { id: "list-1-2", name: "全身姿态 A类模型" },
-              { id: "list-1-3", name: "全身姿态 B类模型" },
-              { id: "list-1-4", name: "全身 A-pose模型 " },
-              { id: "list-1-5", name: "4D动态模型" },
-              { id: "list-1-6", name: "PBR头脸部模型" },
+              {
+                id: "list-1-1",
+                nameEn: "所有全身模型",
+                nameZh: "所有全身模型",
+              },
+              {
+                id: "list-1-2",
+                nameEn: "全身姿态 A类模型",
+                nameZh: "全身姿态 A类模型",
+              },
+              {
+                id: "list-1-3",
+                nameEn: "全身姿态 B类模型",
+                nameZh: "全身姿态 B类模型",
+              },
+              {
+                id: "list-1-4",
+                nameEn: "全身 A-pose模型",
+                nameZh: "全身 A-pose模型",
+              },
+              { id: "list-1-5", nameEn: "4D动态模型", nameZh: "4D动态模型" },
+              {
+                id: "list-1-6",
+                nameEn: "PBR头脸部模型",
+                nameZh: "PBR头脸部模型",
+              },
             ],
           },
           {
             id: "list-2",
-            title: "会员页面",
+            titleZh: "会员页面",
+            titleEn: "Member Page",
             menuList: [
-              { id: "list-2-1", name: "交易记录" },
-              { id: "list-2-2", name: "收藏夹" },
-              { id: "list-2-3", name: "优惠券" },
+              {
+                id: "list-2-1",
+                nameZh: "交易记录",
+                nameEn: "Transaction Record",
+                path: "/myAccount",
+              },
+              {
+                id: "list-2-2",
+                nameZh: "收藏夹",
+                nameEn: "Favorites",
+                path: "/myAccount",
+              },
+              {
+                id: "list-2-3",
+                nameZh: "优惠券",
+                nameEn: "Coupons",
+                path: "/myAccount",
+              },
             ],
           },
           {
             id: "list-3",
-            title: "网站支持",
+            titleZh: "网站支持",
+            titleEn: "Website Support",
             menuList: [
-              { id: "list-3-1", name: "联系我们" },
-              { id: "list-3-2", name: "常见问题" },
-              { id: "list-3-3", name: "模型授权范围" },
-              { id: "list-3-4", name: "教程" },
+              {
+                id: "list-3-1",
+                nameZh: "联系我们",
+                nameEn: "Contact us",
+                path: "/contactUs",
+              },
+              {
+                id: "list-3-2",
+                nameZh: "常见问题",
+                nameEn: "Q&A",
+                path: "//questionList",
+              },
+              {
+                id: "list-3-3",
+                nameZh: "模型授权范围",
+                nameEn: "Model Authorization Scope",
+                path: "/home",
+              },
+              {
+                id: "list-3-4",
+                nameZh: "教程",
+                nameEn: "Tutorials",
+                path: "/home",
+              },
             ],
           },
         ],
       },
     };
+  },
+  methods: {
+    // 模型分类
+    modelTypeHandler() {
+      setTimeout(() => {
+        const modelCategory_data = localStorage.getItem("modelCategory_data");
+        if (modelCategory_data) {
+          const modelTypeList = JSON.parse(modelCategory_data);
+          this.$set(this.footer.list[0], "menuList", modelTypeList);
+        }
+      }, 1000);
+    },
+  },
+  mounted() {
+    this.modelTypeHandler();
   },
 };
 </script>
@@ -117,13 +190,13 @@ export default {
       display: flex;
       align-items: center;
       margin-bottom: 5px;
-      font-family: Inter, Inter;
-      font-size: 24px;
+      font-size: 16px;
       color: #a8a8a8;
       line-height: 28px;
       text-align: left;
       .desc-label {
         width: 100px;
+        font-size: 18px;
         white-space: nowrap;
       }
     }
@@ -175,7 +248,7 @@ export default {
           margin-bottom: 0;
         }
         &:hover {
-          color: #ED6336;
+          color: #ed6336;
         }
       }
     }

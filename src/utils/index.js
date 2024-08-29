@@ -9,5 +9,5 @@ export const getToken = () => {
 
 // 获取当前语言种类
 export const getLocale = () => {
-  return localStorage.getItem('locale').toLocaleLowerCase() || 'En';
+  return localStorage.getItem('locale')?.toLocaleLowerCase() || 'En';
 }

@@ -26,10 +26,7 @@
             v-for="child in item?.subMenuList"
             :key="child?.id"
           >
-            <div
-              class="sub-menu-title"
-              v-if="child?.[`name${locale}`]"
-            >
+            <div class="sub-menu-title" v-if="child?.[`name${locale}`]">
               {{ child?.[`name${locale}`] }}
             </div>
             <div
@@ -41,10 +38,7 @@
               "
             >
               <a>
-                {{
-                  subItem?.label ||
-                  subItem?.[`name${locale}`]
-                }}
+                {{ subItem?.label || subItem?.[`name${locale}`] }}
                 <i
                   v-if="subItem?.childCategories?.length"
                   class="el-icon-arrow-right"
@@ -93,8 +87,11 @@
             {{ userInfo.nickname }}
           </div>
           <!-- <div class="personal-menu-item personal-email">{{userInfo.email}}</div> -->
+          <div class="personal-menu-item pad-top8" @click="myAccount">
+            {{ locale === "Zh" ? "我的账户" : "My Account" }}
+          </div>
           <div class="personal-menu-item pad-top8" @click="changePassword">
-            {{ locale === "Zh" ? "修改密码" : "Change password" }}
+            {{ locale === "Zh" ? "修改密码" : "Change Password" }}
           </div>
           <div class="personal-menu-item" @click="loginOut">
             {{ locale === "Zh" ? "退出" : "Exit" }}
@@ -198,7 +195,7 @@ const menuList = [
     ],
   },
   { id: 3, nameZh: "常见问题", nameEn: "Q&A", path: "/questionList" },
-  { id: 4, nameZh: "教程", nameEn: "Tutorials" },
+  { id: 4, nameZh: "教程", nameEn: "Tutorials", path: "/home" },
   { id: 5, nameZh: "联系我们", nameEn: "Contact us", path: "/contactUs" },
 ];
 
@@ -215,10 +212,14 @@ export default {
   },
   computed: {
     locale() {
-      return this.$i18n.locale == 'Zh' ? 'Zh' : 'En';
-    }
+      return this.$i18n.locale == "Zh" ? "Zh" : "En";
+    },
   },
   methods: {
+    // 我的账户
+    myAccount() {
+      this.$router.push("/myAccount");
+    },
     // 退出
     async loginOut() {
       const res = await logOut();
