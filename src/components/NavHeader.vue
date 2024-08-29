@@ -331,6 +331,7 @@ export default {
   z-index: 99;
   .nav-left {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     width: 152px;
     height: 100%;
@@ -345,12 +346,15 @@ export default {
   .nav-center {
     display: flex;
     align-items: center;
+    justify-content: space-around;
     height: 100%;
+    flex: 1;
+    margin: 0 20px 0 50px;
     .menu-item {
       position: relative;
       display: flex;
       align-items: center;
-      margin-right: 50px;
+      // margin-right: 50px;
       height: 100%;
       cursor: pointer;
       span {
