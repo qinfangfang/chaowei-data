@@ -39,9 +39,17 @@
             {{ detail?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
           </div>
           <div class="operate-btn">
-            <div v-if="showDownload" class="operate-item">下载模板</div>
+            <div
+              v-if="showDownload"
+              class="operate-item"
+              @click="downloadClick"
+            >
+              下载模板
+            </div>
             <div v-if="!showDownload" class="operate-item">直接购买</div>
-            <div class="operate-item add-car" @click="addBuyCar">加入购物车</div>
+            <div class="operate-item add-car" @click="addBuyCar">
+              加入购物车
+            </div>
           </div>
         </div>
         <div class="product-attributes">
@@ -52,9 +60,11 @@
               v-for="item in attributesList"
               :key="item?.id"
             >
-              <span>{{ item?.label }}</span>
+              <span>{{ item?.[`label${$i18n.locale}`] }}：</span>
               <template v-if="item?.tagList">
-                <a v-for="tag in detail?.tags" :key="tag?.id">{{ tag?.[`name${$i18n.locale}`] }}</a>
+                <a v-for="tag in detail?.tags" :key="tag?.id">{{
+                  tag?.[`name${$i18n.locale}`]
+                }}</a>
               </template>
               <span v-else class="value" :class="item?.class">{{
                 detail?.[`${item?.key}${$i18n.locale}`] ||
@@ -73,7 +83,7 @@
   </div>
 </template>
 <script>
-import { getModelDetailById } from "@/api/index.js";
+import { getModelDetailById, getModelDownloadUrlById } from "@/api/index.js";
 import { addModelToCarById } from "@/api/buyCar.js";
 
 export default {
@@ -81,74 +91,122 @@ export default {
     return {
       index: 0,
       isExist: true,
-      description: '产品已下架或者不存在',
-      previewList: [
-        {
-          id: 1,
-          imageUrl:
-            "http://gips3.baidu.com/it/u=1821127123,1149655687&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-        },
-        {
-          id: 2,
-          imageUrl:
-            "http://gips1.baidu.com/it/u=1647344915,1746921568&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-        },
-        {
-          id: 3,
-          imageUrl:
-            "http://gips2.baidu.com/it/u=295419831,2920259701&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-        },
-        {
-          id: 4,
-          imageUrl:
-            "http://gips3.baidu.com/it/u=1537137094,335954266&fm=3028&app=3028&f=JPEG&fmt=auto?w=720&h=1280",
-        },
-      ],
+      description: "产品已下架或者不存在",
+      previewList: [],
       detail: {},
       attributesList: [
-        { id: "1", label: "面片数：", text: "--", uniqueKey: "geometry" },
-        { id: "2", label: "布线类型：", text: "--", key: "type" },
+        {
+          id: "1",
+          labelZh: "面片数",
+          labelEn: "Geometry",
+          text: "--",
+          uniqueKey: "geometry",
+        },
+        {
+          id: "2",
+          labelZh: "布线类型",
+          labelEn: "Type",
+          text: "--",
+          key: "type",
+        },
         {
           id: "3",
-          label: "单位：",
+          labelZh: "单位",
+          labelEn: "Unit",
           text: "--",
           key: `unit`,
         },
-        { id: "4", label: "文件格式：", text: "--", uniqueKey: "format" },
-        { id: "5", label: "贴图大小：", text: "--", uniqueKey: "mapSize" },
+        {
+          id: "4",
+          labelZh: "文件格式",
+          labelEn: "File Format",
+          text: "--",
+          uniqueKey: "format",
+        },
+        {
+          id: "5",
+          labelZh: "贴图大小",
+          labelEn: "Map Size",
+          text: "--",
+          uniqueKey: "mapSize",
+        },
         {
           id: "6",
-          label: "贴图格式：",
+          labelZh: "贴图格式",
+          labelEn: "Preview Format",
           text: "--",
           uniqueKey: "previewFormat",
         },
-        { id: "7", label: "贴图类型：", text: "---", key: "mapType" },
-        { id: "8", label: "模型大小：", text: "--", uniqueKey: "modelSize" },
+        {
+          id: "7",
+          labelZh: "贴图类型",
+          labelEn: "Map Type",
+          text: "---",
+          key: "mapType",
+        },
+        {
+          id: "8",
+          labelZh: "模型大小",
+          labelEn: "Model Size",
+          text: "--",
+          uniqueKey: "modelSize",
+        },
         // { id: "9", label: "UV状态：", text: "--", key: "" },
         {
           id: "10",
-          label: "法律信息：",
+          labelZh: "法律信息",
+          labelEn: "法律信息",
           text: "点击查看授权信息",
           class: "color-ed6336",
         },
-        { id: "11", label: "标签：", text: "", tagList: [], key: 'tags' },
+        {
+          id: "11",
+          labelZh: "标签",
+          labelEn: "Tags",
+          text: "",
+          tagList: [],
+          key: "tags",
+        },
       ],
+      downloadUrl: "",
     };
   },
   computed: {
     showDownload() {
-      return this.detail?.free === true ? true : (this.default?.owned === true ? true : false);
-    }
+      return this.detail?.free === true
+        ? true
+        : this.default?.owned === true
+        ? true
+        : false;
+    },
+  },
+  watch: {
+    async showDownload(val) {
+      // 显示下载按钮
+      console.log("1111");
+      if (val) {
+        const res = await getModelDownloadUrlById({
+          id: this.$route.params?.id,
+        });
+        if (!res.code && res?.url) {
+          this.downloadUrl = res?.url;
+        }
+      }
+    },
   },
   methods: {
+    // 下载
+    downloadClick() {
+      window.open(downloadUrl, "_blank");
+    },
     // 添加购物车
     async addBuyCar() {
       const params = this.$route.params;
-      const res = await addModelToCarById({id: params?.id});
-      if(!res?.code) {
-        this.$message.success('添加成功');
+      const res = await addModelToCarById({ id: params?.id });
+      if (!res?.code) {
+        this.$message.success("添加成功");
       }
-      console.log('添加购物车>>>>>>>>>>', res);
+      console.log("添加购物车>>>>>>>>>>", res);
     },
     changeSlide(val, idx) {
       // console.log("changeSlide>>>>>>", val, idx);
@@ -174,9 +232,9 @@ export default {
       const params = this.$route.params;
       const res = await getModelDetailById({ id: params?.id });
       console.log("getModelDetailById>>>>>>>>", res);
-      if(res?.code == '3000') {
+      if (res?.code == "3000") {
         this.isExist = false;
-        this.description = res?.msg || '产品已下架或者不存在';
+        this.description = res?.msg || "产品已下架或者不存在";
         return;
       }
       this.detail = res || {};

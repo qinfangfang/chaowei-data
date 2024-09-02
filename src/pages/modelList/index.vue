@@ -1,7 +1,9 @@
 <template>
   <div class="model-list-wrapper">
     <div class="model-sidebar">
-      <div class="reset-btn">{{ isZh ? "复位选项" : "Reset Options" }}</div>
+      <div class="reset-btn" @click="resetSelect">
+        {{ isZh ? "复位选项" : "Reset Options" }}
+      </div>
       <div class="model-type-list">
         <div class="model-type-title">
           {{ isZh ? "模型种类" : "Model Categories" }}
@@ -37,14 +39,17 @@
                 :key="item?.id"
               >
                 <!-- <span>（{{ item?.modelSize }}）</span> -->
-                <el-checkbox-group v-model="modelForm[item?.id]">
-                  <el-checkbox
+                <el-radio-group
+                  v-model="modelForm[item?.id]"
+                  @input="(val) => radioChange(val, item?.id)"
+                >
+                  <el-radio
                     v-for="child in item?.childCategories"
                     :key="child?.id"
                     :label="`${child?.id}`"
-                    >{{ child?.[`name${$i18n.locale}`] }}</el-checkbox
+                    >{{ child?.[`name${$i18n.locale}`] }}</el-radio
                   >
-                </el-checkbox-group>
+                </el-radio-group>
               </el-collapse-item>
             </el-collapse>
           </div>
@@ -96,7 +101,10 @@
         </div>
       </div>
     </div>
-    <div class="model-product-wrap">
+    <div
+      class="model-product-wrap"
+      :class="`${pagination.show ? 'pad-bot-45' : ''}`"
+    >
       <!-- <div class="model-search">
         <el-input
           id="search-input"
@@ -135,6 +143,17 @@
           </div>
         </div>
         <el-empty v-if="!modelList.length" :image-size="200"></el-empty>
+      </div>
+      <div class="pagination-wrap" v-if="pagination.show">
+        <el-pagination
+          background
+          :current-page="pagination.pageNum"
+          layout="prev, pager, next"
+          :total="pagination.total"
+          @current-change="curPageChange"
+        >
+          <!-- layout="prev, pager, next, jumper" -->
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -284,15 +303,16 @@ export default {
         ],
       },
       modelForm: {
-        1: [],
-        2: [],
-        3: [],
-        4: [],
+        1: "",
+        2: "",
+        3: "",
+        4: "",
       },
       form: {
         // searchVal: "",
         filterSearch: "",
         modelType: "",
+        categoryId: "",
         tpye: [],
         gender: [],
         age: [],
@@ -303,22 +323,31 @@ export default {
       },
       activeModelNames: [],
       activeTagsNames: [],
+      tagKeys: [],
+      pagination: {
+        show: false,
+        pageNum: 1,
+        pageSize: 10,
+        total: 0,
+      },
     };
   },
   watch: {
     $route(to) {
       console.log("to>>>>>>", to);
       this.form.modelType = to.query?.modelType || "";
-      this.getModelListData();
+      this.getModelListData(true);
     },
     form: {
-      handler: (val) => {
+      handler(val) {
         console.log("this.form>>>>", val);
+        this.getModelListData(1);
       },
       deep: true,
     },
     modelForm: {
-      handler: (val) => {
+      handler(val) {
+        this.getModelListData(1);
         console.log("this.modelForm>>>>", val);
       },
       deep: true,
@@ -330,6 +359,39 @@ export default {
     },
   },
   methods: {
+    // 模型种类单选切换
+    radioChange(val, id) {
+      console.log(111, val, this.activeModelNames, id);
+      Object.entries(this.modelForm).forEach(([key, values]) => {
+        this.$set(this.modelForm, `${key}`, "");
+      });
+      this.$set(this.modelForm, id, val);
+      this.form.categoryId = val;
+    },
+    // 重置筛选项
+    resetSelect() {
+      this.form = {
+        filterSearch: "",
+        modelType: "",
+        categoryId: "",
+        tpye: [],
+        gender: [],
+        age: [],
+        activity: [],
+        clothing: [],
+        accessorise: [],
+        area: [],
+      };
+      this.modelForm = {
+        1: [],
+        2: [],
+        3: [],
+        4: [],
+      };
+      this.activeModelNames = [];
+      this.activeTagsNames = [];
+      this.getModelListData(1);
+    },
     // 获取图片展示
     getProdImageUrl(item) {
       return (
@@ -366,9 +428,11 @@ export default {
     },
     // 处理筛选条件
     initFilter(res = []) {
+      this.tagKeys = [];
       res.forEach((item) => {
         let _key = item?.nameEn?.toLocaleLowerCase();
         item.uniqueKey = _key;
+        this.tagKeys.push(_key);
         this.$set(this.form, _key, []);
       });
     },
@@ -379,22 +443,52 @@ export default {
       this.initFilter(res);
       console.log("getModelTagGroup>>>>>>>", res);
     },
-    // 获取收费模型列表
-    async getModelListData() {
+    // 重置pageNum
+    resetPageConfig() {
+      this.pagination.pageNum = 1;
+    },
+    // 页码变化触发
+    curPageChange(pageNum) {
+      this.pagination.pageNum = pageNum;
+      this.getModelListData();
+    },
+    // 获取所有tags筛选集合
+    getAllTagsFilter() {
+      let tagIds = [];
+      this.tagKeys.forEach((item) => {
+        tagIds = tagIds.concat(this.form[item]);
+      });
+      return tagIds;
+    },
+    // 获取模型列表(收费or免费)
+    async getModelListData(flag, config = {}) {
+      if (flag) {
+        this.resetPageConfig();
+      }
       const query = this.$route.query;
       let res = [];
       if (query?.isFree === "1") {
+        // 免费模型
         res = await getModelFreeList({
-          pageNum: 1,
-          pageSize: 10,
+          pageNum: this.pagination.pageNum,
+          pageSize: this.pagination.pageSize,
+          categoryId: this.form.categoryId,
+          tagIds: this.getAllTagsFilter(),
+          ...config,
         });
       } else {
+        // 收费模型
         res = await getModelList({
-          pageNum: 1,
-          pageSize: 10,
-          // categoryId: 0,
+          pageNum: this.pagination.pageNum,
+          pageSize: this.pagination.pageSize,
+          categoryId: this.form.categoryId,
+          tagIds: this.getAllTagsFilter(),
+          ...config,
         });
       }
+      this.pagination.show =
+        res?.total != 0 && res?.total / this.pagination.pageSize > 1;
+      this.pagination.total = res?.total || 0;
       this.modelList = res?.data || [];
       console.log("getModelListData>>>>>>>", res);
     },
@@ -403,6 +497,10 @@ export default {
       const modelCategory_data = localStorage.getItem("modelCategory_data");
       if (modelCategory_data) {
         this.modelTypeList = JSON.parse(modelCategory_data);
+        this.modelTypeList.forEach((item) => {
+          this.$set(this.modelForm, item?.id, "");
+        });
+        console.log("this.modelForm>>>>>>", this.modelForm);
       }
     },
   },
@@ -482,6 +580,21 @@ export default {
           }
         }
       }
+      /deep/ .el-radio {
+        display: flex;
+        margin-right: 0;
+        height: 28px;
+        .el-radio__input {
+          width: 0;
+          overflow: hidden;
+        }
+        .el-radio__input.is-checked + .el-radio__label {
+          color: #ed6336;
+        }
+        .el-radio__label {
+          padding-left: 5px;
+        }
+      }
     }
     .style-wrap {
       margin-top: 50px;
@@ -510,9 +623,8 @@ export default {
         border-radius: 4px 4px 4px 4px;
         .model-size {
           position: absolute;
-          right: 10px;
-          top: 50%;
-          transform: translateY(-50%);
+          right: 12px;
+          top: 12px;
         }
         /deep/ .el-collapse {
           border-top: none;
@@ -530,7 +642,7 @@ export default {
         }
         /deep/ .el-collapse-item__content {
           margin-top: 10px;
-          padding: 15px 15px;
+          padding: 15px 15px 10px;
           background: #ffffff;
           border-radius: 4px 4px 4px 4px;
           border: 1px solid #000000;
@@ -569,7 +681,29 @@ export default {
     }
   }
   .model-product-wrap {
+    position: relative;
     flex: 1;
+    &.pad-bot-45 {
+      padding-bottom: 45px;
+    }
+    .pagination-wrap {
+      display: flex;
+      justify-content: center;
+      position: absolute;
+      width: 100%;
+      height: 45px;
+      padding-top: 15px;
+      left: 0;
+      bottom: 15px;
+      z-index: 2;
+      background-color: #fff;
+      /deep/ .el-pagination.is-background .el-pager li:not(.disabled).active {
+        background-color: #ed6336;
+      }
+      /deep/ .el-pager li:hover {
+        color: #ed6336;
+      }
+    }
   }
   .model-search {
     height: 60px;
@@ -682,6 +816,9 @@ export default {
           .product-code {
             font-size: 14px;
             color: #222;
+            // text-overflow: ellipsis;
+            // overflow: hidden;
+            // white-space: nowrap;
           }
           .product-price {
             margin-top: 15px;

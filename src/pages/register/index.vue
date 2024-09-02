@@ -1,7 +1,7 @@
 <template>
   <div class="register-module">
-    <div class="title">注册</div>
-    <div class="register-wrap">
+    <div v-if="inputContentVis" class="title">注册</div>
+    <div v-if="inputContentVis" class="register-wrap">
       <el-form
         :model="form"
         ref="registerForm"
@@ -28,10 +28,7 @@
             { required: true, message: '请输入邮箱地址', trigger: 'blur' },
           ]"
         >
-          <el-input
-            v-model="form.email"
-            placeholder="请输入邮箱"
-          ></el-input>
+          <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
         </el-form-item>
         <el-form-item
           v-if="form.emailCode"
@@ -65,6 +62,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <div v-else class="success-tip-wrap">已发送邮件！请前往邮箱注册账号</div>
   </div>
 </template>
 <script>
@@ -80,6 +78,7 @@ export default {
         password: "",
         emailCode: "",
       },
+      inputContentVis: true,
     };
   },
   methods: {
@@ -92,6 +91,7 @@ export default {
           nickname,
         });
         console.log("发送邮件注册>>>>>>", res);
+        this.inputContentVis = false;
         // localStorage.setItem("email", email);
       } else if (this.form.emailCode) {
         const res = await emailRegister({
@@ -100,13 +100,15 @@ export default {
           gender: 0,
         });
         console.log("注册>>>>>>", res);
-        if (res?.code != "0") {
-          this.$message.error(res?.msg);
-          return;
-        }
-        if (_data?.token) {
-          this.$router.push("/home");
-        }
+        this.$router.push("/home");
+
+        // if (res?.code != "0") {
+        //   this.$message.error(res?.msg);
+        //   return;
+        // }
+        // if (_data?.token) {
+        //   this.$router.push("/home");
+        // }
         // if (localStorage.getItem("email")) {
         //   const _data = await emailLogin({
         //     email: localStorage.getItem("email"),
@@ -172,6 +174,11 @@ export default {
     color: #fff;
     cursor: pointer;
     user-select: none;
+  }
+  .success-tip-wrap {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 26px;
   }
 }
 </style>

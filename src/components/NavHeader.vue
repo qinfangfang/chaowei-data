@@ -266,7 +266,6 @@ export default {
       if (item?.path) {
         this.$router.push(item.path);
       }
-      this.$router.push("/modelList");
     },
     // 切换语言
     changeLangEvent() {

@@ -70,3 +70,14 @@ export const getModelDetailById = (data = {}) => {
     data,
   });
 };
+
+/**
+ * 获取模型临时下载链接
+ * id
+ */
+export const getModelDownloadUrlById = (data = {}) => {
+  return request({
+    url: `/model/downloadUrl/${data?.id}`,
+    data,
+  });
+};
