@@ -120,7 +120,7 @@ export default {
     font-family: Inter, Inter;
     font-size: 32px;
     color: #000;
-    line-height: 47px;
+    line-height: 40px;
   }
   .trade-log-wrap {
     display: flex;

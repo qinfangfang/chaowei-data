@@ -16,3 +16,28 @@
     }
   }
 }
+
+// 重置部分element-ui组件颜色
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  color: #fff;
+  background-color: #ed6336;
+}
+.el-pager li:hover,
+.el-pagination.is-background .el-pager li:hover {
+  color: #ed6336 !important;
+}
+
+.el-pagination .el-select .el-input .el-input__inner {
+  &:hover {
+    border-color: #dcdfe6;
+  }
+}
+
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover,
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: #ed6336;
+}
+.el-select-dropdown__item.selected {
+  color: #ed6336;
+}

@@ -86,6 +86,23 @@
             <span class="label">购物节折扣</span>
             <span class="value">减 {{ unit }} 7.00</span>
           </div>
+          <div class="pay-wrap">
+            <div class="pay-list">
+              <div class="pay-item">
+                <i class="el-icon-success"></i>
+                <div class="pay-icon"></div>
+                <div class="pat-text">微信支付</div>
+              </div>
+              <div class="pay-item">
+                <i class="el-icon-success"></i>
+                <div class="pay-icon"></div>
+                <div class="pat-text">支付宝</div>
+              </div>
+            </div>
+            <div class="qr-code-wrap" v-show="showQrCode">
+              <canvas id="qr-code"></canvas>
+            </div>
+          </div>
         </div>
         <div class="total-info">
           <div class="pay-info">
@@ -102,6 +119,8 @@
 </template>
 <script>
 import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
+import { orderCreate } from "@/api/order.js";
+import QRCode from "qrcode";
 
 export default {
   data() {
@@ -109,6 +128,8 @@ export default {
       prodList: [],
       selectAll: false,
       selectedList: [],
+      payType: "1", // 1-微信、2-支付宝
+      showQrCode: false,
     };
   },
   computed: {
@@ -134,19 +155,49 @@ export default {
     },
   },
   methods: {
+    // 创建支付二维码
+    createQrCode(payInfo = "") {
+      const qrCodeEle = document.getElementById("qr-code");
+      console.log("QRCode>>>>>>>>>>>>>", QRCode);
+      payInfo && QRCode.toCanvas(qrCodeEle, payInfo);
+      this.showQrCode = true;
+    },
     // 提交购物车
-    submitBuyCar() {
+    async submitBuyCar() {
       console.log("提交购物车");
+      if (localStorage.getItem("order_payInfo")) {
+        this.createQrCode(localStorage.getItem("order_payInfo"));
+      }
+      const modelIds = this.selectedList.map((item) => item?.modelId);
+      const res = await orderCreate({
+        payType: this.payType,
+        modelIds,
+      });
+      console.log("创建订单>>>>>>>>>>>>", res);
+      const payInfo = res?.payInfo || localStorage.getItem("order_payInfo");
+      if (
+        (!res.code && res?.payInfo) ||
+        localStorage.getItem("order_payInfo")
+      ) {
+        localStorage.setItem("order_payInfo", payInfo);
+        this.createQrCode(payInfo);
+      } else {
+        res?.msg && this.$message.error(res?.msg);
+      }
     },
     // 批量删除
     patchDeleteClick() {
-      if(this.selectedList.length == 0) return;
-      this.$confirm(`确认要删除选择的${this.selectedList.length}个模型吗?`, "提醒", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        customClass: 'global-messag0eBox'
-      })
+      if (this.selectedList.length == 0) return;
+      this.$confirm(
+        `确认要删除选择的${this.selectedList.length}个模型吗?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          customClass: "global-messag0eBox",
+        }
+      )
         .then(async () => {
           const cartIds = this.selectedList.map((item) => item?.cartId);
           const res = await orderCartDeleteById({ cartIds });
@@ -165,7 +216,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-        customClass: 'global-messag0eBox'
+        customClass: "global-messag0eBox",
       })
         .then(async () => {
           const res = await orderCartDeleteById({ cartIds: [item?.cartId] });
@@ -403,7 +454,7 @@ export default {
         }
       }
       .coupon-discount {
-        padding: 30px 35px 60px;
+        padding: 30px 35px 20px;
         .discount-item {
           display: flex;
           justify-content: space-between;
@@ -441,6 +492,35 @@ export default {
         }
         .zhe-kou {
           margin-top: 5px;
+        }
+        .pay-wrap {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 15px;
+          .pay-item {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            font-weight: 500;
+            font-size: 18px;
+            i {
+              margin-right: 10px;
+              color: #666;
+              font-size: 20px;
+            }
+          }
+          .qr-code-wrap {
+            width: 200px;
+            height: 200px;
+            margin: 10px auto 0;
+            overflow: hidden;
+            border-radius: 4px;
+            border: 1px solid #f1f1f1;
+            #qr-code {
+              width: 100% !important;
+              height: 100% !important;
+            }
+          }
         }
       }
       .total-info {

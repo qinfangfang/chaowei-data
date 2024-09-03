@@ -1,7 +1,10 @@
 <template>
   <div class="trade-log">
     <div class="page-title">交易 清单</div>
-    <div class="trade-log-wrap">
+    <div
+      class="trade-log-wrap"
+      :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`"
+    >
       <div class="all-products">
         <div class="prod-operate">
           <div class="selected-all">
@@ -10,15 +13,9 @@
             >
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="handleEdit()"
-              >下载所选</el-button
-            >
-            <el-button size="mini" @click="handleEdit()"
-              >删除所选</el-button
-            >
-            <el-button size="mini" @click="handleEdit()"
-              >所选开票</el-button
-            >
+            <el-button size="mini" @click="handleEdit()">下载所选</el-button>
+            <el-button size="mini" @click="handleEdit()">删除所选</el-button>
+            <el-button size="mini" @click="handleEdit()">所选开票</el-button>
           </div>
         </div>
         <el-table
@@ -32,74 +29,116 @@
             <template slot-scope="scope">
               <div class="product-info">
                 <div class="prodcut-pic">
-                  <img
-                    src="http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280"
-                    alt=""
-                  />
+                  <img :src="getProdImageUrl(scope?.row?.model)" alt="" />
                 </div>
                 <div class="product-name">
-                  <div>{{ scope?.row?.productName }}</div>
-                  <div class="name">{{ scope?.row?.productNo }}</div>
+                  <div>{{ scope?.row?.model?.[`name${$i18n.locale}`] }}</div>
+                  <div class="name">{{ scope?.row?.model?.code }}</div>
                 </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="价格" width="300">
+          <el-table-column label="价格" width="200">
             <template slot-scope="scope">
-              <div class="product-price">￥ 167.00</div>
+              <div class="product-price">
+                {{ $i18n.locale == "Zh" ? "¥ " : "$ " }}{{ scope?.row?.price }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="交易状态" width="150">
+            <template slot-scope="scope">
+              <div class="trade-status">{{ getOrderStatus(scope?.row) }}</div>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <div class="moveto-favorites">再次下载</div>
-              <div class="get-invoice">开具发票</div>
+              <div class="moveto-favorites" v-if="scope?.row?.receiptStatus == '2'">再次下载</div>
+              <div class="get-invoice" v-if="scope?.row?.receiptStatus == '1'">开具发票</div>
               <div class="delete-btn">删除</div>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
+    <div class="pagination-wrap" v-if="pagination.total > pagination.pageSize">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        background
+        align="right"
+        :current-page="pagination.pageNum"
+        :page-sizes="pagination.pageSizes"
+        :page-size="pagination.pageSize"
+        layout="total, sizes, prev, pager, next"
+        :total="100 || pagination.total"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 <script>
+import { orderItemList } from "@/api/order.js";
+
 export default {
   data() {
     return {
       prodList: [
-        {
-          productCode: "1",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-03",
-          price: "￥ 167.00",
-        },
-        {
-          productCode: "2",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-02",
-          price: "￥ 167.00",
-        },
-        {
-          productCode: "3",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-04",
-          price: "￥ 167.00",
-        },
-        {
-          productCode: "4",
-          productName: "超越维度  3D B类写实人物",
-          productNo: "SD_A_LiuYS_F_504",
-          date: "2016-05-01",
-          price: "￥ 167.00",
-        },
+        // {
+        //   productCode: "1",
+        //   productName: "超越维度  3D B类写实人物",
+        //   productNo: "SD_A_LiuYS_F_504",
+        //   date: "2016-05-03",
+        //   price: "￥ 167.00",
+        // },
+        // {
+        //   productCode: "2",
+        //   productName: "超越维度  3D B类写实人物",
+        //   productNo: "SD_A_LiuYS_F_504",
+        //   date: "2016-05-02",
+        //   price: "￥ 167.00",
+        // },
       ],
       selectAll: false,
       selectedList: [],
+      pagination: {
+        total: 0,
+        pageNum: 1,
+        pageSize: 10,
+        pageSizes: [5, 10, 20],
+      },
     };
   },
   methods: {
+    // 获取订单交易状态
+    getOrderStatus(item) {
+      // 开票状态 1:待开票 2:开票中 3: 开票完成
+      const receiptStatus = {
+        1: "待开票",
+        2: "开票中",
+        3: "开票完成",
+      };
+      return receiptStatus[item?.receiptStatus] || "已购买";
+    },
+    // 获取图片展示
+    getProdImageUrl(item) {
+      console.log("model>>>>>>>>", item);
+      return (
+        item?.["frontView"] ||
+        item?.["fortyFiveView"] ||
+        item?.["sideView"] ||
+        item?.["grayView"]
+      );
+    },
+    // 修改pageNum
+    handleCurrentChange(val) {
+      this.pagination.pageNum = val;
+      this.queryOrderItemList();
+    },
+    // 修改pageSize
+    handleSizeChange(val) {
+      this.pagination.pageSize = val;
+      this.queryOrderItemList();
+    },
     handleEdit() {},
     checkChange(val) {
       console.log("checkChange>>>>>>>>", val);
@@ -115,6 +154,19 @@ export default {
         this.selectAll = true;
       }
     },
+    // 查询用户订单
+    async queryOrderItemList(data = {}) {
+      const res = await orderItemList({
+        ...this.pagination,
+        ...data,
+      });
+      console.log("订单列表>>>>>>>>", res);
+      this.prodList = res?.data || [];
+      this.pagination.total = res?.total || 0;
+    },
+  },
+  created() {
+    this.queryOrderItemList();
   },
 };
 </script>
@@ -126,12 +178,32 @@ export default {
     font-family: Inter, Inter;
     font-size: 32px;
     color: #000;
-    line-height: 47px;
+    line-height: 40px;
   }
   .trade-log-wrap {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    overflow: auto;
+    height: calc(100vh - 100px - 30px - 30px - 40px - 15px);
+    /**
+      100px header
+      30px .content-wrap padding-top
+      30px .content-wrap padding-bottom
+      40px .page-title height
+      15px .page-title margin-bottom
+      40px .pagination-wrap height
+      10px .pagination-wrap margin-top
+    */
+    &.pagination {
+      height: calc(
+        100vh - 100px - 30px - 30px - 40px - 15px - 40px - 10px
+      ); // 去除分页
+    }
+    &::-webkit-scrollbar {
+      // 隐藏滚动条
+      width: 0;
+    }
     .all-products {
       flex: 1;
       background-color: #fff;
@@ -272,6 +344,10 @@ export default {
         color: #ed6336;
         line-height: 35px;
       }
+      .trade-status {
+        font-size: 14px;
+        color: #222;
+      }
       .moveto-favorites,
       .get-invoice {
         color: #000;
@@ -299,6 +375,14 @@ export default {
         cursor: pointer;
       }
     }
+  }
+  .pagination-wrap {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+    margin-top: 10px;
+    background-color: #fff;
   }
 }
 </style>
