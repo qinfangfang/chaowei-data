@@ -31,12 +31,13 @@
                 : ''
             }`"
           >
-            <div class="model-size">（{{ item?.modelSize }}）</div>
+            <div class="model-size" v-if="item?.modelSize">（{{ item?.modelSize }}）</div>
             <el-collapse v-model="activeModelNames" @change="handleModelChange">
               <el-collapse-item
                 :title="item?.[`name${$i18n.locale}`]"
                 :name="`${item?.id}`"
                 :key="item?.id"
+                v-if="item?.modelSize"
               >
                 <!-- <span>（{{ item?.modelSize }}）</span> -->
                 <el-radio-group
@@ -403,7 +404,8 @@ export default {
     },
     // 去商品详情
     goDetail(item) {
-      this.$router.push(`/prodDetail/${item?.id}`);
+      window.open(`/prodDetail/${item?.id}`,'_blank');
+      // this.$router.push(`/prodDetail/${item?.id}`);
     },
     // 模型点击
     modelClick(item) {
