@@ -75,3 +75,25 @@ export const orderItemList = (data = {}) => {
       data,
     });
   };
+
+  /**
+ * 支付回调 - 微信
+ */
+
+export const payCallBackWx = (data = {}) => {
+  return request({
+    url: `/payment/callbacks/wechat/transaction`,
+    data,
+  });
+};
+
+/**
+ * 支付回调 - 支付宝
+ */
+
+export const payCallBackAliPay = (data = {}) => {
+  return request({
+    url: `/payment/callbacks/ali/transaction`,
+    data,
+  });
+};

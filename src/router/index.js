@@ -87,6 +87,14 @@ export default new VueRouter({
       },
     },
     {
+      path: "/PaySuccess",
+      name: "PaySuccess",
+      component: () => import("../pages/paySuccess/index.vue"),
+      meta: {
+        title: "支付成功",
+      },
+    },
+    {
       // 重定向到首页
       path: "/:pathMatch(.*)",
       redirect: "/home",

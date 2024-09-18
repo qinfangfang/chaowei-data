@@ -65,16 +65,21 @@
         </el-table>
       </div>
       <div class="buy-cost">
-        <div class="title">
-          结算清单
-          <span>已选 {{ totalCount }} 项</span>
+        <div class="title" :class="`${$i18n?.locale}`">
+          {{ $i18n?.locale == "Zh" ? "结算清单" : "Settlement List" }}
+          <span
+            >{{ $i18n?.locale == "Zh" ? "已选" : "Selected" }} {{ totalCount }}
+            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span
+          >
         </div>
         <div class="coupon-discount">
           <div class="discount-item total-money">
-            <span class="label">商品总价</span>
+            <span class="label">{{
+              $i18n?.locale == "Zh" ? "商品总价" : "Total price of the product"
+            }}</span>
             <span class="value">{{ unit }} {{ productTotalMoney }}</span>
           </div>
-          <div class="discount-item total-jian">
+          <!-- <div class="discount-item total-jian">
             <span class="label">共减</span>
             <span class="value">减 {{ unit }} 17.00</span>
           </div>
@@ -85,33 +90,76 @@
           <div class="discount-item zhe-kou">
             <span class="label">购物节折扣</span>
             <span class="value">减 {{ unit }} 7.00</span>
-          </div>
+          </div> -->
           <div class="pay-wrap">
+            <div class="pay-text">
+              {{ $i18n?.locale == "Zh" ? "支付方式" : "Payment Methods" }}
+            </div>
             <div class="pay-list">
-              <div class="pay-item">
-                <i class="el-icon-success"></i>
-                <div class="pay-icon"></div>
-                <div class="pat-text">微信支付</div>
+              <div class="pay-item" @click="tabChangePayType('1')">
+                <i
+                  :class="`${
+                    payType == '1' ? 'el-icon-success' : 'el-icon-circle-check'
+                  }`"
+                ></i>
+                <div class="pay-icon">
+                  <img src="@/assets/imgs/buyCar/weChat_icon.jpg" alt="" />
+                </div>
+                <div class="pat-text">
+                  {{ $i18n?.locale == "Zh" ? "微信支付" : "Wechat Pay" }}
+                </div>
               </div>
-              <div class="pay-item">
-                <i class="el-icon-success"></i>
-                <div class="pay-icon"></div>
-                <div class="pat-text">支付宝</div>
+              <div class="pay-item" @click="tabChangePayType('2')">
+                <i
+                  :class="`${
+                    payType == '2' ? 'el-icon-success' : 'el-icon-circle-check'
+                  }`"
+                ></i>
+                <div class="pay-icon">
+                  <img src="@/assets/imgs/buyCar/aliPay_icon.jpg" alt="" />
+                </div>
+                <div class="pat-text">
+                  {{ $i18n?.locale == "Zh" ? "支付宝" : "Alipay" }}
+                </div>
               </div>
             </div>
             <div class="qr-code-wrap" v-show="showQrCode">
-              <canvas id="qr-code"></canvas>
+              <!-- 微信支付 -->
+              <canvas v-if="payType == '1'" id="qr-code"></canvas>
+              <iframe
+                v-if="aliPayFormHtml"
+                :srcdoc="aliPayFormHtml"
+                frameborder="no"
+                border="0"
+                marginwidth="0"
+                marginheight="0"
+                scrolling="no"
+                width="200"
+                height="200"
+                style="overflow: hidden"
+              ></iframe>
+            </div>
+            <div class="count-down" v-if="count">
+              支付剩余时间：<span>{{ countDown.minutes }} </span>分 :
+              <span>{{ countDown.seconds }} </span>秒
             </div>
           </div>
         </div>
         <div class="total-info">
           <div class="pay-info">
             <div class="pay-money">
-              <span>合计:&nbsp;</span> {{ unit }} {{ totalMoney }}
+              <span>{{ $i18n?.locale == "Zh" ? "合计" : "Total" }}:&nbsp;</span>
+              {{ unit }} {{ totalMoney }}
             </div>
-            <div class="discount-money">共减 {{ unit }} 17.00</div>
+            <!-- <div class="discount-money">共减 {{ unit }} 17.00</div> -->
           </div>
-          <div class="submit-btn" @click="submitBuyCar">结算</div>
+          <div
+            class="submit-btn"
+            :class="`${orderId || !selectedList.length ? 'disabled' : ''}`"
+            @click="submitBuyCar"
+          >
+            {{ $i18n?.locale == "Zh" ? "结算" : "Settle Accounts" }}
+          </div>
         </div>
       </div>
     </div>
@@ -119,7 +167,7 @@
 </template>
 <script>
 import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
-import { orderCreate } from "@/api/order.js";
+import { orderCreate, queryOrderStatus } from "@/api/order.js";
 import QRCode from "qrcode";
 
 export default {
@@ -130,6 +178,11 @@ export default {
       selectedList: [],
       payType: "1", // 1-微信、2-支付宝
       showQrCode: false,
+      aliPayFormHtml: "",
+      timer: null,
+      orderId: null,
+      duration: 1000,
+      count: 0,
     };
   },
   computed: {
@@ -153,8 +206,22 @@ export default {
       }, 0);
       return price;
     },
+    countDown() {
+      let minutes = parseInt(this.count / 60);
+      let seconds = this.count - minutes * 60;
+      minutes =
+        minutes == 0 ? "00" : minutes > 10 ? `${minutes}` : `0${minutes}`;
+      seconds =
+        seconds == 0 ? "00" : seconds > 10 ? `${seconds}` : `0${seconds}`;
+      return { minutes, seconds };
+    },
   },
   methods: {
+    // 切换支付方式
+    tabChangePayType(key) {
+      this.showQrCode = false;
+      this.payType = key;
+    },
     // 创建支付二维码
     createQrCode(payInfo = "") {
       const qrCodeEle = document.getElementById("qr-code");
@@ -165,22 +232,26 @@ export default {
     // 提交购物车
     async submitBuyCar() {
       console.log("提交购物车");
-      if (localStorage.getItem("order_payInfo")) {
-        this.createQrCode(localStorage.getItem("order_payInfo"));
-      }
+      if (this.orderId || !this.selectedList.length) return;
       const modelIds = this.selectedList.map((item) => item?.modelId);
       const res = await orderCreate({
         payType: this.payType,
         modelIds,
       });
       console.log("创建订单>>>>>>>>>>>>", res);
-      const payInfo = res?.payInfo || localStorage.getItem("order_payInfo");
-      if (
-        (!res.code && res?.payInfo) ||
-        localStorage.getItem("order_payInfo")
-      ) {
-        localStorage.setItem("order_payInfo", payInfo);
-        this.createQrCode(payInfo);
+      const payInfo = res?.payInfo;
+      if (!res.code && res?.payInfo) {
+        this.orderId = res?.orderId;
+        this.count = res?.payInfoExpirySeconds || 6000; // 默认剩余时间6000s
+        this.getOrderList();
+        if (this.payType == "1") {
+          // 微信支付
+          this.createQrCode(payInfo);
+        } else {
+          this.showQrCode = true;
+          this.aliPayFormHtml = payInfo;
+        }
+        this.payCallBack();
       } else {
         res?.msg && this.$message.error(res?.msg);
       }
@@ -249,9 +320,45 @@ export default {
       console.log("购物车数据>>>>>", res);
       this.prodList = res?.data || [];
     },
+    // 关闭定时器
+    closeTimer() {
+      clearInterval(this.timer);
+      this.timer = null;
+    },
+    // 订单状态查询
+    payCallBack() {
+      this.timer = setInterval(async () => {
+        this.count--;
+        if (this.count < 0) {
+          this.closeTimer();
+          // 2- 超时未支付
+          this.$router.push(`/paySuccess?status=1`);
+          return;
+        }
+        if (this.count % 5 == 0) {
+          // 5s查询一次
+          const res = await queryOrderStatus({ orderId: this.orderId }).catch(
+            (err) => {
+              this.closeTimer();
+              this.$router.push(
+                `/paySuccess?status=3&errMsg=${encodeURIComponent(err?.msg)}`
+              );
+            }
+          );
+          if (!res?.code && res?.status && res?.status != "0") {
+            this.closeTimer();
+            // 0- 待支付 1-支付成功 2- 超时未支付
+            this.$router.push(`/paySuccess?status=${res?.status}`);
+          }
+        }
+      }, this.duration); // 5s查询一次
+    },
   },
   created() {
     this.getOrderList();
+  },
+  beforeDestroy() {
+    this.closeTimer();
   },
 };
 </script>
@@ -446,11 +553,18 @@ export default {
         color: #000;
         line-height: 42px;
         border-bottom: 1px solid #ddd;
+        white-space: nowrap;
         span {
           margin-left: 50px;
           font-weight: 400;
           font-size: 24px;
           line-height: 28px;
+        }
+        &.En {
+          font-size: 24px;
+          span {
+            font-size: 20px;
+          }
         }
       }
       .coupon-discount {
@@ -495,18 +609,59 @@ export default {
         }
         .pay-wrap {
           display: flex;
+          flex-direction: column;
           justify-content: space-between;
-          margin-top: 15px;
+          margin-top: 20px;
+          .pay-text {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            font-size: 24px;
+            color: #000;
+            span {
+              margin-left: 10px;
+              color: #999;
+              font-size: 12px;
+            }
+            &::before {
+              position: relative;
+              top: 5px;
+              content: "*";
+              padding-right: 5px;
+              color: #ed6336;
+            }
+          }
+          .pay-list {
+            padding-left: 15px;
+          }
           .pay-item {
             display: flex;
             align-items: center;
             height: 32px;
+            width: 50%;
             font-weight: 500;
-            font-size: 18px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            &:last-child {
+              margin-bottom: 0;
+            }
             i {
-              margin-right: 10px;
+              margin-right: 5px;
               color: #666;
               font-size: 20px;
+              &.el-icon-success {
+                color: #ed6336;
+              }
+            }
+            .pay-icon {
+              width: 28px;
+              height: 28px;
+              margin-right: 5px;
+              img {
+                display: block;
+                width: 100%;
+              }
             }
           }
           .qr-code-wrap {
@@ -519,6 +674,16 @@ export default {
             #qr-code {
               width: 100% !important;
               height: 100% !important;
+            }
+          }
+          .count-down {
+            color: #222;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            span {
+              color: #ed6336;
+              font-weight: 500;
             }
           }
         }
@@ -562,6 +727,10 @@ export default {
           background: #ed6336;
           border-radius: 4px 4px 4px 4px;
           cursor: pointer;
+          &.disabled {
+            cursor: not-allowed;
+            background-color: #ddd;
+          }
         }
       }
     }
