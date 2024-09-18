@@ -35,7 +35,7 @@
           <div class="name">{{ detail?.[`name${$i18n.locale}`] }}</div>
           <div class="code">{{ detail?.code }}</div>
           <div class="price">
-            售价：{{ $i18n.locale == "Zh" ? "¥ " : "$ " }}
+            {{$i18n.locale == "Zh" ? '售价' : 'Price'}}：{{ $i18n.locale == "Zh" ? "¥ " : "$ " }}
             {{ detail?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
           </div>
           <div class="operate-btn">
@@ -205,6 +205,8 @@ export default {
       const res = await addModelToCarById({ id: params?.id });
       if (!res?.code) {
         this.$message.success("添加成功");
+      } else {
+        res?.msg && this.$message.error(res?.msg);
       }
       console.log("添加购物车>>>>>>>>>>", res);
     },
