@@ -15,7 +15,7 @@
           <div class="delete-selected">
             <el-button size="mini" @click="handleEdit()">下载所选</el-button>
             <el-button size="mini" @click="handleEdit()">删除所选</el-button>
-            <el-button size="mini" @click="handleEdit()">所选开票</el-button>
+            <el-button size="mini" @click="batchInvoice">所选开票</el-button>
           </div>
         </div>
         <el-table
@@ -52,8 +52,19 @@
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <div class="moveto-favorites" v-if="scope?.row?.receiptStatus == '2'">再次下载</div>
-              <div class="get-invoice" v-if="scope?.row?.receiptStatus == '1'">开具发票</div>
+              <div
+                class="moveto-favorites"
+                v-if="scope?.row?.receiptStatus == '3'"
+              >
+                再次下载
+              </div>
+              <div
+                class="get-invoice"
+                @click="invoiceClick(scope?.row)"
+                v-if="scope?.row?.receiptStatus == '1'"
+              >
+                开具发票
+              </div>
               <div class="delete-btn">删除</div>
             </template>
           </el-table-column>
@@ -74,10 +85,12 @@
       >
       </el-pagination>
     </div>
+    <InvoiceDialog :visible="invoiceVisible" @confirm="invoiceHanlder" @close="invoiceVisible = false" />
   </div>
 </template>
 <script>
-import { orderItemList } from "@/api/order.js";
+import { orderItemList, orderItemReceipt } from "@/api/order.js";
+import InvoiceDialog from "./components/invoiceDialog.vue";
 
 export default {
   data() {
@@ -106,9 +119,43 @@ export default {
         pageSize: 10,
         pageSizes: [5, 10, 20],
       },
+      invoiceData: {},
+      invoiceVisible: false,
+      isBatchInvoice: false,
     };
   },
+  components: {
+    InvoiceDialog,
+  },
   methods: {
+    // 开发票弹窗确认
+    async invoiceHanlder(val = {}) {
+      const orderItemIds = this.selectedList.map((item) => item?.orderItemId);
+      const res = await orderItemReceipt({
+        orderItemIds: this.isBatchInvoice
+          ? orderItemIds
+          : [this.invoiceData?.orderItemId],
+        ...val,
+      });
+      if (!res?.code) {
+        this.invoiceVisible = false;
+        this.queryOrderItemList();
+        this.$message.success("开票成功");
+      } else {
+        res?.msg && this.$message.error(res?.msg);
+      }
+    },
+    // 开具发票点击
+    invoiceClick(data = {}) {
+      this.invoiceData = data;
+      this.isBatchInvoice = false;
+      this.invoiceVisible = true;
+    },
+    // 批量开票
+    async batchInvoice() {
+      this.isBatchInvoice = true;
+      this.invoiceVisible = true;
+    },
     // 获取订单交易状态
     getOrderStatus(item) {
       // 开票状态 1:待开票 2:开票中 3: 开票完成
@@ -121,7 +168,7 @@ export default {
     },
     // 获取图片展示
     getProdImageUrl(item) {
-      console.log("model>>>>>>>>", item);
+      // console.log("model>>>>>>>>", item);
       return (
         item?.["frontView"] ||
         item?.["fortyFiveView"] ||

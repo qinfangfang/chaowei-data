@@ -35,7 +35,9 @@
           <div class="name">{{ detail?.[`name${$i18n.locale}`] }}</div>
           <div class="code">{{ detail?.code }}</div>
           <div class="price">
-            {{$i18n.locale == "Zh" ? '售价' : 'Price'}}：{{ $i18n.locale == "Zh" ? "¥ " : "$ " }}
+            {{ $i18n.locale == "Zh" ? "售价" : "Price" }}：{{
+              $i18n.locale == "Zh" ? "¥ " : "$ "
+            }}
             {{ detail?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
           </div>
           <div class="operate-btn">
@@ -46,7 +48,13 @@
             >
               下载模板
             </div>
-            <div v-if="!showDownload" class="operate-item">直接购买</div>
+            <div
+              v-if="!showDownload"
+              class="operate-item"
+              @click="directPurchase"
+            >
+              直接购买
+            </div>
             <div class="operate-item add-car" @click="addBuyCar">
               加入购物车
             </div>
@@ -80,11 +88,13 @@
     <div class="empty-wrap" v-else>
       <el-empty :image-size="200" :description="description"></el-empty>
     </div>
+    <PayDialog :visible="visible" :prodData="detail" @close="visible = false" />
   </div>
 </template>
 <script>
 import { getModelDetailById, getModelDownloadUrlById } from "@/api/index.js";
 import { addModelToCarById } from "@/api/buyCar.js";
+import PayDialog from "@/components/payDialog.vue";
 
 export default {
   data() {
@@ -169,7 +179,11 @@ export default {
         },
       ],
       downloadUrl: "",
+      visible: false,
     };
+  },
+  components: {
+    PayDialog,
   },
   computed: {
     showDownload() {
@@ -195,6 +209,11 @@ export default {
     },
   },
   methods: {
+    // 直接购买
+    directPurchase() {
+      return;
+      this.visible = true;
+    },
     // 下载
     downloadClick() {
       window.open(downloadUrl, "_blank");
