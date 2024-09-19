@@ -34,7 +34,7 @@
           <el-table-column label="项目名称">
             <template slot-scope="scope">
               <div class="product-info">
-                <div class="product-name">
+                <div class="product-name" @click="goDetail(scope?.row)">
                   <div>{{ scope?.row?.[`name${$i18n.locale}`] }}</div>
                   <div class="name">{{ scope?.row?.code }}</div>
                 </div>
@@ -217,6 +217,10 @@ export default {
     },
   },
   methods: {
+    // 跳转详情页
+    goDetail(data = {}) {
+      window.open(`/prodDetail/${data?.modelId}`, "_blank");
+    },
     // 切换支付方式
     tabChangePayType(key) {
       this.showQrCode = false;
@@ -319,6 +323,14 @@ export default {
       const res = await orderCartList();
       console.log("购物车数据>>>>>", res);
       this.prodList = res?.data || [];
+      this.prodList.forEach((item) => {
+        if (this.$route?.query?.modelId == item?.modelId) {
+          this.selectedList = [item];
+          setTimeout(() => {
+            this.$refs.multipleTable.toggleRowSelection(item);
+          }, 100);
+        }
+      });
     },
     // 关闭定时器
     closeTimer() {
@@ -507,6 +519,7 @@ export default {
           font-size: 16px;
           color: #000;
           line-height: 28px;
+          cursor: pointer;
           .name {
             margin-top: 20px;
           }

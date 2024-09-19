@@ -14,7 +14,7 @@
           </div>
           <div class="delete-selected">
             <el-button size="mini" @click="handleEdit()">下载所选</el-button>
-            <el-button size="mini" @click="handleEdit()">删除所选</el-button>
+            <!-- <el-button size="mini" @click="handleEdit()">删除所选</el-button> -->
             <el-button size="mini" @click="batchInvoice">所选开票</el-button>
           </div>
         </div>
@@ -31,7 +31,7 @@
                 <div class="prodcut-pic">
                   <img :src="getProdImageUrl(scope?.row?.model)" alt="" />
                 </div>
-                <div class="product-name">
+                <div class="product-name" @click="goDetail(scope?.row?.model)">
                   <div>{{ scope?.row?.model?.[`name${$i18n.locale}`] }}</div>
                   <div class="name">{{ scope?.row?.model?.code }}</div>
                 </div>
@@ -52,12 +52,12 @@
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <div
+              <!-- <div
                 class="moveto-favorites"
                 v-if="scope?.row?.receiptStatus == '3'"
               >
                 再次下载
-              </div>
+              </div> -->
               <div
                 class="get-invoice"
                 @click="invoiceClick(scope?.row)"
@@ -65,7 +65,13 @@
               >
                 开具发票
               </div>
-              <div class="delete-btn">删除</div>
+              <div
+                v-if="scope?.row?.receiptStatus > '1'"
+                class="delete-btn"
+                @click="downloadClick(scope?.row)"
+              >
+                下载
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -85,11 +91,16 @@
       >
       </el-pagination>
     </div>
-    <InvoiceDialog :visible="invoiceVisible" @confirm="invoiceHanlder" @close="invoiceVisible = false" />
+    <InvoiceDialog
+      :visible="invoiceVisible"
+      @confirm="invoiceHanlder"
+      @close="invoiceVisible = false"
+    />
   </div>
 </template>
 <script>
 import { orderItemList, orderItemReceipt } from "@/api/order.js";
+import { getModelDownloadUrlById } from "@/api/index.js";
 import InvoiceDialog from "./components/invoiceDialog.vue";
 
 export default {
@@ -128,6 +139,19 @@ export default {
     InvoiceDialog,
   },
   methods: {
+    // 跳转详情页
+    goDetail(data = {}) {
+      window.open(`/prodDetail/${data?.id}`, "_blank");
+    },
+    // 下载模型
+    async downloadClick(data = {}) {
+      const res = await getModelDownloadUrlById({
+        id: data?.model?.id,
+      });
+      if (!res.code && res?.url) {
+        window.open(res?.url, "_blank");
+      }
+    },
     // 开发票弹窗确认
     async invoiceHanlder(val = {}) {
       const orderItemIds = this.selectedList.map((item) => item?.orderItemId);
@@ -380,6 +404,7 @@ export default {
           font-size: 16px;
           color: #000;
           line-height: 28px;
+          cursor: pointer;
           .name {
             margin-top: 20px;
           }

@@ -11,7 +11,7 @@
             arrow="always"
             @change="changeSlide"
           >
-            <el-carousel-item v-for="item in previewList" :key="item?.imageUrl">
+            <el-carousel-item v-for="item in previewList" :key="item?.id">
               <div class="slider-item">
                 <img :src="item?.imageUrl" alt="" />
               </div>
@@ -22,7 +22,7 @@
           <div
             class="preview-item"
             v-for="(item, idx) in previewList"
-            :key="item?.imageUrl"
+            :key="item?.id"
             @click="previewClick(item, idx)"
             :class="`${idx === index ? 'active' : ''}`"
           >
@@ -55,7 +55,7 @@
             >
               直接购买
             </div>
-            <div class="operate-item add-car" @click="addBuyCar">
+            <div v-if="!showDownload" class="operate-item add-car" @click="addBuyCar">
               加入购物车
             </div>
           </div>
@@ -189,7 +189,7 @@ export default {
     showDownload() {
       return this.detail?.free === true
         ? true
-        : this.default?.owned === true
+        : this.detail?.owned === true
         ? true
         : false;
     },
@@ -209,14 +209,15 @@ export default {
     },
   },
   methods: {
-    // 直接购买
-    directPurchase() {
-      return;
-      this.visible = true;
+    // 直接购买 TODO
+    async directPurchase() {
+      await this.addBuyCar();
+      this.$router.push(`/buyCar?modelId=${this.detail?.id}`);
+      // this.visible = true;
     },
     // 下载
     downloadClick() {
-      window.open(downloadUrl, "_blank");
+      window.open(this.downloadUrl, "_blank");
     },
     // 添加购物车
     async addBuyCar() {
@@ -240,13 +241,32 @@ export default {
 
     // 处理轮播图展示
     handleSwiperData(data = {}) {
-      const keyList = ["frontView", "fortyFiveView", "sideView", "grayView"];
-      this.previewList = keyList.map((item, idx) => {
-        return {
-          id: idx,
-          imageUrl: data?.[item],
-        };
+      const keyList = [
+        "frontView",
+        "fortyFiveView",
+        "sideView",
+        "fullView",
+        "grayView",
+      ];
+      const arr = [];
+      this.previewList = keyList.forEach((item, idx) => {
+        const imgArr = data?.[item]?.split(",") || [];
+        if (imgArr.length == 1) {
+          arr.push({
+            id: idx,
+            imageUrl: imgArr[0],
+          });
+        } else if (imgArr.length > 1) {
+          imgArr.forEach((imgItm, index) => {
+            arr.push({
+            id: `${idx}_${index}`,
+            imageUrl: imgItm,
+          });
+          });
+        }
       });
+      this.previewList = arr;
+      // return arr;
     },
     // 获取模型详情数据
     async getModelDetailByIdData() {
@@ -284,7 +304,7 @@ export default {
     margin: 0 auto;
   }
   .preview-module {
-    width: 520px;
+    width: 540px;
     .preview-swiper {
       height: 930px;
       background-color: #ddd;
@@ -318,8 +338,8 @@ export default {
     margin-top: 30px;
     .preview-item {
       flex-shrink: 0;
-      width: 160px;
-      height: 280px;
+      width: 120px;
+      height: 210px;
       margin: 0 20px 20px 0;
       border-radius: 4px;
       cursor: pointer;
@@ -328,7 +348,7 @@ export default {
       &.active {
         border-color: #ed6336;
       }
-      &:nth-child(3n) {
+      &:nth-child(4n) {
         margin-right: 0;
       }
       img {

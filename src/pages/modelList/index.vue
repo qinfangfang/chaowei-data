@@ -31,7 +31,9 @@
                 : ''
             }`"
           >
-            <div class="model-size" v-if="item?.modelSize">（{{ item?.modelSize }}）</div>
+            <div class="model-size" v-if="item?.modelSize">
+              （{{ item?.modelSize }}）
+            </div>
             <el-collapse v-model="activeModelNames" @change="handleModelChange">
               <el-collapse-item
                 :title="item?.[`name${$i18n.locale}`]"
@@ -85,6 +87,7 @@
                 :name="`${item?.id}`"
                 :key="item?.id"
               >
+              {{  item?.uniqueKey }}
                 <el-checkbox-group v-model="form[item?.uniqueKey]">
                   <el-checkbox
                     v-for="child in item?.tags"
@@ -143,7 +146,7 @@
             </div>
           </div>
         </div>
-        <el-empty v-if="!modelList.length" :image-size="200"></el-empty>
+        <el-empty v-if="!modelList?.length" :image-size="200"></el-empty>
       </div>
       <div class="pagination-wrap" v-if="pagination.show">
         <el-pagination
@@ -304,10 +307,10 @@ export default {
         ],
       },
       modelForm: {
-        1: "",
-        2: "",
-        3: "",
-        4: "",
+        1: [],
+        2: [],
+        3: [],
+        4: [],
       },
       form: {
         // searchVal: "",
@@ -364,7 +367,7 @@ export default {
     radioChange(val, id) {
       console.log(111, val, this.activeModelNames, id);
       Object.entries(this.modelForm).forEach(([key, values]) => {
-        this.$set(this.modelForm, `${key}`, "");
+        this.$set(this.modelForm, `${key}`, []);
       });
       this.$set(this.modelForm, id, val);
       this.form.categoryId = val;
@@ -404,7 +407,7 @@ export default {
     },
     // 去商品详情
     goDetail(item) {
-      window.open(`/prodDetail/${item?.id}`,'_blank');
+      window.open(`/prodDetail/${item?.id}`, "_blank");
       // this.$router.push(`/prodDetail/${item?.id}`);
     },
     // 模型点击
@@ -458,7 +461,9 @@ export default {
     getAllTagsFilter() {
       let tagIds = [];
       this.tagKeys.forEach((item) => {
-        tagIds = tagIds.concat(this.form[item]);
+        if (this.form[item]) {
+          tagIds = tagIds.concat(this.form[item]);
+        }
       });
       return tagIds;
     },
@@ -500,7 +505,7 @@ export default {
       if (modelCategory_data) {
         this.modelTypeList = JSON.parse(modelCategory_data);
         this.modelTypeList.forEach((item) => {
-          this.$set(this.modelForm, item?.id, "");
+          this.$set(this.modelForm, item?.id, []);
         });
         console.log("this.modelForm>>>>>>", this.modelForm);
       }
