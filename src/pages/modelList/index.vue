@@ -87,7 +87,7 @@
                 :name="`${item?.id}`"
                 :key="item?.id"
               >
-              {{  item?.uniqueKey }}
+              <!-- {{  item?.uniqueKey }} -->
                 <el-checkbox-group v-model="form[item?.uniqueKey]">
                   <el-checkbox
                     v-for="child in item?.tags"
