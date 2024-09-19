@@ -69,14 +69,17 @@ export const orderItemList = (data = {}) => {
     ]
   }
  */
-  export const orderCreate = (data = {}) => {
-    return request({
-      url: `/order/create`,
-      data,
-    });
-  };
+export const orderCreate = (data = {}) => {
+  return request({
+    url: `/order/create`,
+    data,
+    headers: {
+      "X-Language": "Zh",
+    },
+  });
+};
 
-  /**
+/**
  * 支付回调 - 微信
  */
 

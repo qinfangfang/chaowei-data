@@ -238,6 +238,9 @@ export default {
       console.log("提交购物车");
       if (this.orderId || !this.selectedList.length) return;
       const modelIds = this.selectedList.map((item) => item?.modelId);
+      Cookies.set("payInfo", '');
+      window.open(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
+      return;
       const res = await orderCreate({
         payType: this.payType,
         modelIds,

@@ -87,7 +87,16 @@ export default new VueRouter({
       },
     },
     {
-      path: "/PaySuccess",
+      path: "/payPage",
+      name: "PayPage",
+      component: () => import("../pages/payPage/index.vue"),
+      meta: {
+        // hideNavBar: true,
+        title: "支付订单",
+      },
+    },
+    {
+      path: "/paySuccess",
       name: "PaySuccess",
       component: () => import("../pages/paySuccess/index.vue"),
       meta: {
