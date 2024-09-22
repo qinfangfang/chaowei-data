@@ -215,6 +215,18 @@ export default {
       return this.$i18n.locale == "Zh" ? "Zh" : "En";
     },
   },
+  mounted() {
+    const storageLang = localStorage.getItem("locale");
+    const browserLang = navigator.language;
+    const tar = storageLang || browserLang
+    if (tar === "Zh" || tar === 'zh-CN') {
+      this.language = "Zh"
+      this.$i18n.locale = "Zh"
+    } else {
+      this.language = "En"
+      this.$i18n.locale = "En"
+    }
+  },
   methods: {
     // 我的账户
     myAccount() {
