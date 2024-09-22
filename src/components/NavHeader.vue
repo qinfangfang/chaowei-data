@@ -4,60 +4,31 @@
       <img src="@/assets/imgs/navOrFooter/header_logo.png" alt="" />
     </div>
     <div class="nav-center">
-      <div
-        class="menu-item"
-        v-for="(item, index) in menuList"
-        :key="item.id"
-        @click.stop="jumpTo(item)"
-      >
+      <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click.stop="jumpTo(item)">
         <span>{{ item?.[`name${$i18n?.locale}`] }}</span>
-        <div
-          class="sub-menu-wrap"
-          v-if="item?.subMenuList"
-          :style="{ width: item?.with }"
-        >
+        <div class="sub-menu-wrap" v-if="item?.subMenuList" :style="{ width: item?.with }">
           <!-- <div
           class="sub-menu-wrap"
           v-if="item?.subMenuList"
           :style="{ width: item?.with, display: index === 1 ? 'flex' : 'none' }"
         > -->
-          <div
-            class="sub-menu-list"
-            v-for="child in item?.subMenuList"
-            :key="child?.id"
-          >
+          <div class="sub-menu-list" v-for="child in item?.subMenuList" :key="child?.id">
             <div class="sub-menu-title" v-if="child?.[`name${locale}`]">
               {{ child?.[`name${locale}`] }}
             </div>
-            <div
-              class="sub-menu-item"
-              v-for="(subItem, idx) in child?.list"
-              :key="subItem?.id"
-              @click.stop="
-                jumpTo(subItem, Boolean(subItem?.childCategories?.length))
-              "
-            >
+            <div class="sub-menu-item" v-for="(subItem, idx) in child?.list" :key="subItem?.id" @click.stop="
+              jumpTo(subItem, {hasChild: Boolean(subItem?.childCategories?.length)})
+              ">
               <a>
                 {{ subItem?.label || subItem?.[`name${locale}`] }}
-                <i
-                  v-if="subItem?.childCategories?.length"
-                  class="el-icon-arrow-right"
-                ></i>
+                <i v-if="subItem?.childCategories?.length" class="el-icon-arrow-right"></i>
               </a>
               <!-- <el-collapse-transition> -->
-              <div
-                class="sub-menu-item-wrap"
-                v-show="
-                  activeChildId == subItem.id &&
-                  subItem?.childCategories?.length
-                "
-              >
-                <div
-                  class="sub-menu-item-wrap-item"
-                  v-for="childItem in subItem?.childCategories"
-                  :key="childItem?.id"
-                  @click.stop="jumpTo(subItem)"
-                >
+              <div class="sub-menu-item-wrap" v-show="activeChildId == subItem.id &&
+                subItem?.childCategories?.length
+                ">
+                <div class="sub-menu-item-wrap-item" v-for="childItem in subItem?.childCategories" :key="childItem?.id"
+                  @click.stop="jumpTo(childItem, {jumpFlag: true, parentId: subItem?.id})">
                   {{ childItem?.[`name${$i18n.locale}`] }}
                 </div>
               </div>
@@ -70,19 +41,11 @@
     <div class="nav-right">
       <div class="right-item language-icon" @click="changeLangEvent">
         {{ locale === "Zh" ? "中文" : ""
-        }}<img
-          v-if="locale === 'En'"
-          src="@/assets/imgs/navOrFooter/language_icon.png"
-          alt=""
-        />
+        }}<img v-if="locale === 'En'" src="@/assets/imgs/navOrFooter/language_icon.png" alt="" />
       </div>
       <div class="right-item personal-icon" @click.stop="showPersonalMenu">
         <img src="@/assets/imgs/navOrFooter/personal_icon.png" alt="" />
-        <div
-          class="personal-menu"
-          :class="`${showMenu ? 'show' : ''}`"
-          @click="(e) => e.stopPropagation()"
-        >
+        <div class="personal-menu" :class="`${showMenu ? 'show' : ''}`" @click="(e) => e.stopPropagation()">
           <div class="personal-menu-item personal-name">
             {{ userInfo.nickname }}
           </div>
@@ -99,10 +62,8 @@
         </div>
       </div>
       <div class="right-item buy-car" @click="buyCar">
-        <img src="@/assets/imgs/navOrFooter/buy_car_icon.png" alt="" /><span
-          >{{ locale == "Zh" ? "¥ " : "$ "
-          }}{{ $globalState.productTotalMoney }}</span
-        >
+        <img src="@/assets/imgs/navOrFooter/buy_car_icon.png" alt="" /><span>{{ locale == "Zh" ? "¥ " : "$ "
+        }}{{ $globalState.productTotalMoney }}</span>
       </div>
     </div>
   </div>
@@ -120,7 +81,7 @@ const menuList = [
     nameZh: "模型库",
     nameEn: "Model Library",
     with: "490px",
-    path: "/modelList",
+    // path: "/modelList",
     subMenuList: [
       {
         id: "1.1",
@@ -173,19 +134,21 @@ const menuList = [
     nameZh: "免费案例",
     nameEn: "Free Model",
     with: "188px",
-    path: "/modelList?isFree=1",
+    // path: "/modelList?isFree=1",
     subMenuList: [
       {
         id: "2.1",
         list: [
           {
             id: "2.1.1",
+            isFree: 1,
             nameEn: "全身姿态模型",
             nameZh: "全身姿态模型",
             path: "/modelList?modelType=1&isFree=1",
           },
           {
             id: "2.1.2",
+            isFree: 1,
             nameEn: "全身 A-pose模型",
             nameZh: "全身 A-pose模型",
             path: "/modelList?modelType=3&isFree=1",
@@ -268,16 +231,14 @@ export default {
       this.$router.push("/home");
     },
     // 联系我们
-    jumpTo(item, flag) {
-      if (flag) {
+    jumpTo(item, config = {}) {
+      if (config.hasChild) {
         // 有子节点
         this.activeChildId =
           item?.id && this.activeChildId != item?.id ? item?.id : "";
         return;
       }
-      if (item?.path) {
-        this.$router.push(item.path);
-      }
+      config.jumpFlag && this.$router.push(`/modelList?parentId=${config.parentId}&modelType=${item?.id}${item?.isFree ? '&isFree=1' : ''}`);
     },
     // 切换语言
     changeLangEvent() {
@@ -340,6 +301,7 @@ export default {
   color: #ffffff;
   line-height: 38px;
   z-index: 99;
+
   .nav-left {
     display: flex;
     flex-shrink: 0;
@@ -349,11 +311,13 @@ export default {
     margin-left: 88px;
     cursor: pointer;
     white-space: nowrap;
+
     img {
       display: block;
       width: 100%;
     }
   }
+
   .nav-center {
     display: flex;
     align-items: center;
@@ -361,6 +325,7 @@ export default {
     height: 100%;
     flex: 1;
     margin: 0 20px 0 50px;
+
     .menu-item {
       position: relative;
       display: flex;
@@ -368,34 +333,42 @@ export default {
       // margin-right: 50px;
       height: 100%;
       cursor: pointer;
+
       span {
         font-size: 26px;
         padding: 5px 20px;
         white-space: nowrap;
       }
+
       @media screen and (max-width: 1420px) {
         span {
           font-size: 22px;
         }
       }
+
       &:last-child {
         margin-right: 0;
       }
+
       &:hover {
         color: #ed6336;
       }
+
       &:nth-child(1):hover,
       &:nth-child(2):hover {
         color: #fff;
+
         .sub-menu-wrap {
           display: flex;
           justify-content: space-between;
         }
+
         span {
           background: #ed6336;
           border-radius: 6px 6px 6px 6px;
         }
       }
+
       .sub-menu-wrap {
         position: absolute;
         left: 50%;
@@ -416,6 +389,7 @@ export default {
         text-align: left;
         z-index: 10;
         transform: translateX(-50%);
+
         &::after {
           content: "";
           position: absolute;
@@ -425,12 +399,14 @@ export default {
           border: 10px solid rgba(236, 236, 236, 0.98);
           z-index: 11;
         }
+
         .sub-menu-title {
           position: relative;
           font-weight: bold;
           padding-bottom: 20px;
           margin-bottom: 20px;
           cursor: default;
+
           &::after {
             content: "";
             position: absolute;
@@ -441,21 +417,26 @@ export default {
             border-bottom: 1px solid #000000;
           }
         }
+
         .sub-menu-list {
           flex: 1;
+
           .sub-menu-item {
             // height: 18px;
             margin-bottom: 20px;
             font-size: 15px;
+
             a:hover {
               color: #ed6336;
             }
+
             .sub-menu-item-wrap {
               margin-top: 10px;
               padding: 10px;
               background-color: rgba(255, 255, 255, 0.4);
               border-radius: 4px;
               width: 174px;
+
               // &.show {
               //   display: block;
               // }
@@ -466,11 +447,13 @@ export default {
                 border-bottom: 1px solid #e5e5e5;
                 font-size: 14px;
                 color: #333;
+
                 &:last-child {
                   border-bottom-color: transparent;
                   padding-bottom: 0;
                   margin-bottom: 0;
                 }
+
                 &:hover {
                   color: #ed6336;
                 }
@@ -491,27 +474,33 @@ export default {
     height: 100%;
     cursor: pointer;
     width: 360px;
+
     .right-item {
       position: relative;
       display: flex;
       align-items: center;
       margin-right: 32px;
       height: 100%;
+
       &:last-child {
         margin-left: 0;
       }
+
       &.language-icon {
         width: 50px;
+
         img {
           width: 38px;
           height: 38px;
         }
       }
+
       &.personal-icon {
         img {
           width: 36px;
           height: 35px;
         }
+
         .personal-menu {
           display: none;
           position: absolute;
@@ -523,21 +512,26 @@ export default {
           transform: translateX(-50%);
           background-color: rgba(236, 236, 236, 0.98);
           z-index: 5;
+
           &.show {
             display: block;
           }
+
           .personal-menu-item {
             position: relative;
             color: #000;
             font-size: 14px;
             line-height: 36px;
             text-align: center;
+
             &.pad-top8 {
               padding-top: 8px;
             }
+
             &:hover {
               color: #ed6336;
             }
+
             &.personal-name {
               margin: 0 15px;
               padding-bottom: 8px;
@@ -548,13 +542,16 @@ export default {
           }
         }
       }
+
       &.buy-car {
         height: auto;
         line-height: 38px;
+
         img {
           width: 40px;
           height: 40px;
         }
+
         span {
           // margin-left: 5px;
           padding: 0 8px 0;
