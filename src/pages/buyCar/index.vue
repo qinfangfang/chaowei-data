@@ -5,22 +5,13 @@
       <div class="all-products">
         <div class="prod-operate">
           <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange"
-              >全选</el-checkbox
-            >
+            <el-checkbox v-model="selectAll" @change="checkChange">全选</el-checkbox>
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="patchDeleteClick"
-              >删除所选</el-button
-            >
+            <el-button size="mini" @click="patchDeleteClick">删除所选</el-button>
           </div>
         </div>
-        <el-table
-          ref="multipleTable"
-          :data="prodList"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-        >
+        <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="100"></el-table-column>
           <el-table-column label="" width="130">
             <template slot-scope="scope">
@@ -41,7 +32,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="价格" width="300">
+          <el-table-column label="价格" width="100">
             <template slot-scope="scope">
               <div class="product-price">
                 {{ unit }}
@@ -53,11 +44,8 @@
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
-              <div class="moveto-favorites">移入收藏夹</div>
-              <div
-                class="delete-btn"
-                @click="deleteClick(scope.$index, scope.row)"
-              >
+              <!-- <div class="moveto-favorites">移入收藏夹</div> -->
+              <div class="delete-btn" @click="deleteClick(scope.$index, scope.row)">
                 删除
               </div>
             </template>
@@ -67,10 +55,8 @@
       <div class="buy-cost">
         <div class="title" :class="`${$i18n?.locale}`">
           {{ $i18n?.locale == "Zh" ? "结算清单" : "Settlement List" }}
-          <span
-            >{{ $i18n?.locale == "Zh" ? "已选" : "Selected" }} {{ totalCount }}
-            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span
-          >
+          <span>{{ $i18n?.locale == "Zh" ? "已选" : "Selected" }} {{ totalCount }}
+            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span>
         </div>
         <div class="coupon-discount">
           <div class="discount-item total-money">
@@ -97,11 +83,8 @@
             </div>
             <div class="pay-list">
               <div class="pay-item" @click="tabChangePayType('1')">
-                <i
-                  :class="`${
-                    payType == '1' ? 'el-icon-success' : 'el-icon-circle-check'
-                  }`"
-                ></i>
+                <i :class="`${payType == '1' ? 'el-icon-success' : 'el-icon-circle-check'
+                  }`"></i>
                 <div class="pay-icon">
                   <img src="@/assets/imgs/buyCar/weChat_icon.jpg" alt="" />
                 </div>
@@ -110,11 +93,8 @@
                 </div>
               </div>
               <div class="pay-item" @click="tabChangePayType('2')">
-                <i
-                  :class="`${
-                    payType == '2' ? 'el-icon-success' : 'el-icon-circle-check'
-                  }`"
-                ></i>
+                <i :class="`${payType == '2' ? 'el-icon-success' : 'el-icon-circle-check'
+                  }`"></i>
                 <div class="pay-icon">
                   <img src="@/assets/imgs/buyCar/aliPay_icon.jpg" alt="" />
                 </div>
@@ -126,18 +106,8 @@
             <div class="qr-code-wrap" v-show="showQrCode">
               <!-- 微信支付 -->
               <canvas v-if="payType == '1'" id="qr-code"></canvas>
-              <iframe
-                v-if="aliPayFormHtml"
-                :srcdoc="aliPayFormHtml"
-                frameborder="no"
-                border="0"
-                marginwidth="0"
-                marginheight="0"
-                scrolling="no"
-                width="200"
-                height="200"
-                style="overflow: hidden"
-              ></iframe>
+              <iframe v-if="aliPayFormHtml" :srcdoc="aliPayFormHtml" frameborder="no" border="0" marginwidth="0"
+                marginheight="0" scrolling="no" width="200" height="200" style="overflow: hidden"></iframe>
             </div>
             <div class="count-down" v-if="count">
               支付剩余时间：<span>{{ countDown.minutes }} </span>分 :
@@ -153,11 +123,7 @@
             </div>
             <!-- <div class="discount-money">共减 {{ unit }} 17.00</div> -->
           </div>
-          <div
-            class="submit-btn"
-            :class="`${orderId || !selectedList.length ? 'disabled' : ''}`"
-            @click="submitBuyCar"
-          >
+          <div class="submit-btn" :class="`${orderId || !selectedList.length ? 'disabled' : ''}`" @click="submitBuyCar">
             {{ $i18n?.locale == "Zh" ? "结算" : "Settle Accounts" }}
           </div>
         </div>
@@ -239,6 +205,7 @@ export default {
       if (this.orderId || !this.selectedList.length) return;
       const modelIds = this.selectedList.map((item) => item?.modelId);
       Cookies.set("payInfo", '');
+      localStorage.setItem(`payProductList_${modelIds.join('&')}`, JSON.stringify(this.selectedList));
       // window.open(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
       this.$router.replace(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
       return;
@@ -287,7 +254,7 @@ export default {
             res?.msg && this.$message.error(res?.msg);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     },
     // 删除确认
     deleteClick(idx, item) {
@@ -306,7 +273,7 @@ export default {
             res?.msg && this.$message.error(res?.msg);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     },
     checkChange(val) {
       console.log("checkChange>>>>>>>>", val);
@@ -384,6 +351,7 @@ export default {
   padding: 45px;
   background-color: #f3f3f3;
   overflow: auto;
+
   .page-title {
     margin-bottom: 15px;
     font-family: Inter, Inter;
@@ -391,55 +359,68 @@ export default {
     color: #000;
     line-height: 47px;
   }
+
   .buy-car-wrap {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+
     .all-products {
       flex: 1;
       background-color: #fff;
       border-radius: 22px 22px 22px 22px;
       overflow: hidden;
+
       .prod-operate {
         display: flex;
         align-items: center;
         height: 60px;
         padding-left: 30px;
+
         .selected-all {
           /deep/ .el-checkbox {
             color: #000;
           }
+
           /deep/ .el-checkbox__input.is-checked .el-checkbox__inner {
             background-color: #ed6336;
             border-color: #ed6336;
           }
-          /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
+
+          /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
             color: #ed6336;
           }
+
           /deep/ .el-checkbox__input.is-focus .el-checkbox__inner {
             border-color: #ed6336;
+
             &:hover,
             &:focus {
               border-color: #ed6336;
             }
           }
+
           /deep/ .el-checkbox__inner {
             width: 20px;
             height: 20px;
+
             &::after {
               content: "";
               left: 7px;
               top: 4px;
             }
+
             &:hover,
             &:focus {
               border-color: #ed6336;
             }
           }
         }
+
         .delete-selected {
           margin-left: 30px;
           cursor: pointer;
+
           /deep/ .el-button:hover,
           /deep/ .el-button:focus {
             color: #ed6336;
@@ -448,11 +429,13 @@ export default {
           }
         }
       }
+
       /deep/ .el-table thead {
         tr {
           height: 45px;
           background: #ddd;
         }
+
         th.el-table__cell {
           padding: 0;
           font-family: Inter, Inter;
@@ -461,44 +444,55 @@ export default {
           color: #000;
           text-align: left;
           background: #ddd;
+
           &:nth-child(1) {
             position: relative;
             z-index: -1;
           }
+
           &:nth-child(2) {
             // padding-left: 145px;
           }
         }
       }
+
       /deep/ .el-table tbody tr {
         .el-table__cell:nth-child(1) {
           .cell {
             padding-left: 30px;
           }
+
           .el-checkbox__inner {
             width: 20px;
             height: 20px;
+
             &::after {
               content: "";
               left: 7px;
               top: 4px;
             }
           }
+
           .el-checkbox__input.is-checked .el-checkbox__inner {
             background-color: #ed6336;
             border-color: #ed6336;
           }
-          .el-checkbox__input.is-checked + .el-checkbox__label {
+
+          .el-checkbox__input.is-checked+.el-checkbox__label {
             color: #ed6336;
           }
+
           .el-checkbox__input.is-focus .el-checkbox__inner {
             border-color: #ed6336;
+
             &:hover,
             &:focus {
               border-color: #ed6336;
             }
           }
+
           .el-checkbox__inner {
+
             &:hover,
             &:focus {
               border-color: #ed6336;
@@ -506,43 +500,52 @@ export default {
           }
         }
       }
+
       .product-info {
         display: flex;
         align-items: center;
+
         .prodcut-pic {
           width: 87px;
           cursor: pointer;
+
           img {
             display: block;
             width: 100%;
           }
         }
+
         .product-name {
           font-family: Inter, Inter;
           font-weight: 400;
-          font-size: 16px;
+          font-size: 13px;
           color: #000;
           line-height: 28px;
           cursor: pointer;
+
           .name {
             margin-top: 20px;
           }
         }
       }
+
       .product-price {
         font-weight: 400;
-        font-size: 24px;
+        font-size: 18px;
         color: #ed6336;
         line-height: 35px;
       }
+
       .moveto-favorites {
         color: #000;
         font-size: 16px;
         cursor: pointer;
+
         &:hover {
           color: #ed6336;
         }
       }
+
       .delete-btn {
         display: flex;
         align-items: center;
@@ -558,11 +561,13 @@ export default {
         cursor: pointer;
       }
     }
+
     .buy-cost {
       width: 450px;
       margin-left: 50px;
       background: #fff;
       border-radius: 22px 22px 22px 22px;
+
       .title {
         padding: 30px 35px;
         font-weight: bold;
@@ -571,64 +576,79 @@ export default {
         line-height: 42px;
         border-bottom: 1px solid #ddd;
         white-space: nowrap;
+
         span {
           margin-left: 50px;
           font-weight: 400;
           font-size: 24px;
           line-height: 28px;
         }
+
         &.En {
           font-size: 24px;
+
           span {
             font-size: 20px;
           }
         }
       }
+
       .coupon-discount {
         padding: 30px 35px 20px;
+
         .discount-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
           font-weight: 400;
         }
+
         .total-money,
         .total-jian {
           font-size: 24px;
           color: #000;
           line-height: 28px;
+
           .value {
             font-size: 30px;
             line-height: 35px;
           }
         }
+
         .total-jian {
           margin-top: 40px;
+
           .value {
             color: #ed6336;
             font-size: 24px;
           }
         }
+
         .man-jian,
         .zhe-kou {
           font-size: 15px;
           color: #787878;
           line-height: 18px;
+
           .value {
             color: #ed6336;
           }
         }
+
         .man-jian {
           margin-top: 15px;
         }
+
         .zhe-kou {
           margin-top: 5px;
         }
+
         .pay-wrap {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           margin-top: 20px;
+
           .pay-text {
             display: flex;
             align-items: center;
@@ -636,11 +656,13 @@ export default {
             position: relative;
             font-size: 24px;
             color: #000;
+
             span {
               margin-left: 10px;
               color: #999;
               font-size: 12px;
             }
+
             &::before {
               position: relative;
               top: 5px;
@@ -649,9 +671,11 @@ export default {
               color: #ed6336;
             }
           }
+
           .pay-list {
             padding-left: 15px;
           }
+
           .pay-item {
             display: flex;
             align-items: center;
@@ -660,27 +684,33 @@ export default {
             font-weight: 500;
             font-size: 16px;
             margin-bottom: 10px;
+
             &:last-child {
               margin-bottom: 0;
             }
+
             i {
               margin-right: 5px;
               color: #666;
               font-size: 20px;
+
               &.el-icon-success {
                 color: #ed6336;
               }
             }
+
             .pay-icon {
               width: 28px;
               height: 28px;
               margin-right: 5px;
+
               img {
                 display: block;
                 width: 100%;
               }
             }
           }
+
           .qr-code-wrap {
             width: 200px;
             height: 200px;
@@ -688,16 +718,19 @@ export default {
             overflow: hidden;
             border-radius: 4px;
             border: 1px solid #f1f1f1;
+
             #qr-code {
               width: 100% !important;
               height: 100% !important;
             }
           }
+
           .count-down {
             color: #222;
             margin-top: 20px;
             text-align: center;
             font-size: 14px;
+
             span {
               color: #ed6336;
               font-weight: 500;
@@ -705,6 +738,7 @@ export default {
           }
         }
       }
+
       .total-info {
         display: flex;
         align-items: center;
@@ -712,12 +746,14 @@ export default {
         padding: 20px 35px;
         border-top: 1px solid #ddd;
         font-weight: 400;
+
         .pay-money {
           display: flex;
           align-items: center;
           font-size: 24px;
           color: #ed6336;
           line-height: 28px;
+
           span {
             font-weight: bold;
             font-size: 30px;
@@ -725,12 +761,14 @@ export default {
             line-height: 35px;
           }
         }
+
         .discount-money {
           margin-top: 5px;
           font-size: 15px;
           color: #ed6336;
           line-height: 18px;
         }
+
         .submit-btn {
           display: flex;
           align-items: center;
@@ -744,6 +782,7 @@ export default {
           background: #ed6336;
           border-radius: 4px 4px 4px 4px;
           cursor: pointer;
+
           &.disabled {
             cursor: not-allowed;
             background-color: #ddd;
@@ -752,5 +791,4 @@ export default {
       }
     }
   }
-}
-</style>
+}</style>

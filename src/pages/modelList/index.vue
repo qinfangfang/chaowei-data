@@ -26,7 +26,7 @@
             :key="item?.id"
             :class="`style-item ${
               activeModelNames.includes(`${idx + 1}`) &&
-              modelForm?.[item?.id]?.length
+              modelForm?.[item?.id]
                 ? 'active'
                 : ''
             }`"
@@ -62,14 +62,14 @@
         <div class="style-title">
           {{ styleInfo?.[`title${isZh ? "Zh" : "En"}`] }}
         </div>
-        <div class="style-search">
+        <!-- <div class="style-search">
           <el-input
             placeholder="输入关键词进行搜索"
             suffix-icon="el-icon-search"
             v-model="form.filterSearch"
           >
           </el-input>
-        </div>
+        </div> -->
         <div class="style-list">
           <div
             v-for="(item, idx) in styleInfo?.list"
@@ -308,10 +308,10 @@ export default {
         ],
       },
       modelForm: {
-        1: [],
-        2: [],
-        3: [],
-        4: [],
+        1: '',
+        2: '',
+        3: '',
+        4: '',
       },
       form: {
         // searchVal: "",
@@ -341,6 +341,8 @@ export default {
     $route(to) {
       console.log("to>>>>>>", to);
       this.form.modelType = to.query?.modelType || "";
+      this.form.categoryId = to.query?.modelType || "";
+      this.initSlectedModel();
       this.getModelListData(true);
     },
     form: {
@@ -368,7 +370,7 @@ export default {
     radioChange(val, id) {
       console.log(111, val, this.activeModelNames, id);
       Object.entries(this.modelForm).forEach(([key, values]) => {
-        this.$set(this.modelForm, `${key}`, []);
+        this.$set(this.modelForm, `${key}`, '');
       });
       this.$set(this.modelForm, id, val);
       this.form.categoryId = val;
@@ -388,10 +390,10 @@ export default {
         area: [],
       };
       this.modelForm = {
-        1: [],
-        2: [],
-        3: [],
-        4: [],
+        1: '',
+        2: '',
+        3: '',
+        4: '',
       };
       this.activeModelNames = [];
       this.activeTagsNames = [];
@@ -439,6 +441,7 @@ export default {
     initPageQuery() {
       const query = this.$route.query;
       this.form.modelType = query?.modelType || "";
+      this.form.categoryId = query?.modelType || "";
     },
     // 处理筛选条件
     initFilter(res = []) {
@@ -514,16 +517,27 @@ export default {
       if (modelCategory_data) {
         this.modelTypeList = JSON.parse(modelCategory_data);
         this.modelTypeList.forEach((item) => {
-          this.$set(this.modelForm, item?.id, []);
+          this.$set(this.modelForm, item?.id, '');
         });
-        console.log("this.modelForm>>>>>>", this.modelForm);
       }
+      this.initSlectedModel();
     },
+    // 初始化选择设置
+    initSlectedModel() {
+      const query = this.$route.query;
+      if(query.parentId) {
+        this.activeModelNames = [query.parentId];
+      }
+      if(query.parentId && query.modelType) {
+        this.$set(this.modelForm, `${query.parentId}`, query.modelType);
+      }
+      console.log("this.modelForm>>>>>>", this.modelForm);
+    }
   },
   created() {
     this.initPageQuery();
     this.getModelTagGroupData();
-    this.getModelListData();
+    // this.getModelListData();
   },
   mounted() {
     this.modelTypeHandler();
@@ -616,7 +630,7 @@ export default {
       margin-top: 50px;
       .style-title {
         height: 24px;
-        font-family: Inter, Inter;
+        margin-bottom: 30px;
         font-weight: 400;
         font-size: 20px;
         color: #000;

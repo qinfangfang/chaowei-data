@@ -1,32 +1,33 @@
 <template>
   <div class="pay-wrap-module">
+    <div class="buy-product-info">
+      <div class="product-item">
+        <span class="pay-label">购买商品：</span>
+        <span class="product-namelist">{{ productName }}</span>
+      </div>
+      <div class="product-item product-price">
+        <span class="pay-label">商品总价：</span>
+        <span class="price-num">{{ unit }}{{ totalMoney }}</span>
+      </div>
+    </div>
     <div class="qr-code-wrap" v-show="showQrCode">
       <!-- 微信支付 | 支付宝支付 -->
       <canvas id="qr-code"></canvas>
-      <iframe
-        v-if="false && aliPayFormHtml"
-        :srcdoc="aliPayFormHtml"
-        frameborder="no"
-        border="0"
-        marginwidth="0"
-        marginheight="0"
-        scrolling="no"
-        width="200"
-        height="200"
-        style="overflow: hidden"
-      ></iframe>
+      <iframe v-if="false && aliPayFormHtml" :srcdoc="aliPayFormHtml" frameborder="no" border="0" marginwidth="0"
+        marginheight="0" scrolling="no" width="200" height="200" style="overflow: hidden"></iframe>
     </div>
     <div class="count-down" v-if="count">
       支付剩余时间：<span>{{ countDown.minutes }} </span>分 :
       <span>{{ countDown.seconds }} </span>秒
     </div>
-    <div class="count-down">
+    <div class="count-down" v-if="count">
       请尽快完成支付, 否则会影响您的购物体验~
     </div>
   </div>
 </template>
 <script>
 import { orderCreate, queryOrderStatus } from "@/api/order.js";
+import { orderCartList } from "@/api/buyCar.js";
 import QRCode from "qrcode";
 import Cookies from "js-cookie";
 
@@ -43,25 +44,23 @@ export default {
       orderId: null,
       duration: 1000,
       count: 0,
+      prodList: [],
+      modelIds: [],
     };
   },
   computed: {
     unit() {
       return this.$i18n.locale == "Zh" ? "¥ " : "$ ";
     },
-    totalCount() {
-      return this.selectedList.length;
-    },
-    productTotalMoney() {
-      const price = this.selectedList.reduce((pre, cur) => {
-        return pre + cur?.[`price${this.$i18n.locale == "Zh" ? "Cny" : "Usd"}`];
-      }, 0);
-      // console.log('1111>>>>>>>>>>>', this.$globalState);
-      this.$globalState.productTotalMoney = price;
-      return price;
+    productName() {
+      const nameArr = [];
+      this.prodList.forEach(item => {
+        nameArr.push(item?.[`name${this.$i18n.locale}`]);
+      });
+      return nameArr.join('、');
     },
     totalMoney() {
-      const price = this.selectedList.reduce((pre, cur) => {
+      const price = this.prodList.reduce((pre, cur) => {
         return pre + cur?.[`price${this.$i18n.locale == "Zh" ? "Cny" : "Usd"}`];
       }, 0);
       return price;
@@ -70,9 +69,9 @@ export default {
       let minutes = parseInt(this.count / 60);
       let seconds = this.count - minutes * 60;
       minutes =
-        minutes == 0 ? "00" : minutes > 10 ? `${minutes}` : `0${minutes}`;
+        minutes == 0 ? "00" : minutes >= 10 ? `${minutes}` : `0${minutes}`;
       seconds =
-        seconds == 0 ? "00" : seconds > 10 ? `${seconds}` : `0${seconds}`;
+        seconds == 0 ? "00" : seconds >= 10 ? `${seconds}` : `0${seconds}`;
       return { minutes, seconds };
     },
   },
@@ -91,17 +90,18 @@ export default {
       if (Cookies.get("payInfo")) { // cookies有值
         const payInfo = Cookies.get("payInfo");
         // if (this.payType == "1") {
-          // 微信支付
-          setTimeout(() => {
-            this.createQrCode(payInfo);
-          }, 100)
+        // 微信支付
+        setTimeout(() => {
+          this.createQrCode(payInfo);
+        }, 100)
+        this.payCallBack();
         // } else {
         //   this.showQrCode = true;
         //   this.aliPayFormHtml = payInfo;
         // }
         return;
       }
-      const modelIds = JSON.parse(this.$route?.query?.modelIds || "[]");
+      const modelIds = this.modelIds;
       if (!modelIds.length) return;
       const res = await orderCreate({
         payType: this.payType,
@@ -115,11 +115,11 @@ export default {
 
         const seconds = 600; // 600s
         const expires = new Date(new Date() * 1 + seconds * 1000);
-        Cookies.set("payInfo", payInfo, { expires });
 
+        payInfo  && Cookies.set("payInfo", payInfo, { expires });
+        res?.orderId && Cookies.set("payOrderId", res?.orderId, { expires });
         Cookies.set("payEndTime", expires, { expires });
 
-        
         this.createQrCode(payInfo);
         // if (this.payType == "1") {
         //   // 微信支付
@@ -145,12 +145,12 @@ export default {
         if (this.count < 0) {
           this.closeTimer();
           // 2- 超时未支付
-          this.$router.push(`/paySuccess?status=1`);
+          this.$router.push(`/paySuccess?status=2`);
           return;
         }
         if (this.count % 5 == 0) {
           // 5s查询一次
-          const res = await queryOrderStatus({ orderId: this.orderId }).catch(
+          const res = await queryOrderStatus({ orderId: this.orderId || Cookies.get('payOrderId') }).catch(
             (err) => {
               this.closeTimer();
               this.$router.push(
@@ -166,12 +166,27 @@ export default {
         }
       }, this.duration); // 5s查询一次
     },
+    // 获取购物车数据
+    async getOrderList() {
+      const res = JSON.parse(localStorage.getItem(`payProductList_${this.modelIds.join('&')}`) || []);
+      console.log("购物车所选商品>>>>>", res);
+      this.prodList = res;
+      this.prodList = this.prodList.filter((item) => {
+        return this.modelIds.includes(item?.modelId);
+      });
+    },
   },
   created() {
     this.payType = this.$route?.query?.payType;
-    setTimeout(() => {
+    this.modelIds = JSON.parse(this.$route?.query?.modelIds || "[]");
+    const payEndTime = Cookies.get('payEndTime') || 0;
+    if (payEndTime && payEndTime != 0) {
+      this.count = Math.round((new Date(payEndTime).getTime() - new Date().getTime()) / 1000);
+    }
+    this.getOrderList();
+    // setTimeout(() => {
       this.submitBuyCar();
-    }, 10000)
+    // }, 10000)
   },
   beforeDestroy() {
     this.closeTimer();
@@ -186,6 +201,31 @@ export default {
   margin: 0px auto;
   padding-top: 100px;
   max-width: 1200px;
+  .buy-product-info {
+    // width: 200px;
+    // height: 200px;
+    margin: 0 auto;
+    max-width: 600px;
+    .product-item {
+      display: flex;
+      &.product-price {
+        margin-top: 15px;
+      }
+      .product-namelist {
+        margin-top: -6px;
+        color: #333;
+        font-size: 14px;
+        line-height: 36px;
+      }
+      .pay-label {
+        white-space: nowrap;
+      }
+      .price-num {
+        color: #ed6336;
+      }
+    }
+  }
+
   .qr-code-wrap {
     width: 200px;
     height: 200px;
@@ -193,16 +233,19 @@ export default {
     overflow: hidden;
     border-radius: 4px;
     border: 1px solid #f1f1f1;
+
     #qr-code {
       width: 100% !important;
       height: 100% !important;
     }
   }
+
   .count-down {
     color: #222;
     margin-top: 20px;
     text-align: center;
     font-size: 14px;
+
     span {
       color: #ed6336;
       font-weight: 500;
