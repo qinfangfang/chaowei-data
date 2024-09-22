@@ -124,7 +124,8 @@
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
             <div class="model-pic">
-              <img :src="getProdImageUrl(item)" alt="" />
+              <img class="front-img" :src="getFrontviewUrl(item)" alt="" />
+              <img class="fortyfive-img" :src="getFortyFiveviewUrl(item)" alt="" />
               <div class="tag-list">
                 <div
                   class="tag-item"
@@ -397,13 +398,21 @@ export default {
       this.getModelListData(1);
     },
     // 获取图片展示
-    getProdImageUrl(item) {
-      return (
-        item?.["frontView"] ||
-        item?.["fortyFiveView"] ||
-        item?.["sideView"] ||
-        item?.["grayView"]
-      );
+    getFrontviewUrl(item) {
+      const splitTar = item.frontView && item.frontView.split(',')
+      if (splitTar && splitTar.length > 0) {
+        return splitTar[0]
+      } else {
+        return ''
+      }
+    },
+    getFortyFiveviewUrl(item) {
+      const splitTar = item.fortyFiveView && item.fortyFiveView.split(',')
+      if (splitTar && splitTar.length > 0) {
+        return splitTar[0]
+      } else {
+        return ''
+      }
     },
     // 去商品详情
     goDetail(item) {
@@ -763,14 +772,26 @@ export default {
           position: relative;
           overflow: hidden;
           &:hover {
-            img {
-              transform: scale(1.3);
+            img.front-img {
+              display: none;
             }
+            img.fortyfive-img {
+              display: block;
+            }
+            // img {
+            //   transform: scale(1.3);
+            // }
           }
           img {
             transition: transform 0.3s linear;
             display: block;
             width: 100%;
+          }
+          img.front-img {
+            display: block;
+          }
+          img.fortyfive-img {
+            display: none;
           }
           .new-tag {
             position: absolute;

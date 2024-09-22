@@ -170,7 +170,6 @@ import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
 import { orderCreate, queryOrderStatus } from "@/api/order.js";
 import QRCode from "qrcode";
 import Cookies from "js-cookie";
-
 export default {
   data() {
     return {
@@ -240,7 +239,8 @@ export default {
       if (this.orderId || !this.selectedList.length) return;
       const modelIds = this.selectedList.map((item) => item?.modelId);
       Cookies.set("payInfo", '');
-      window.open(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
+      // window.open(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
+      this.$router.replace(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
       return;
       const res = await orderCreate({
         payType: this.payType,

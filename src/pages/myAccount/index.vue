@@ -10,7 +10,7 @@
         >
           <span>交易记录</span><span>4</span>
         </div>
-        <div
+        <!-- <div
           class="menu-item"
           :class="`${type === '2' ? 'active' : ''}`"
           @click="tabClick('2')"
@@ -23,7 +23,7 @@
           @click="tabClick('3')"
         >
           足迹
-        </div>
+        </div> -->
         <div
           class="menu-item"
           :class="`${type === '4' ? 'active' : ''}`"
@@ -31,13 +31,13 @@
         >
           开票信息
         </div>
-        <div
+        <!-- <div
           class="menu-item"
           :class="`${type === '5' ? 'active' : ''}`"
           @click="tabClick('5')"
         >
           <span>优惠券</span><span>2</span>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="content-wrap">

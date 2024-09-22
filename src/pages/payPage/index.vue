@@ -20,6 +20,9 @@
       支付剩余时间：<span>{{ countDown.minutes }} </span>分 :
       <span>{{ countDown.seconds }} </span>秒
     </div>
+    <div class="count-down">
+      请尽快完成支付, 否则会影响您的购物体验~
+    </div>
   </div>
 </template>
 <script>
