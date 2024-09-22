@@ -122,6 +122,7 @@
                   {{ $i18n?.locale == "Zh" ? "支付宝" : "Alipay" }}
                 </div>
               </div>
+              <paypal-buttons :on-approve="onApprove" :create-order="createOrder" :on-shipping-address-change="onShippingAddressChange" :on-shipping-options-change="onShippingOptionsChange" :on-error="onError" :style-object="style" />
             </div>
             <div class="qr-code-wrap" v-show="showQrCode">
               <!-- 微信支付 -->
@@ -166,10 +167,14 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
 import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
 import { orderCreate, queryOrderStatus } from "@/api/order.js";
 import QRCode from "qrcode";
 import Cookies from "js-cookie";
+console.log(paypal.Buttons, 'PayPalButton---------')
+console.log(Vue, 'window.Vue---------')
+const PayPalButton = paypal.Buttons.driver('vue', Vue)
 export default {
   data() {
     return {
@@ -184,6 +189,9 @@ export default {
       duration: 1000,
       count: 0,
     };
+  },
+  components: {
+      "paypal-buttons": PayPalButton,
   },
   computed: {
     unit() {
@@ -215,6 +223,67 @@ export default {
         seconds == 0 ? "00" : seconds > 10 ? `${seconds}` : `0${seconds}`;
       return { minutes, seconds };
     },
+    createOrder: function() {
+      return (data) => {
+          // Order is created on the server and the order id is returned
+          return fetch("/my-server/create-paypal-order", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  // use the "body" param to optionally pass additional order information
+                  // like product skus and quantities
+                  body: JSON.stringify({
+                      cart: [{
+                          sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
+                          quantity: "YOUR_PRODUCT_QUANTITY",
+                      }, ],
+                  }),
+              })
+              .then((response) => response.json())
+              .then((order) => order.id);
+      }
+  },
+  onApprove: function() {
+      return (data) => {
+          // Order is captured on the server
+          return fetch("/my-server/capture-paypal-order", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                      orderID: data.orderID
+                  })
+              })
+              .then((response) => response.json());
+      }
+  },
+  onShippingAddressChange(data, actions) {
+      // if (data.shippingAddress.countryCode !== 'US') {
+      //     return actions.reject(data.errors.COUNTRY_ERROR);
+      // }
+  },
+  onShippingOptionsChange(data, actions) {
+      // if (data.selectedShippingOption.type === 'PICKUP') {
+      //     return actions.reject(data.errors.STORE_UNAVAILABLE);
+      // }
+  },
+  onError: function() {
+      return (err) => {
+          console.error(err);
+          window.location.href = "/your-error-page-here";
+      }
+  },
+  style: function() {
+      return {
+          shape: 'pill',
+          color: 'gold',
+          layout: 'horizontal',
+          label: 'paypal',
+          tagline: false,
+      }
+  },
   },
   methods: {
     // 跳转详情页
