@@ -1,16 +1,11 @@
 <template>
   <div class="trade-log">
     <div class="page-title">交易 清单</div>
-    <div
-      class="trade-log-wrap"
-      :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`"
-    >
+    <div class="trade-log-wrap" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
       <div class="all-products">
         <div class="prod-operate">
           <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange"
-              >全选</el-checkbox
-            >
+            <el-checkbox v-model="selectAll" @change="checkChange">全选</el-checkbox>
           </div>
           <div class="delete-selected">
             <el-button size="mini" @click="handleEdit()">下载所选</el-button>
@@ -18,12 +13,7 @@
             <el-button size="mini" @click="batchInvoice">所选开票</el-button>
           </div>
         </div>
-        <el-table
-          ref="multipleTable"
-          :data="prodList"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-        >
+        <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="100"></el-table-column>
           <el-table-column label="项目名称">
             <template slot-scope="scope">
@@ -38,19 +28,30 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="价格" width="200">
+          <el-table-column label="价格" width="100">
             <template slot-scope="scope">
               <div class="product-price">
                 {{ $i18n.locale == "Zh" ? "¥ " : "$ " }}{{ scope?.row?.price }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="交易状态" width="150">
+          <el-table-column label="交易状态" width="100">
             <template slot-scope="scope">
               <div class="trade-status">{{ getOrderStatus(scope?.row) }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200">
+          <el-table-column label="交易编号" width="150">
+            <template slot-scope="scope">
+              <div class="trade-id" @click="copyToClip({ content: `${scope?.row?.orderNo}` })">{{ scope?.row?.orderNo }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="交易时间" width="100">
+            <template slot-scope="scope">
+              <div class="trade-time">{{ formatDate(scope?.row?.createTime) }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="120">
             <template slot-scope="scope">
               <!-- <div
                 class="moveto-favorites"
@@ -58,18 +59,10 @@
               >
                 再次下载
               </div> -->
-              <div
-                class="get-invoice"
-                @click="invoiceClick(scope?.row)"
-                v-if="scope?.row?.receiptStatus == '1'"
-              >
+              <div class="get-invoice" @click="invoiceClick(scope?.row)" v-if="scope?.row?.receiptStatus == '1'">
                 开具发票
               </div>
-              <div
-                v-if="scope?.row?.receiptStatus > '1'"
-                class="delete-btn"
-                @click="downloadClick(scope?.row)"
-              >
+              <div class="delete-btn" @click="downloadClick(scope?.row)">
                 下载
               </div>
             </template>
@@ -78,30 +71,19 @@
       </div>
     </div>
     <div class="pagination-wrap" v-if="pagination.total > pagination.pageSize">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        background
-        align="right"
-        :current-page="pagination.pageNum"
-        :page-sizes="pagination.pageSizes"
-        :page-size="pagination.pageSize"
-        layout="total, sizes, prev, pager, next"
-        :total="100 || pagination.total"
-      >
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background align="right"
+        :current-page="pagination.pageNum" :page-sizes="pagination.pageSizes" :page-size="pagination.pageSize"
+        layout="total, sizes, prev, pager, next" :total="100 || pagination.total">
       </el-pagination>
     </div>
-    <InvoiceDialog
-      :visible="invoiceVisible"
-      @confirm="invoiceHanlder"
-      @close="invoiceVisible = false"
-    />
+    <InvoiceDialog :visible="invoiceVisible" @confirm="invoiceHanlder" @close="invoiceVisible = false" />
   </div>
 </template>
 <script>
 import { orderItemList, orderItemReceipt } from "@/api/order.js";
 import { getModelDownloadUrlById } from "@/api/index.js";
 import InvoiceDialog from "./components/invoiceDialog.vue";
+import dayjs from 'dayjs';
 
 export default {
   data() {
@@ -139,6 +121,21 @@ export default {
     InvoiceDialog,
   },
   methods: {
+    copyToClip({ content }) {
+      if (content === undefined || content === null) return;
+      const createInput = document.createElement('input');
+      createInput.value = content;
+      document.body.appendChild(createInput);
+      createInput.select();
+      document.execCommand('Copy'); // document执行复制操作
+      createInput.remove();
+      this.$message.success('复制成功');
+    },
+    // 交易时间格式化
+    formatDate(val) {
+      if (!val) return '--';
+      return dayjs(val).format('YYYY-MM-DD hh:mm:ss');
+    },
     // 跳转详情页
     goDetail(data = {}) {
       window.open(`/prodDetail/${data?.id}`, "_blank");
@@ -210,7 +207,7 @@ export default {
       this.pagination.pageSize = val;
       this.queryOrderItemList();
     },
-    handleEdit() {},
+    handleEdit() { },
     checkChange(val) {
       console.log("checkChange>>>>>>>>", val);
       if (val) {
@@ -244,6 +241,7 @@ export default {
 <style lang="less" scoped>
 .trade-log {
   background-color: #f3f3f3;
+
   .page-title {
     margin-bottom: 15px;
     font-family: Inter, Inter;
@@ -251,12 +249,14 @@ export default {
     color: #000;
     line-height: 40px;
   }
+
   .trade-log-wrap {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     overflow: auto;
     height: calc(100vh - 100px - 30px - 30px - 40px - 15px);
+
     /**
       100px header
       30px .content-wrap padding-top
@@ -267,59 +267,70 @@ export default {
       10px .pagination-wrap margin-top
     */
     &.pagination {
-      height: calc(
-        100vh - 100px - 30px - 30px - 40px - 15px - 40px - 10px
-      ); // 去除分页
+      height: calc(100vh - 100px - 30px - 30px - 40px - 15px - 40px - 10px); // 去除分页
     }
+
     &::-webkit-scrollbar {
       // 隐藏滚动条
       width: 0;
     }
+
     .all-products {
       flex: 1;
       background-color: #fff;
       border-radius: 22px 22px 22px 22px;
       overflow: hidden;
+
       .prod-operate {
         display: flex;
         align-items: center;
         height: 60px;
         padding-left: 30px;
+
         .selected-all {
           /deep/ .el-checkbox {
             color: #000;
           }
+
           /deep/ .el-checkbox__input.is-checked .el-checkbox__inner {
             background-color: #ed6336;
             border-color: #ed6336;
           }
-          /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
+
+          /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
             color: #ed6336;
           }
+
           /deep/ .el-checkbox__input.is-focus .el-checkbox__inner {
             border-color: #ed6336;
+
             &:hover,
             &:focus {
               border-color: #ed6336;
             }
           }
+
           /deep/ .el-checkbox__inner {
             width: 20px;
             height: 20px;
+
             &::after {
               content: "";
               left: 7px;
               top: 4px;
             }
+
             &:hover,
             &:focus {
               border-color: #ed6336;
             }
           }
         }
+
         .delete-selected {
           margin-left: 30px;
           cursor: pointer;
+
           /deep/ .el-button:hover,
           /deep/ .el-button:focus {
             color: #606266;
@@ -328,11 +339,13 @@ export default {
           }
         }
       }
+
       /deep/ .el-table thead {
         tr {
           height: 45px;
           background: #ddd;
         }
+
         th.el-table__cell {
           padding: 0;
           font-family: Inter, Inter;
@@ -341,44 +354,55 @@ export default {
           color: #000;
           text-align: left;
           background: #ddd;
+
           &:nth-child(1) {
             position: relative;
             z-index: -1;
           }
+
           &:nth-child(2) {
             padding-left: 145px;
           }
         }
       }
+
       /deep/ .el-table tbody tr {
         .el-table__cell:nth-child(1) {
           .cell {
             padding-left: 30px;
           }
+
           .el-checkbox__inner {
             width: 20px;
             height: 20px;
+
             &::after {
               content: "";
               left: 7px;
               top: 4px;
             }
           }
+
           .el-checkbox__input.is-checked .el-checkbox__inner {
             background-color: #ed6336;
             border-color: #ed6336;
           }
-          .el-checkbox__input.is-checked + .el-checkbox__label {
+
+          .el-checkbox__input.is-checked+.el-checkbox__label {
             color: #ed6336;
           }
+
           .el-checkbox__input.is-focus .el-checkbox__inner {
             border-color: #ed6336;
+
             &:hover,
             &:focus {
               border-color: #ed6336;
             }
           }
+
           .el-checkbox__inner {
+
             &:hover,
             &:focus {
               border-color: #ed6336;
@@ -386,49 +410,73 @@ export default {
           }
         }
       }
+
       .product-info {
         display: flex;
         align-items: center;
+
         .prodcut-pic {
           width: 87px;
           cursor: pointer;
+
           img {
             display: block;
             width: 100%;
           }
         }
+
         .product-name {
           margin-left: 55px;
           font-family: Inter, Inter;
           font-weight: 400;
-          font-size: 16px;
+          font-size: 13px;
           color: #000;
           line-height: 28px;
           cursor: pointer;
+
           .name {
             margin-top: 20px;
           }
         }
       }
+
       .product-price {
         font-weight: 400;
-        font-size: 24px;
+        font-size: 18px;
         color: #ed6336;
         line-height: 35px;
       }
+
       .trade-status {
         font-size: 14px;
         color: #222;
       }
+
+      .trade-id,
+      .trade-time {
+        font-size: 13px;
+        color: #222;
+        cursor: default;
+
+      }
+
+      .trade-id {
+        &:hover {
+          color: #ed6336;
+        }
+      }
+
       .moveto-favorites,
       .get-invoice {
         color: #000;
         font-size: 14px;
         cursor: pointer;
+
         &:hover {
           color: #ed6336;
         }
       }
+
       // .get-invoice {
       //   color: #666;
       // }
@@ -448,6 +496,7 @@ export default {
       }
     }
   }
+
   .pagination-wrap {
     display: flex;
     justify-content: flex-end;
@@ -456,5 +505,4 @@ export default {
     margin-top: 10px;
     background-color: #fff;
   }
-}
-</style>
+}</style>

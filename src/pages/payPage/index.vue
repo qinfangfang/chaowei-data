@@ -1,10 +1,10 @@
 <template>
   <div class="pay-wrap-module">
     <div class="qr-code-wrap" v-show="showQrCode">
-      <!-- 微信支付 -->
-      <canvas v-if="payType == '1'" id="qr-code"></canvas>
+      <!-- 微信支付 | 支付宝支付 -->
+      <canvas id="qr-code"></canvas>
       <iframe
-        v-if="aliPayFormHtml"
+        v-if="false && aliPayFormHtml"
         :srcdoc="aliPayFormHtml"
         frameborder="no"
         border="0"
@@ -87,15 +87,15 @@ export default {
       if (this.orderId) return;
       if (Cookies.get("payInfo")) { // cookies有值
         const payInfo = Cookies.get("payInfo");
-        if (this.payType == "1") {
+        // if (this.payType == "1") {
           // 微信支付
           setTimeout(() => {
             this.createQrCode(payInfo);
           }, 100)
-        } else {
-          this.showQrCode = true;
-          this.aliPayFormHtml = payInfo;
-        }
+        // } else {
+        //   this.showQrCode = true;
+        //   this.aliPayFormHtml = payInfo;
+        // }
         return;
       }
       const modelIds = JSON.parse(this.$route?.query?.modelIds || "[]");
@@ -109,17 +109,22 @@ export default {
       if (!res.code && res?.payInfo) {
         this.orderId = res?.orderId;
         this.count = res?.payInfoExpirySeconds || 6000; // 默认剩余时间6000s
-        if (this.payType == "1") {
-          // 微信支付
-          // localStorage.setItem("payInfo", JSON.stringify(payInfo));
-          const seconds = 600; // 600s
-          const expires = new Date(new Date() * 1 + seconds * 1000);
-          Cookies.set("payInfo", payInfo, { expires });
-          this.createQrCode(payInfo);
-        } else {
-          this.showQrCode = true;
-          this.aliPayFormHtml = payInfo;
-        }
+
+        const seconds = 600; // 600s
+        const expires = new Date(new Date() * 1 + seconds * 1000);
+        Cookies.set("payInfo", payInfo, { expires });
+
+        Cookies.set("payEndTime", expires, { expires });
+
+        
+        this.createQrCode(payInfo);
+        // if (this.payType == "1") {
+        //   // 微信支付
+        //   this.createQrCode(payInfo);
+        // } else {
+        //   this.showQrCode = true;
+        //   this.aliPayFormHtml = payInfo;
+        // }
         this.payCallBack();
       } else {
         res?.msg && this.$message.error(res?.msg);
@@ -161,7 +166,9 @@ export default {
   },
   created() {
     this.payType = this.$route?.query?.payType;
-    this.submitBuyCar();
+    setTimeout(() => {
+      this.submitBuyCar();
+    }, 10000)
   },
   beforeDestroy() {
     this.closeTimer();

@@ -169,6 +169,7 @@
 import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
 import { orderCreate, queryOrderStatus } from "@/api/order.js";
 import QRCode from "qrcode";
+import Cookies from "js-cookie";
 
 export default {
   data() {
