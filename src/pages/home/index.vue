@@ -1,5 +1,20 @@
 <template>
   <div class="chaowei-home">
+    <div class="chaowei-video">
+      <video
+        src="@/assets/video/home_video.mp4"
+        autoplay="autoplay"
+        muted="muted"
+        loop="loop"
+      ></video>
+      <div class="video-desc">
+        <div class="desc-title">PEOPLEGROUNDTRUTH</div>
+        <div class="desc-sub">
+          多场景 · 多姿态 · 多民族 简单易用的扫描模型库
+        </div>
+        <div class="right-selected" @click="rightNowSelect">立即挑选！</div>
+      </div>
+    </div>
     <div class="model-list">
       <template v-for="item in modelList">
         <div class="model-item" :key="item.id">
@@ -52,17 +67,6 @@ export default {
       modelList: [
         {
           id: "1",
-          imgUrl: Home1,
-          height: "856px",
-          title: "适合中国创作者的\n3D扫描人物超市",
-          subTitle: "多场景 · 多姿态 · 多民族 简单易用的亚洲扫描模型库",
-          buttonList: [
-            { id: "1.1", name: "立即挑选！", bgColor: "#ED6336" },
-            { id: "1.2", name: "下载模板", bgColor: "#A8A8A8" },
-          ],
-        },
-        {
-          id: "2",
           imgUrl: Home2,
           height: "754px",
           title: "全身 A-POSE 模型",
@@ -73,30 +77,12 @@ export default {
           ],
         },
         {
-          id: "3",
-          imgUrl: Home3,
-          height: "754px",
-          title: "PBR人物头脸部模型",
-          subTitle:
-            "带有8K PBR贴图的高精度人物头面部模型\n已重新拓扑并附带骨骼绑定",
-          buttonList: [{ id: "3.1", name: "即将上线", bgColor: "#A8A8A8" }],
-        },
-        {
-          id: "4",
-          imgUrl: Home4,
-          height: "754px",
-          title: "4D 人物模型序列",
-          subTitle:
-            "4D人是由不同角度的\n高帧率镜头和红外相机捕捉的动态模型序列\n每个模型都包含一个高分辨率的网格和贴图序列\n无需人工拓扑和制作动画 更真实、流畅",
-          buttonList: [{ id: "4.1", name: "即将上线", bgColor: "#A8A8A8" }],
-        },
-        {
-          id: "5",
+          id: "2",
           imgUrl: Home5,
           height: "754px",
           title: "模型扫描设备介绍",
           subTitle:
-            "模型素材库的所有所有模型\n都是由超维生产的设备 按照真实人体1:1完成采集\n如需对采集设备感兴趣 可以前往设备网站",
+            "模型素材库的所有所有模型\n都是由超维生产的设备\n按照真实人体1:1完成采集\n如需对采集设备感兴趣\n可以前往设备网站",
           buttonList: [{ id: "5.1", name: "点击跳转", bgColor: "#A8A8A8" }],
         },
       ],
@@ -106,7 +92,11 @@ export default {
     Footer,
     Login,
   },
-  methods: {},
+  methods: {
+    rightNowSelect() {
+      this.$router.push('/modelList');
+    }
+  },
   created() {
     console.log("this.$router", this.$router);
   },
@@ -114,13 +104,58 @@ export default {
 </script>
 <style lang="less" scoped>
 .chaowei-home {
+  .chaowei-video {
+    position: relative;
+    width: 100%;
+    margin-bottom: -5px;
+    video {
+      width: 100%;
+    }
+    .video-desc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      width: 50vw;
+      top: 50%;
+      left: 5%;
+      transform: translate(0, -50%);
+      color: #fff;
+      z-index: 1;
+      .desc-title {
+        font-family: Kanit, Kanit;
+        font-weight: bold;
+        font-size: 56px;
+        line-height: 75px;
+        text-align: center;
+      }
+      .desc-sub {
+        font-size: 18px;
+        line-height: 26px;
+        letter-spacing: 4px;
+      }
+      .right-selected {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 296px;
+        height: 56px;
+        margin-top: 120px;
+        background-color: #ed6336;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 24px;
+        cursor: pointer;
+      }
+    }
+  }
   .model-list {
     .model-item {
       display: flex;
       justify-content: space-between;
       color: #000;
       background-color: #fff;
-      &:nth-child(odd) {
+      &:nth-child(even) {
         background-color: #f3f3f3;
         flex-direction: row-reverse;
       }
@@ -154,9 +189,10 @@ export default {
         .sub-tilte {
           margin-top: 16px;
           font-family: Inter, Inter;
-          font-size: 20px;
-          line-height: 23px;
+          font-size: 18px;
+          line-height: 26px;
           letter-spacing: 4px;
+          text-align: center;
         }
         .button-list {
           display: flex;
@@ -166,8 +202,8 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 200px;
-            height: 38px;
+            width: 296px;
+            height: 56px;
             border-radius: 12px 12px 12px 12px;
             color: #fff;
             font-family: Inter, Inter;
@@ -186,14 +222,14 @@ export default {
     padding: 80px 75px 45px;
     background-color: #fff;
     .partner-title {
-      font-family: Inter, Inter;
       font-weight: bold;
-      font-size: 48px;
+      font-size: 40px;
       color: #000;
       line-height: 56px;
       text-align: center;
     }
     .partner-pic {
+      margin-top: 30px;
       img {
         display: block;
         width: 100%;

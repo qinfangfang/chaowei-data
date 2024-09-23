@@ -157,9 +157,9 @@ const menuList = [
       },
     ],
   },
-  { id: 3, nameZh: "常见问题", nameEn: "Q&A", path: "/questionList" },
-  { id: 4, nameZh: "教程", nameEn: "Tutorials", path: "/home" },
-  { id: 5, nameZh: "联系我们", nameEn: "Contact us", path: "/contactUs" },
+  { id: 3, nameZh: "常见问题", nameEn: "Q&A", redirect: true, path: "/questionList" },
+  { id: 4, nameZh: "教程", nameEn: "Tutorials", redirect: true, path: "" },
+  { id: 5, nameZh: "联系我们", nameEn: "Contact us", redirect: true, path: "/contactUs" },
 ];
 
 export default {
@@ -232,6 +232,10 @@ export default {
     },
     // 联系我们
     jumpTo(item, config = {}) {
+      if(item?.redirect) {
+        item?.path && this.$router.push(item?.path);
+        return;
+      }
       if (config.hasChild) {
         // 有子节点
         this.activeChildId =
