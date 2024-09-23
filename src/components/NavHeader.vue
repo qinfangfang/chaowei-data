@@ -81,7 +81,8 @@ const menuList = [
     nameZh: "模型库",
     nameEn: "Model Library",
     with: "490px",
-    // path: "/modelList",
+    redirect: true,
+    path: "/modelList",
     subMenuList: [
       {
         id: "1.1",
@@ -134,28 +135,29 @@ const menuList = [
     nameZh: "免费案例",
     nameEn: "Free Model",
     with: "188px",
-    // path: "/modelList?isFree=1",
-    subMenuList: [
-      {
-        id: "2.1",
-        list: [
-          {
-            id: "2.1.1",
-            isFree: 1,
-            nameEn: "全身姿态模型",
-            nameZh: "全身姿态模型",
-            path: "/modelList?modelType=1&isFree=1",
-          },
-          {
-            id: "2.1.2",
-            isFree: 1,
-            nameEn: "全身 A-pose模型",
-            nameZh: "全身 A-pose模型",
-            path: "/modelList?modelType=3&isFree=1",
-          },
-        ],
-      },
-    ],
+    redirect: true,
+    path: "/freeModel",
+    // subMenuList: [
+    //   {
+    //     id: "2.1",
+    //     list: [
+    //       {
+    //         id: "2.1.1",
+    //         isFree: 1,
+    //         nameEn: "全身姿态模型",
+    //         nameZh: "全身姿态模型",
+    //         path: "/modelList?modelType=1&isFree=1",
+    //       },
+    //       {
+    //         id: "2.1.2",
+    //         isFree: 1,
+    //         nameEn: "全身 A-pose模型",
+    //         nameZh: "全身 A-pose模型",
+    //         path: "/modelList?modelType=3&isFree=1",
+    //       },
+    //     ],
+    //   },
+    // ],
   },
   { id: 3, nameZh: "常见问题", nameEn: "Q&A", redirect: true, path: "/questionList" },
   { id: 4, nameZh: "教程", nameEn: "Tutorials", redirect: true, path: "" },

@@ -5,13 +5,22 @@
       <div class="all-products">
         <div class="prod-operate">
           <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange">全选</el-checkbox>
+            <el-checkbox v-model="selectAll" @change="checkChange"
+              >全选</el-checkbox
+            >
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="patchDeleteClick">删除所选</el-button>
+            <el-button size="mini" @click="patchDeleteClick"
+              >删除所选</el-button
+            >
           </div>
         </div>
-        <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table
+          ref="multipleTable"
+          :data="prodList"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
           <el-table-column type="selection" width="100"></el-table-column>
           <el-table-column label="" width="130">
             <template slot-scope="scope">
@@ -45,7 +54,10 @@
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
               <!-- <div class="moveto-favorites">移入收藏夹</div> -->
-              <div class="delete-btn" @click="deleteClick(scope.$index, scope.row)">
+              <div
+                class="delete-btn"
+                @click="deleteClick(scope.$index, scope.row)"
+              >
                 删除
               </div>
             </template>
@@ -55,8 +67,10 @@
       <div class="buy-cost">
         <div class="title" :class="`${$i18n?.locale}`">
           {{ $i18n?.locale == "Zh" ? "结算清单" : "Settlement List" }}
-          <span>{{ $i18n?.locale == "Zh" ? "已选" : "Selected" }} {{ totalCount }}
-            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span>
+          <span
+            >{{ $i18n?.locale == "Zh" ? "已选" : "Selected" }} {{ totalCount }}
+            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span
+          >
         </div>
         <div class="coupon-discount">
           <div class="discount-item total-money">
@@ -83,8 +97,11 @@
             </div>
             <div class="pay-list">
               <div class="pay-item" @click="tabChangePayType('1')">
-                <i :class="`${payType == '1' ? 'el-icon-success' : 'el-icon-circle-check'
-                  }`"></i>
+                <i
+                  :class="`${
+                    payType == '1' ? 'el-icon-success' : 'el-icon-circle-check'
+                  }`"
+                ></i>
                 <div class="pay-icon">
                   <img src="@/assets/imgs/buyCar/weChat_icon.jpg" alt="" />
                 </div>
@@ -93,8 +110,11 @@
                 </div>
               </div>
               <div class="pay-item" @click="tabChangePayType('2')">
-                <i :class="`${payType == '2' ? 'el-icon-success' : 'el-icon-circle-check'
-                  }`"></i>
+                <i
+                  :class="`${
+                    payType == '2' ? 'el-icon-success' : 'el-icon-circle-check'
+                  }`"
+                ></i>
                 <div class="pay-icon">
                   <img src="@/assets/imgs/buyCar/aliPay_icon.jpg" alt="" />
                 </div>
@@ -102,13 +122,30 @@
                   {{ $i18n?.locale == "Zh" ? "支付宝" : "Alipay" }}
                 </div>
               </div>
-              <paypal-buttons :on-approve="onApprove" :create-order="createOrder" :on-shipping-address-change="onShippingAddressChange" :on-shipping-options-change="onShippingOptionsChange" :on-error="onError" :style-object="style" />
+              <!-- <paypal-buttons
+                :on-approve="onApprove"
+                :create-order="createOrder"
+                :on-shipping-address-change="onShippingAddressChange"
+                :on-shipping-options-change="onShippingOptionsChange"
+                :on-error="onError"
+                :style-object="style"
+              /> -->
             </div>
             <div class="qr-code-wrap" v-show="showQrCode">
               <!-- 微信支付 -->
               <canvas v-if="payType == '1'" id="qr-code"></canvas>
-              <iframe v-if="aliPayFormHtml" :srcdoc="aliPayFormHtml" frameborder="no" border="0" marginwidth="0"
-                marginheight="0" scrolling="no" width="200" height="200" style="overflow: hidden"></iframe>
+              <iframe
+                v-if="aliPayFormHtml"
+                :srcdoc="aliPayFormHtml"
+                frameborder="no"
+                border="0"
+                marginwidth="0"
+                marginheight="0"
+                scrolling="no"
+                width="200"
+                height="200"
+                style="overflow: hidden"
+              ></iframe>
             </div>
             <div class="count-down" v-if="count">
               支付剩余时间：<span>{{ countDown.minutes }} </span>分 :
@@ -124,7 +161,11 @@
             </div>
             <!-- <div class="discount-money">共减 {{ unit }} 17.00</div> -->
           </div>
-          <div class="submit-btn" :class="`${orderId || !selectedList.length ? 'disabled' : ''}`" @click="submitBuyCar">
+          <div
+            class="submit-btn"
+            :class="`${orderId || !selectedList.length ? 'disabled' : ''}`"
+            @click="submitBuyCar"
+          >
             {{ $i18n?.locale == "Zh" ? "结算" : "Settle Accounts" }}
           </div>
         </div>
@@ -138,9 +179,9 @@ import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
 import { orderCreate, queryOrderStatus } from "@/api/order.js";
 import QRCode from "qrcode";
 import Cookies from "js-cookie";
-console.log(paypal.Buttons, 'PayPalButton---------')
-console.log(Vue, 'window.Vue---------')
-const PayPalButton = paypal.Buttons.driver('vue', Vue)
+console.log(paypal.Buttons, "PayPalButton---------");
+console.log(Vue, "window.Vue---------");
+const PayPalButton = paypal.Buttons.driver("vue", Vue);
 export default {
   data() {
     return {
@@ -157,7 +198,7 @@ export default {
     };
   },
   components: {
-      "paypal-buttons": PayPalButton,
+    "paypal-buttons": PayPalButton,
   },
   computed: {
     unit() {
@@ -189,67 +230,68 @@ export default {
         seconds == 0 ? "00" : seconds > 10 ? `${seconds}` : `0${seconds}`;
       return { minutes, seconds };
     },
-    createOrder: function() {
+    createOrder: function () {
       return (data) => {
-          // Order is created on the server and the order id is returned
-          return fetch("/my-server/create-paypal-order", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  // use the "body" param to optionally pass additional order information
-                  // like product skus and quantities
-                  body: JSON.stringify({
-                      cart: [{
-                          sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
-                          quantity: "YOUR_PRODUCT_QUANTITY",
-                      }, ],
-                  }),
-              })
-              .then((response) => response.json())
-              .then((order) => order.id);
-      }
-  },
-  onApprove: function() {
+        // Order is created on the server and the order id is returned
+        return fetch("/my-server/create-paypal-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // use the "body" param to optionally pass additional order information
+          // like product skus and quantities
+          body: JSON.stringify({
+            cart: [
+              {
+                sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
+                quantity: "YOUR_PRODUCT_QUANTITY",
+              },
+            ],
+          }),
+        })
+          .then((response) => response.json())
+          .then((order) => order.id);
+      };
+    },
+    onApprove: function () {
       return (data) => {
-          // Order is captured on the server
-          return fetch("/my-server/capture-paypal-order", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                      orderID: data.orderID
-                  })
-              })
-              .then((response) => response.json());
-      }
-  },
-  onShippingAddressChange(data, actions) {
+        // Order is captured on the server
+        return fetch("/my-server/capture-paypal-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderID: data.orderID,
+          }),
+        }).then((response) => response.json());
+      };
+    },
+    onShippingAddressChange(data, actions) {
       // if (data.shippingAddress.countryCode !== 'US') {
       //     return actions.reject(data.errors.COUNTRY_ERROR);
       // }
-  },
-  onShippingOptionsChange(data, actions) {
+    },
+    onShippingOptionsChange(data, actions) {
       // if (data.selectedShippingOption.type === 'PICKUP') {
       //     return actions.reject(data.errors.STORE_UNAVAILABLE);
       // }
-  },
-  onError: function() {
+    },
+    onError: function () {
       return (err) => {
-          console.error(err);
-          window.location.href = "/your-error-page-here";
-      }
-  },
-  style: function() {
+        console.error(err);
+        window.location.href = "/your-error-page-here";
+      };
+    },
+    style: function () {
       return {
-          shape: 'pill',
-          color: 'gold',
-          layout: 'horizontal',
-          label: 'paypal',
-          tagline: false,
-      }
-  },
+        shape: "pill",
+        color: "gold",
+        layout: "horizontal",
+        label: "paypal",
+        tagline: false,
+      };
+    },
   },
   methods: {
     // 跳转详情页
@@ -273,10 +315,15 @@ export default {
       console.log("提交购物车");
       if (this.orderId || !this.selectedList.length) return;
       const modelIds = this.selectedList.map((item) => item?.modelId);
-      Cookies.set("payInfo", '');
-      localStorage.setItem(`payProductList_${modelIds.join('&')}`, JSON.stringify(this.selectedList));
+      Cookies.set("payInfo", "");
+      localStorage.setItem(
+        `payProductList_${modelIds.join("&")}`,
+        JSON.stringify(this.selectedList)
+      );
       // window.open(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
-      this.$router.replace(`/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`);
+      this.$router.replace(
+        `/payPage?payType=${this.payType}&modelIds=${JSON.stringify(modelIds)}`
+      );
       return;
       const res = await orderCreate({
         payType: this.payType,
@@ -323,7 +370,7 @@ export default {
             res?.msg && this.$message.error(res?.msg);
           }
         })
-        .catch(() => { });
+        .catch(() => {});
     },
     // 删除确认
     deleteClick(idx, item) {
@@ -342,7 +389,7 @@ export default {
             res?.msg && this.$message.error(res?.msg);
           }
         })
-        .catch(() => { });
+        .catch(() => {});
     },
     checkChange(val) {
       console.log("checkChange>>>>>>>>", val);
@@ -456,7 +503,7 @@ export default {
             border-color: #ed6336;
           }
 
-          /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
+          /deep/ .el-checkbox__input.is-checked + .el-checkbox__label {
             color: #ed6336;
           }
 
@@ -547,7 +594,7 @@ export default {
             border-color: #ed6336;
           }
 
-          .el-checkbox__input.is-checked+.el-checkbox__label {
+          .el-checkbox__input.is-checked + .el-checkbox__label {
             color: #ed6336;
           }
 
@@ -561,7 +608,6 @@ export default {
           }
 
           .el-checkbox__inner {
-
             &:hover,
             &:focus {
               border-color: #ed6336;
@@ -860,4 +906,5 @@ export default {
       }
     }
   }
-}</style>
+}
+</style>
