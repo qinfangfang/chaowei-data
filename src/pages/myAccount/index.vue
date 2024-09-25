@@ -8,7 +8,7 @@
           :class="`${type === '1' ? 'active' : ''}`"
           @click="tabClick('1')"
         >
-          <span>交易记录</span><span>4</span>
+          <span>交易记录</span><span v-if="tradeCount">{{ tradeCount }}</span>
         </div>
         <!-- <div
           class="menu-item"
@@ -24,13 +24,13 @@
         >
           足迹
         </div> -->
-        <div
+        <!-- <div
           class="menu-item"
           :class="`${type === '4' ? 'active' : ''}`"
           @click="tabClick('4')"
         >
           开票信息
-        </div>
+        </div> -->
         <!-- <div
           class="menu-item"
           :class="`${type === '5' ? 'active' : ''}`"
@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="content-wrap">
-      <TradeLog v-if="type === '1'" />
+      <TradeLog v-if="type === '1'" @updateCount="updateCount" />
       <Favorites v-if="type === '2'" />
       <FootPrint v-if="type === '3'" />
       <Invocie v-if="type === '4'" />
@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       type: "1", // 1 交易记录 2 收藏夹 3 足迹 4 开票信息 5 优惠券
+      tradeCount: 0,
     };
   },
   components: {
@@ -73,6 +74,9 @@ export default {
     tabClick(key) {
       this.type = key;
     },
+    updateCount(val) {
+      this.tradeCount = val || 0;
+    }
   },
   created() {
     this.type = this.$route.query?.type || '1';

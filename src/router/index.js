@@ -28,6 +28,14 @@ export default new VueRouter({
       },
     },
     {
+      path: "/freeModel",
+      name: "FreeModel",
+      component: () => import("../pages/freeModel/index.vue"),
+      meta: {
+        title: "免费模型",
+      },
+    },
+    {
       path: "/prodDetail/:id",
       name: "ProdDetail",
       component: () => import("../pages/prodDetail/index.vue"),

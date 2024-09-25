@@ -73,7 +73,7 @@
     <div class="pagination-wrap" v-if="pagination.total > pagination.pageSize">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background align="right"
         :current-page="pagination.pageNum" :page-sizes="pagination.pageSizes" :page-size="pagination.pageSize"
-        layout="total, sizes, prev, pager, next" :total="100 || pagination.total">
+        layout="total, sizes, prev, pager, next" :total="pagination.total">
       </el-pagination>
     </div>
     <InvoiceDialog :visible="invoiceVisible" @confirm="invoiceHanlder" @close="invoiceVisible = false" />
@@ -109,7 +109,7 @@ export default {
       pagination: {
         total: 0,
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 5,
         pageSizes: [5, 10, 20],
       },
       invoiceData: {},
@@ -231,6 +231,7 @@ export default {
       console.log("订单列表>>>>>>>>", res);
       this.prodList = res?.data || [];
       this.pagination.total = res?.total || 0;
+      this.$emit('updateCount', res?.total || 0);
     },
   },
   created() {
@@ -504,5 +505,6 @@ export default {
     height: 40px;
     margin-top: 10px;
     background-color: #fff;
+    border-radius: 4px;
   }
 }</style>

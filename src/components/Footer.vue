@@ -28,6 +28,7 @@
             class="sub-item"
             v-for="subItem in item?.menuList"
             :key="subItem?.id"
+            @click="jumpTo(subItem)"
           >
             {{ subItem?.[`name${$i18n.locale}`] }}
           </div>
@@ -93,18 +94,18 @@ export default {
                 nameEn: "Transaction Record",
                 path: "/myAccount",
               },
-              {
-                id: "list-2-2",
-                nameZh: "收藏夹",
-                nameEn: "Favorites",
-                path: "/myAccount",
-              },
-              {
-                id: "list-2-3",
-                nameZh: "优惠券",
-                nameEn: "Coupons",
-                path: "/myAccount",
-              },
+              // {
+              //   id: "list-2-2",
+              //   nameZh: "收藏夹",
+              //   nameEn: "Favorites",
+              //   path: "/myAccount",
+              // },
+              // {
+              //   id: "list-2-3",
+              //   nameZh: "优惠券",
+              //   nameEn: "Coupons",
+              //   path: "/myAccount",
+              // },
             ],
           },
           {
@@ -124,12 +125,12 @@ export default {
                 nameEn: "Q&A",
                 path: "//questionList",
               },
-              {
-                id: "list-3-3",
-                nameZh: "模型授权范围",
-                nameEn: "Model Authorization Scope",
-                path: "/home",
-              },
+              // {
+              //   id: "list-3-3",
+              //   nameZh: "模型授权范围",
+              //   nameEn: "Model Authorization Scope",
+              //   path: "/home",
+              // },
               {
                 id: "list-3-4",
                 nameZh: "教程",
@@ -143,6 +144,10 @@ export default {
     };
   },
   methods: {
+    // 跳转
+    jumpTo(item) {
+      item?.path && this.$router.push(item?.path);
+    },
     // 模型分类
     modelTypeHandler() {
       setTimeout(() => {
