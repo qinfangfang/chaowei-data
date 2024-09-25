@@ -135,7 +135,7 @@
 <script>
 import Vue from "vue";
 import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
-import { orderCreate, queryOrderStatus } from "@/api/order.js";
+import { orderCreate, queryOrderStatus, orderpaypalCapture } from "@/api/order.js";
 import QRCode from "qrcode";
 import Cookies from "js-cookie";
 console.log(paypal.Buttons, 'PayPalButton---------')
@@ -189,56 +189,74 @@ export default {
         seconds == 0 ? "00" : seconds > 10 ? `${seconds}` : `0${seconds}`;
       return { minutes, seconds };
     },
-    createOrder: function() {
+    createOrder() {
+      const that = this
       return (data) => {
+        const modelIds = that.selectedList.map((item) => item?.modelId);
+        
+        return orderCreate({
+            payType: '3',
+            modelIds,
+          })
+          .then((response) => response.json())
+          .then((order) => order.payInfo);
+          // .then((order) => {
+          //   console.log(order, 'order')
+          //   return order.payInfo
+          // });
+        // return fetch("http://148.135.35.31:8200/api/order/create", {
+        //                     method: "POST",
+        //                     headers: {
+        //                         "Content-Type": "application/json",
+        //                         "X-Language": 'En',
+        //                     },
+        //                     // use the "body" param to optionally pass additional order information
+        //                     // like product skus and quantities
+        //                     body: JSON.stringify({
+        //                       payType: '3',
+        //                       modelIds,
+        //                     }),
+        //                 })
+        //                 .then((response) => response.json())
+        //                 .then((order) => order.payInfo);
           // Order is created on the server and the order id is returned
-          return fetch("/my-server/create-paypal-order", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  // use the "body" param to optionally pass additional order information
-                  // like product skus and quantities
-                  body: JSON.stringify({
-                      cart: [{
-                          sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
-                          quantity: "YOUR_PRODUCT_QUANTITY",
-                      }, ],
-                  }),
-              })
-              .then((response) => response.json())
-              .then((order) => order.id);
+          
+            // return '1XW54853JC509943X'
       }
   },
-  onApprove: function() {
+  onApprove() {
       return (data) => {
           // Order is captured on the server
-          return fetch("/my-server/capture-paypal-order", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                      orderID: data.orderID
+          return orderpaypalCapture({
+                      paypalOrderId: data.orderID
                   })
-              })
               .then((response) => response.json());
+          // return fetch("/my-server/capture-paypal-order", {
+          //         method: "POST",
+          //         headers: {
+          //             "Content-Type": "application/json",
+          //         },
+          //         body: JSON.stringify({
+          //             orderID: data.orderID
+          //         })
+          //     })
+          //     .then((response) => response.json());
       }
   },
   onShippingAddressChange(data, actions) {
-      // if (data.shippingAddress.countryCode !== 'US') {
-      //     return actions.reject(data.errors.COUNTRY_ERROR);
-      // }
+      if (data.shippingAddress && data.shippingAddress.countryCode !== 'US') {
+          return actions.reject(data.errors.COUNTRY_ERROR);
+      }
   },
   onShippingOptionsChange(data, actions) {
-      // if (data.selectedShippingOption.type === 'PICKUP') {
-      //     return actions.reject(data.errors.STORE_UNAVAILABLE);
-      // }
+      if (data.selectedShippingOption && data.selectedShippingOption.type === 'PICKUP') {
+          return actions.reject(data.errors.STORE_UNAVAILABLE);
+      }
   },
   onError: function() {
       return (err) => {
           console.error(err);
-          window.location.href = "/your-error-page-here";
+          window.location.href = "/buyCar";
       }
   },
   style: function() {

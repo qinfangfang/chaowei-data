@@ -27,6 +27,12 @@ export const orderPreCreate = (data = {}) => {
     data,
   });
 };
+export const orderpaypalCapture = (data = {}) => {
+  return request({
+    url: `/order/paypalCapture`,
+    data,
+  });
+};
 
 /**
  * 开发票
@@ -74,7 +80,7 @@ export const orderCreate = (data = {}) => {
     url: `/order/create`,
     data,
     headers: {
-      "X-Language": "Zh",
+      "X-Language": data.payType === '3' ? 'En' : "Zh",
     },
   });
 };
