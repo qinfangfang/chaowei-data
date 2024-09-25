@@ -69,11 +69,11 @@ export default {
           id: "1",
           imgUrl: Home2,
           height: "754px",
-          title: "全身 A-POSE 模型",
-          subTitle: "基于动画流程制作的APose动画模型\n已重新拓扑并附带骨骼绑定",
+          title: "3D全身姿态模型",
+          subTitle: "由3D数据扫描团队通过瞬时三维成像系统完成的写实风格模型\n素材数量多、可筛选、姿势丰富， \n包含不同场景、年龄、风格的人物数据。",
           buttonList: [
             { id: "2.1", name: "立即挑选！", bgColor: "#ED6336" },
-            { id: "2.2", name: "下载模板", bgColor: "#A8A8A8" },
+            { id: "2.2", name: "下载免费模型", bgColor: "#A8A8A8" },
           ],
         },
         {
@@ -82,7 +82,7 @@ export default {
           height: "754px",
           title: "模型扫描设备介绍",
           subTitle:
-            "模型素材库的所有所有模型\n都是由超维生产的设备\n按照真实人体1:1完成采集\n如需对采集设备感兴趣\n可以前往设备网站",
+            "模型素材库的所有所有模型\n都是由超维生产的设备 按照真实人体1:1完成采集\n如需对采集设备感兴趣 可以前往设备网站",
           buttonList: [{ id: "5.1", name: "点击跳转", bgColor: "#A8A8A8" }],
         },
       ],
@@ -160,8 +160,9 @@ export default {
         flex-direction: row-reverse;
       }
       &:nth-child(1) {
-        color: #fff;
-        background: linear-gradient(180deg, #404040 6%, #000000 100%);
+        color: #000;
+        background: #fff;
+        // background: linear-gradient(180deg, #404040 6%, #000000 100%);
       }
       .model-item-pic {
         flex: 1;
@@ -189,7 +190,7 @@ export default {
         .sub-tilte {
           margin-top: 16px;
           font-family: Inter, Inter;
-          font-size: 18px;
+          font-size: 16px;
           line-height: 26px;
           letter-spacing: 4px;
           text-align: center;
