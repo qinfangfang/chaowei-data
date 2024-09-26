@@ -79,7 +79,7 @@ const menuList = [
   {
     id: 1,
     nameZh: "模型库",
-    nameEn: "Model Library",
+    nameEn: "MODEL LIBRARY",
     with: "490px",
     redirect: true,
     path: "/modelList",
@@ -133,7 +133,7 @@ const menuList = [
   {
     id: 2,
     nameZh: "免费案例",
-    nameEn: "Free Model",
+    nameEn: "FREE MODLE",
     with: "188px",
     redirect: true,
     path: "/freeModel",
@@ -159,9 +159,9 @@ const menuList = [
     //   },
     // ],
   },
-  { id: 3, nameZh: "常见问题", nameEn: "Q&A", redirect: true, path: "/questionList" },
-  { id: 4, nameZh: "教程", nameEn: "Tutorials", redirect: true, path: "" },
-  { id: 5, nameZh: "联系我们", nameEn: "Contact us", redirect: true, path: "/contactUs" },
+  { id: 3, nameZh: "常见问题", nameEn: "FAQ", redirect: true, path: "/questionList" },
+  { id: 4, nameZh: "教程", nameEn: "TUTORIALS", redirect: true, path: "" },
+  { id: 5, nameZh: "联系我们", nameEn: "CONTACT US", redirect: true, path: "/contactUs" },
 ];
 
 export default {

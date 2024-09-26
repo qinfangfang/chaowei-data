@@ -53,7 +53,7 @@ export default {
           {
             id: "list-1",
             titleZh: "模型分类",
-            titleEn: 'Model Categories',
+            titleEn: 'Model Classification',
             menuList: [
               {
                 id: "list-1-1",
@@ -86,7 +86,7 @@ export default {
           {
             id: "list-2",
             titleZh: "会员页面",
-            titleEn: "Member Page",
+            titleEn: "Member's page",
             menuList: [
               {
                 id: "list-2-1",
@@ -122,13 +122,13 @@ export default {
               {
                 id: "list-3-2",
                 nameZh: "常见问题",
-                nameEn: "Q&A",
+                nameEn: "FAQ",
                 path: "//questionList",
               },
               // {
               //   id: "list-3-3",
               //   nameZh: "模型授权范围",
-              //   nameEn: "Model Authorization Scope",
+              //   nameEn: "Legal documents",
               //   path: "/home",
               // },
               {
