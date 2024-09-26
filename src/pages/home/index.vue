@@ -28,7 +28,7 @@
             <img :src="item?.imgUrl" alt="" />
           </div>
           <div class="model-item-explain">
-            <div class="main-tilte">{{ item?.[`title${lang}`] }}</div>
+            <div class="main-tilte" :class="`${lang}`">{{ item?.[`title${lang}`] }}</div>
             <div class="sub-tilte">{{ item?.[`subTitle${lang}`] }}</div>
             <div class="button-list">
               <div
@@ -151,6 +151,7 @@ export default {
         text-align: center;
       }
       .desc-sub {
+        height: 52px;
         font-size: 18px;
         line-height: 26px;
         letter-spacing: 4px;
@@ -163,7 +164,7 @@ export default {
         justify-content: center;
         width: 296px;
         height: 56px;
-        margin-top: 120px;
+        margin-top: 100px;
         background-color: #ed6336;
         border-radius: 12px;
         font-weight: bold;
@@ -209,6 +210,9 @@ export default {
           font-weight: bold;
           font-size: 48px;
           line-height: 56px;
+          &.En {
+            font-size: 38px;
+          }
         }
         .sub-tilte {
           margin-top: 16px;

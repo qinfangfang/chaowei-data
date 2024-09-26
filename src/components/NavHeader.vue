@@ -5,7 +5,7 @@
     </div>
     <div class="nav-center">
       <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click.stop="mainJumpTo(item, index)">
-        <span :class="`${activeTab == index ? 'active' : ''}`">{{ item?.[`name${$i18n?.locale}`] }}</span>
+        <span :class="`${activeTab == index ? 'active' : ''} ${locale}`">{{ item?.[`name${$i18n?.locale}`] }}</span>
         <div class="sub-menu-wrap" v-if="item?.subMenuList" :style="{ width: item?.with }">
           <!-- <div
           class="sub-menu-wrap"
@@ -354,6 +354,9 @@ export default {
         padding: 5px 20px;
         white-space: nowrap;
         border-radius: 6px;
+        &.En {
+          font-size: 20px;
+        }
         &.active {
           color: #fff;
           background: #ed6336;
