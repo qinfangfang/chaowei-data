@@ -5,18 +5,32 @@
         <img :src="headerImg" />
       </div>
       <div class="banner-text">
-        <div class="banner-title">超写实人物模型商城</div>
+        <div class="banner-title" :class="`${lang}`">
+          {{ isZh ? "超写实人物模型商城" : "PEOPLEGROUNDTRUTH" }}
+        </div>
         <div class="banner-subtitle">
-          向你推荐次时代<br />超写实扫描人物模型
+          {{
+            isZh
+              ? "向你推荐次时代\n超写实扫描人物模型"
+              : "Recommended for next-gen\nUltra-Realistic Scanning\nCharacter Models"
+          }}
         </div>
       </div>
     </div>
     <div class="multi-model-wrap">
-      <div class="title">选择最契合的写实人物模型</div>
+      <div class="title">
+        {{
+          isZh
+            ? "选择最契合的写实人物模型"
+            : "Select Realistic Character Models"
+        }}
+      </div>
       <div class="sub-title">
-        网站包含大量3D扫描模特数据素材数量多、姿势丰富，
-        可根据您的需求进行筛选。<br />
-        包含不同场景 年龄 风格的人物数据
+        {{
+          isZh
+            ? "网站包含大量3D扫描模特数据素材数量多、姿势丰富，可根据您的需求进行筛选。\n包含不同场景 年龄 风格的人物数据"
+            : "Includes a large number of 3D scanned model data with a large number of\nposes, which can be filtered according to your needs.\nContains character data for different scenes, ages and styles."
+        }}
       </div>
       <div class="tab-list">
         <div
@@ -26,7 +40,7 @@
           :key="item?.id"
           @click="tabChange(item, idx)"
         >
-          {{ item?.name }}
+          {{ item?.[`name${lang}`] }}
         </div>
       </div>
       <div class="tab-content">
@@ -40,12 +54,8 @@
               :src="`${require(`@/assets/imgs/freeModel/style-${tabItem?.id}.png`)}`"
               alt=""
             />
-            <!-- <img
-              src="../../assets/imgs/freeModel/style-1-1.png"
-              alt=""
-            /> -->
           </div>
-          <div class="item-name">{{ tabItem?.name }}</div>
+          <div class="item-name">{{ tabItem?.[`name${lang}`] }}</div>
         </div>
       </div>
     </div>
@@ -104,37 +114,45 @@ export default {
       tabList: [
         {
           id: 1,
-          name: "多场景人物数据",
+          nameZh: "多场景人物数据",
+          nameEn: "Multi-scene character",
           list: [
-            { id: "1-1", name: "校园" },
-            { id: "1-2", name: "运动" },
-            { id: "1-3", name: "生活" },
-            { id: "1-4", name: "商务" },
-            { id: "1-5", name: "艺术" },
+            { id: "1-1", nameZh: "校园", nameEn: "School style" },
+            { id: "1-2", nameZh: "运动", nameEn: "Sporty style" },
+            { id: "1-3", nameZh: "生活", nameEn: "Casual style" },
+            { id: "1-4", nameZh: "商务", nameEn: "Business style" },
+            { id: "1-5", nameZh: "艺术", nameEn: "Artistic style" },
           ],
         },
         {
           id: 2,
-          name: "多姿态 服饰 造型数据",
+          nameZh: "多姿态 服饰 造型数据",
+          nameEn: "Multi-style Clothing",
           list: [
-            { id: "2-1", name: "姿态" },
-            { id: "2-2", name: "APOSE" },
+            { id: "2-1", nameZh: "A-POSE", nameZh: "A-POSE" },
+            {
+              id: "2-2",
+              nameZh: "多姿态 服饰 造型",
+              nameZh: "Multi-style Clothing Style",
+            },
           ],
         },
         {
           id: 3,
-          name: "多年龄段分布数据",
+          nameZh: "多年龄段分布数据",
+          nameEn: "Multi-age distribution",
           list: [
-            { id: "3-1", name: "儿童" },
-            { id: "3-2", name: "成年人" },
+            { id: "3-1", nameZh: "儿童", nameZh: "Children" },
+            { id: "3-2", nameZh: "老中青年", nameZh: "A-POSE" },
           ],
         },
         {
           id: 4,
-          name: "多地域、 民族、 肤色数据",
+          nameZh: "多地域、 民族、 肤色数据",
+          nameEn: "Multiregional composition",
           list: [
-            { id: "4-1", name: "中国" },
-            { id: "4-2", name: "外国" },
+            { id: "4-1", nameZh: "中国（多民族造型）", nameZh: "A-POSE" },
+            { id: "4-2", nameZh: "其他地区", nameZh: "A-POSE" },
           ],
         },
       ],
@@ -199,6 +217,14 @@ export default {
       ],
     };
   },
+  computed: {
+    isZh() {
+      return this.$i18n.locale === "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     tabChange(item, idx) {
       this.activeTab = idx;
@@ -236,15 +262,19 @@ export default {
         font-weight: bold;
         font-size: 70px;
         line-height: 129px;
-        letter-spacing: 50px;
+        letter-spacing: 40px;
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         text-align: center;
         white-space: nowrap;
+        &.En {
+          letter-spacing: 10px;
+          font-size: 50px;
+        }
       }
       .banner-subtitle {
         font-size: 25px;
         line-height: 40px;
-        letter-spacing: 4px;
+        white-space: pre-wrap;
       }
     }
   }
@@ -263,6 +293,7 @@ export default {
       font-size: 20px;
       letter-spacing: 1px;
       line-height: 30px;
+      white-space: pre-wrap;
     }
     .tab-list {
       display: flex;
@@ -290,7 +321,7 @@ export default {
     .tab-content {
       display: flex;
       align-items: center;
-      justify-content: space-around;
+      justify-content: center;
       height: 300px;
       margin: 60px auto 0;
       border-radius: 15px;
@@ -298,8 +329,12 @@ export default {
       min-width: 500px;
       .tab-content-item {
         color: #222;
+        margin-right: 60px;
+        &:last-child {
+          margin-right: 0px;
+        }
         .item-pic {
-          height: 170px;
+          height: 200px;
           img {
             height: 100%;
           }
@@ -329,6 +364,7 @@ export default {
         font-size: 40px;
         line-height: 60px;
         letter-spacing: 3px;
+        white-space: pre-wrap;
       }
       .desc-second {
         margin-top: 80px;
