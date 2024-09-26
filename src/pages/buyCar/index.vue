@@ -239,30 +239,7 @@ export default {
             payType: '3',
             modelIds,
           })
-          .then((response) => response.json())
           .then((order) => order.payInfo);
-          // .then((order) => {
-          //   console.log(order, 'order')
-          //   return order.payInfo
-          // });
-        // return fetch("http://148.135.35.31:8200/api/order/create", {
-        //                     method: "POST",
-        //                     headers: {
-        //                         "Content-Type": "application/json",
-        //                         "X-Language": 'En',
-        //                     },
-        //                     // use the "body" param to optionally pass additional order information
-        //                     // like product skus and quantities
-        //                     body: JSON.stringify({
-        //                       payType: '3',
-        //                       modelIds,
-        //                     }),
-        //                 })
-        //                 .then((response) => response.json())
-        //                 .then((order) => order.payInfo);
-          // Order is created on the server and the order id is returned
-          
-            // return '1XW54853JC509943X'
       }
   },
   onApprove() {
@@ -272,16 +249,6 @@ export default {
                       paypalOrderId: data.orderID
                   })
               .then((response) => response.json());
-          // return fetch("/my-server/capture-paypal-order", {
-          //         method: "POST",
-          //         headers: {
-          //             "Content-Type": "application/json",
-          //         },
-          //         body: JSON.stringify({
-          //             orderID: data.orderID
-          //         })
-          //     })
-          //     .then((response) => response.json());
       }
   },
   onShippingAddressChange(data, actions) {
