@@ -4,8 +4,8 @@
       <img src="@/assets/imgs/navOrFooter/header_logo.png" alt="" />
     </div>
     <div class="nav-center">
-      <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click.stop="jumpTo(item)">
-        <span>{{ item?.[`name${$i18n?.locale}`] }}</span>
+      <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click.stop="mainJumpTo(item, index)">
+        <span :class="`${activeTab == index ? 'active' : ''}`">{{ item?.[`name${$i18n?.locale}`] }}</span>
         <div class="sub-menu-wrap" v-if="item?.subMenuList" :style="{ width: item?.with }">
           <!-- <div
           class="sub-menu-wrap"
@@ -173,6 +173,7 @@ export default {
       menuList,
       language: localStorage.getItem("lang") || "En",
       activeChildId: "",
+      activeTab: 0,
     };
   },
   computed: {
@@ -232,7 +233,15 @@ export default {
     goHome() {
       this.$router.push("/home");
     },
-    // 联系我们
+    // 一级菜单跳转
+    mainJumpTo(item, idx) {
+      if(item?.redirect && item?.path) {
+        this.activeTab = idx;
+        item?.path && this.$router.push(item?.path);
+        return;
+      }
+    },
+    // 二级菜单跳转
     jumpTo(item, config = {}) {
       if(item?.redirect) {
         item?.path && this.$router.push(item?.path);
@@ -344,6 +353,19 @@ export default {
         font-size: 26px;
         padding: 5px 20px;
         white-space: nowrap;
+        border-radius: 6px;
+        &.active {
+          color: #fff;
+          background: #ed6336;
+        }
+      }
+
+      &:hover {
+        span {
+          color: #fff;
+          background: #ed6336;
+          border-radius: 6px;
+        }
       }
 
       @media screen and (max-width: 1420px) {
@@ -371,7 +393,7 @@ export default {
 
         span {
           background: #ed6336;
-          border-radius: 6px 6px 6px 6px;
+          border-radius: 6px;
         }
       }
 
