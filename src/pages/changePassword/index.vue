@@ -1,6 +1,6 @@
 <template>
   <div class="register-module">
-    <div class="title">忘记密码</div>
+    <div class="title">{{ isZh ? "忘记密码" : "Forgot Password" }}</div>
     <div class="register-wrap">
       <el-form
         :model="form"
@@ -9,33 +9,47 @@
         class="demo-dynamic"
       >
         <el-form-item
-          label="原密码"
+          :label="`${isZh ? '原密码' : 'Old Password'}`"
           prop="originalPassword"
           :rules="[
-            { required: true, message: '请输入原密码', trigger: 'blur' },
+            {
+              required: true,
+              message: isZh ? '请输入原密码' : 'Please enter the old password',
+              trigger: 'blur',
+            },
           ]"
         >
           <el-input
             type="password"
             v-model="form.originalPassword"
-            placeholder="请输入原密码"
+            :placeholder="`${
+              isZh ? '请输入原密码' : 'Please enter the old password'
+            }`"
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="新密码"
+          :label="`${isZh ? '新密码' : 'New Password'}`"
           prop="newPassword"
           :rules="[
-            { required: true, message: '请输入新密码', trigger: 'blur' },
+            {
+              required: true,
+              message: isZh ? '请输入新密码' : 'Please enter your new password',
+              trigger: 'blur',
+            },
           ]"
         >
           <el-input
             type="password"
             v-model="form.newPassword"
-            placeholder="请输入新密码"
+            :placeholder="`${
+              isZh ? '请输入新密码' : 'Please enter your new password'
+            }`"
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <div class="submit-btn" @click="submit">确认修改</div>
+          <div class="submit-btn" @click="submit">
+            {{ isZh ? "确认修改" : "Confirm Modification" }}
+          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -55,15 +69,23 @@ export default {
       },
     };
   },
+  computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     async submit() {
       // const { originalPassword, newPassword } = this.form;
       const res = await changePwd(this.form);
-      if(res?.code) {
+      if (res?.code) {
         res?.msg && this.$message.error(res?.msg);
       } else {
-        this.$message.success('修改成功');
-        this.$router.push('/home');
+        this.$message.success(this.isZh ? "修改成功" : "Modified successfully");
+        this.$router.push("/home");
       }
     },
   },
