@@ -1,6 +1,6 @@
 <template>
   <div class="register-module">
-    <div class="title">{{ isZh ? "忘记密码" : "Forgot Password" }}</div>
+    <div class="title">{{ isZh ? "修改密码" : "Change Password" }}</div>
     <div class="register-wrap">
       <el-form
         :model="form"

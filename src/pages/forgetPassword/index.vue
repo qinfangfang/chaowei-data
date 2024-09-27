@@ -1,6 +1,6 @@
 <template>
   <div class="register-module">
-    <div class="title">忘记密码</div>
+    <div class="title">{{ isZh ? "忘记密码" : "Forgot Password" }}</div>
     <div class="register-wrap">
       <el-form
         :model="form"
@@ -9,29 +9,43 @@
         class="demo-dynamic"
       >
         <el-form-item
-        v-if="!form.emailCode"
+          v-if="!form.emailCode"
           prop="email"
-          label="邮箱"
+          :label="`${isZh ? '邮箱' : 'Mailbox'}`"
           :rules="[
-            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+            {
+              required: true,
+              message: isZh
+                ? '请输入邮箱地址'
+                : 'Please enter your email address',
+              trigger: 'blur',
+            },
           ]"
         >
           <el-input
             v-model="form.email"
-            placeholder="请输入邮箱"
+            :placeholder="`${
+              isZh ? '请输入邮箱地址' : 'Please enter your email address'
+            }`"
           ></el-input>
         </el-form-item>
         <el-form-item
           v-if="form.emailCode"
-          label="密码"
+          :label="`${isZh ? '密码' : 'Password'}`"
           prop="password"
-          :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]"
+          :rules="[
+            {
+              required: true,
+              message: isZh ? '请输入密码' : 'Please enter password',
+              trigger: 'blur',
+            },
+          ]"
         >
           <el-input
             type="password"
             v-model="form.password"
             autocomplete="off"
-            placeholder="请输入密码"
+            :placeholder="`${isZh ? '请输入密码' : 'Please enter password'}`"
           ></el-input>
         </el-form-item>
         <!-- <el-form-item
@@ -49,7 +63,9 @@
           ></el-input>
         </el-form-item> -->
         <el-form-item>
-          <div class="submit-btn" @click="submit">提交</div>
+          <div class="submit-btn" @click="submit">
+            {{ isZh ? "提交" : "Submit" }}
+          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -69,24 +85,32 @@ export default {
       },
     };
   },
+  computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
+  },
   methods: {
     async submit() {
       const { email, password, emailCode } = this.form;
       if (emailCode) {
         const res = await emailResetPwd({ emailCode, password });
-        if(res?.code) {
+        if (res?.code) {
           res?.msg && this.$message.error(res?.msg);
-        }else {
-          this.$message.success('设置成功');
-          this.$router.push('/home');
+        } else {
+          this.$message.success(this.isZh ? "设置成功" : "Successful setting");
+          this.$router.push("/home");
         }
         console.log("通过邮件重置密码>>>>>>>>>", res);
       } else {
         const res = await emailForgotPwd({ email });
-        if(res?.code) {
+        if (res?.code) {
           res?.msg && this.$message.error(res?.msg);
         } else {
-          this.$message.success('发送成功');
+          this.$message.success(this.isZh ? "发送成功" : "Send successfully");
         }
         console.log("忘记密码邮件>>>>>>>>>发送邮件", res);
       }
