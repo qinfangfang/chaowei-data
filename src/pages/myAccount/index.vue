@@ -1,14 +1,14 @@
 <template>
   <div class="my-account">
     <div class="menu-wrap">
-      <div class="title">我的账户</div>
+      <div class="title">{{isZh ? '我的账户' : 'My Account'}}</div>
       <div class="menu-list">
         <div
           class="menu-item"
           :class="`${type === '1' ? 'active' : ''}`"
           @click="tabClick('1')"
         >
-          <span>交易记录</span><span v-if="tradeCount">{{ tradeCount }}</span>
+          <span>{{isZh ? '交易记录' : 'Transaction records'}}</span><span v-if="tradeCount">{{ tradeCount }}</span>
         </div>
         <!-- <div
           class="menu-item"
@@ -69,6 +69,14 @@ export default {
     FootPrint,
     Invocie,
     Coupon
+  },
+  computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
   },
   methods: {
     tabClick(key) {
