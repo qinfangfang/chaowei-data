@@ -1,68 +1,90 @@
 <template>
   <div class="buy-car">
-    <div class="page-title">项目 清单</div>
+    <div class="page-title">{{ isZh ? "项目 清单" : "Item List" }}</div>
     <div class="buy-car-wrap">
-      <div class="all-products">
-        <div class="prod-operate">
-          <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange"
-              >全选</el-checkbox
-            >
+      <div class="all-products-wrap">
+        <div class="all-products" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
+          <div class="prod-operate">
+            <div class="selected-all">
+              <el-checkbox v-model="selectAll" @change="checkChange">{{
+                isZh ? "全选" : "Select All"
+              }}</el-checkbox>
+            </div>
+            <div class="delete-selected">
+              <el-button size="mini" @click="patchDeleteClick">{{
+                isZh ? "删除所选" : "Delete selected"
+              }}</el-button>
+            </div>
           </div>
-          <div class="delete-selected">
-            <el-button size="mini" @click="patchDeleteClick"
-              >删除所选</el-button
+          <el-table
+            ref="multipleTable"
+            :data="prodList"
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="100"></el-table-column>
+            <el-table-column label="" width="130">
+              <template slot-scope="scope">
+                <div class="product-info">
+                  <div class="prodcut-pic">
+                    <img :src="scope?.row?.fortyFiveView" alt="" />
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="`${isZh ? '项目名称' : 'Project name'}`">
+              <template slot-scope="scope">
+                <div class="product-info">
+                  <div class="product-name" @click="goDetail(scope?.row)">
+                    <div>{{ scope?.row?.[`name${$i18n.locale}`] }}</div>
+                    <div class="name">{{ scope?.row?.code }}</div>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :label="`${isZh ? '价格' : 'Price'}`" width="100">
+              <template slot-scope="scope">
+                <div class="product-price">
+                  {{ unit }}
+                  {{
+                    scope?.row?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`]
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="`${isZh ? '操作' : 'Operation'}`"
+              width="200"
             >
-          </div>
+              <template slot-scope="scope">
+                <!-- <div class="moveto-favorites">移入收藏夹</div> -->
+                <div
+                  class="delete-btn"
+                  @click="deleteClick(scope.$index, scope.row)"
+                >
+                  {{ isZh ? "删除" : "Delete" }}
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
-        <el-table
-          ref="multipleTable"
-          :data="prodList"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
+        <div
+          class="pagination-wrap"
+          v-if="pagination.total > pagination.pageSize"
         >
-          <el-table-column type="selection" width="100"></el-table-column>
-          <el-table-column label="" width="130">
-            <template slot-scope="scope">
-              <div class="product-info">
-                <div class="prodcut-pic">
-                  <img :src="scope?.row?.fortyFiveView" alt="" />
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="项目名称">
-            <template slot-scope="scope">
-              <div class="product-info">
-                <div class="product-name" @click="goDetail(scope?.row)">
-                  <div>{{ scope?.row?.[`name${$i18n.locale}`] }}</div>
-                  <div class="name">{{ scope?.row?.code }}</div>
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="价格" width="100">
-            <template slot-scope="scope">
-              <div class="product-price">
-                {{ unit }}
-                {{
-                  scope?.row?.[`price${$i18n.locale == "Zh" ? "Cny" : "Usd"}`]
-                }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="200">
-            <template slot-scope="scope">
-              <!-- <div class="moveto-favorites">移入收藏夹</div> -->
-              <div
-                class="delete-btn"
-                @click="deleteClick(scope.$index, scope.row)"
-              >
-                删除
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            background
+            align="right"
+            :current-page="pagination.pageNum"
+            :page-sizes="pagination.pageSizes"
+            :page-size="pagination.pageSize"
+            layout="total, sizes, prev, pager, next"
+            :total="pagination.total"
+          >
+          </el-pagination>
+        </div>
       </div>
       <div class="buy-cost">
         <div class="title" :class="`${$i18n?.locale}`">
@@ -77,7 +99,9 @@
             <span class="label">{{
               $i18n?.locale == "Zh" ? "商品总价" : "Total price of the product"
             }}</span>
-            <span class="value">{{ unit }} {{ productTotalMoney }}</span>
+            <span class="value" :class="`${lang}`"
+              >{{ unit }} {{ productTotalMoney }}</span
+            >
           </div>
           <!-- <div class="discount-item total-jian">
             <span class="label">共减</span>
@@ -156,14 +180,18 @@
         <div class="total-info">
           <div class="pay-info">
             <div class="pay-money">
-              <span>{{ $i18n?.locale == "Zh" ? "合计" : "Total" }}:&nbsp;</span>
-              {{ unit }} {{ totalMoney }}
+              <span :class="`${lang}`"
+                >{{ $i18n?.locale == "Zh" ? "合计" : "Total" }}:&nbsp;</span
+              >
+              {{ unit }}{{ totalMoney }}
             </div>
             <!-- <div class="discount-money">共减 {{ unit }} 17.00</div> -->
           </div>
           <div
             class="submit-btn"
-            :class="`${orderId || !selectedList.length ? 'disabled' : ''}`"
+            :class="`${
+              orderId || !selectedList.length ? 'disabled' : ''
+            } ${lang}`"
             @click="submitBuyCar"
           >
             {{ $i18n?.locale == "Zh" ? "结算" : "Settle Accounts" }}
@@ -176,7 +204,11 @@
 <script>
 import Vue from "vue";
 import { orderCartList, orderCartDeleteById } from "@/api/buyCar.js";
-import { orderCreate, queryOrderStatus, orderpaypalCapture } from "@/api/order.js";
+import {
+  orderCreate,
+  queryOrderStatus,
+  orderpaypalCapture,
+} from "@/api/order.js";
 import QRCode from "qrcode";
 import Cookies from "js-cookie";
 console.log(paypal.Buttons, "PayPalButton---------");
@@ -195,12 +227,24 @@ export default {
       orderId: null,
       duration: 1000,
       count: 0,
+      pagination: {
+        total: 0,
+        pageNum: 1,
+        pageSize: 20,
+        pageSizes: [5, 10, 20],
+      },
     };
   },
   components: {
     "paypal-buttons": PayPalButton,
   },
   computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
     unit() {
       return this.$i18n.locale == "Zh" ? "¥ " : "$ ";
     },
@@ -231,43 +275,44 @@ export default {
       return { minutes, seconds };
     },
     createOrder() {
-      const that = this
+      const that = this;
       return (data) => {
         const modelIds = that.selectedList.map((item) => item?.modelId);
-        
+
         return orderCreate({
-            payType: '3',
-            modelIds,
-          })
-          .then((order) => order.payInfo);
-      }
-  },
-  onApprove() {
+          payType: "3",
+          modelIds,
+        }).then((order) => order.payInfo);
+      };
+    },
+    onApprove() {
       return (data) => {
-          // Order is captured on the server
-          return orderpaypalCapture({
-                      paypalOrderId: data.orderID
-                  })
-              .then((response) => response.json());
+        // Order is captured on the server
+        return orderpaypalCapture({
+          paypalOrderId: data.orderID,
+        }).then((response) => response.json());
+      };
+    },
+    onShippingAddressChange(data, actions) {
+      if (data.shippingAddress && data.shippingAddress.countryCode !== "US") {
+        return actions.reject(data.errors.COUNTRY_ERROR);
       }
-  },
-  onShippingAddressChange(data, actions) {
-      if (data.shippingAddress && data.shippingAddress.countryCode !== 'US') {
-          return actions.reject(data.errors.COUNTRY_ERROR);
+    },
+    onShippingOptionsChange(data, actions) {
+      if (
+        data.selectedShippingOption &&
+        data.selectedShippingOption.type === "PICKUP"
+      ) {
+        return actions.reject(data.errors.STORE_UNAVAILABLE);
       }
-  },
-  onShippingOptionsChange(data, actions) {
-      if (data.selectedShippingOption && data.selectedShippingOption.type === 'PICKUP') {
-          return actions.reject(data.errors.STORE_UNAVAILABLE);
-      }
-  },
-  onError: function() {
+    },
+    onError: function () {
       return (err) => {
-          console.error(err);
-          window.location.href = "/buyCar";
-      }
-  },
-  style: function() {
+        console.error(err);
+        window.location.href = "/buyCar";
+      };
+    },
+    style: function () {
       return {
         shape: "pill",
         color: "gold",
@@ -278,6 +323,16 @@ export default {
     },
   },
   methods: {
+    // 修改pageNum
+    handleCurrentChange(val) {
+      this.pagination.pageNum = val;
+      this.getOrderList();
+    },
+    // 修改pageSize
+    handleSizeChange(val) {
+      this.pagination.pageSize = val;
+      this.getOrderList();
+    },
     // 跳转详情页
     goDetail(data = {}) {
       window.open(`/prodDetail/${data?.modelId}`, "_blank");
@@ -335,11 +390,13 @@ export default {
     patchDeleteClick() {
       if (this.selectedList.length == 0) return;
       this.$confirm(
-        `确认要删除选择的${this.selectedList.length}个模型吗?`,
-        "提示",
+        this.isZh
+          ? `确认要删除选择的${this.selectedList.length}个模型吗?`
+          : `Are you sure you want to delete the ${this.selectedList.length} selected models?`,
+        this.isZh ? "提示" : "Tips",
         {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
+          confirmButtonText: this.isZh ? "确定" : "Confirm",
+          cancelButtonText: this.isZh ? "取消" : "Cancel",
           type: "warning",
           customClass: "global-messag0eBox",
         }
@@ -348,7 +405,9 @@ export default {
           const cartIds = this.selectedList.map((item) => item?.cartId);
           const res = await orderCartDeleteById({ cartIds });
           if (!res?.code) {
-            this.$message.success("删除成功");
+            this.$message.success(
+              this.isZh ? "删除成功" : "Successfully deleted"
+            );
             this.getOrderList();
           } else {
             res?.msg && this.$message.error(res?.msg);
@@ -358,16 +417,24 @@ export default {
     },
     // 删除确认
     deleteClick(idx, item) {
-      this.$confirm("确认要删除此模型吗?", "提醒", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        customClass: "global-messag0eBox",
-      })
+      this.$confirm(
+        this.isZh
+          ? "确认要删除此模型吗?"
+          : "Are you sure you want to delete this model?",
+        this.isZh ? "提示" : "Tips",
+        {
+          confirmButtonText: this.isZh ? "确定" : "Confirm",
+          cancelButtonText: this.isZh ? "取消" : "Cancel",
+          type: "warning",
+          customClass: "global-messag0eBox",
+        }
+      )
         .then(async () => {
           const res = await orderCartDeleteById({ cartIds: [item?.cartId] });
           if (!res?.code) {
-            this.$message.success("删除成功");
+            this.$message.success(
+              this.isZh ? "删除成功" : "Successfully deleted"
+            );
             this.getOrderList();
           } else {
             res?.msg && this.$message.error(res?.msg);
@@ -390,10 +457,11 @@ export default {
       }
     },
     // 获取购物车数据
-    async getOrderList() {
-      const res = await orderCartList();
+    async getOrderList(data = {}) {
+      const res = await orderCartList({ ...this.pagination, ...data });
       console.log("购物车数据>>>>>", res);
       this.prodList = res?.data || [];
+      this.pagination.total = res?.total || 0;
       this.prodList.forEach((item) => {
         if (this.$route?.query?.modelId == item?.modelId) {
           this.selectedList = [item];
@@ -448,7 +516,7 @@ export default {
 <style lang="less" scoped>
 .buy-car {
   height: calc(100vh - 100px);
-  padding: 45px;
+  padding: 30px 45px;
   background-color: #f3f3f3;
   overflow: auto;
 
@@ -457,20 +525,28 @@ export default {
     font-family: Inter, Inter;
     font-size: 32px;
     color: #000;
-    line-height: 47px;
+    line-height: 40px;
   }
 
   .buy-car-wrap {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-
-    .all-products {
+    .all-products-wrap {
       flex: 1;
-      background-color: #fff;
+    }
+    .all-products {
       border-radius: 22px 22px 22px 22px;
-      overflow: hidden;
-
+      overflow: auto;
+      height: calc(100vh - 100px - 30px - 30px - 40px - 15px);
+      background-color: #fff;
+      &::-webkit-scrollbar {
+        // 隐藏滚动条
+        width: 0;
+      }
+      &.pagination {
+        height: calc(100vh - 100px - 30px - 30px - 40px - 15px - 40px - 10px); // 去除分页
+      }
       .prod-operate {
         display: flex;
         align-items: center;
@@ -622,6 +698,10 @@ export default {
           line-height: 28px;
           cursor: pointer;
 
+          &:hover {
+            color: #ed6336;
+          }
+
           .name {
             margin-top: 20px;
           }
@@ -659,6 +739,15 @@ export default {
         border-radius: 4px;
         cursor: pointer;
       }
+    }
+    .pagination-wrap {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 40px;
+      margin-top: 10px;
+      background-color: #fff;
+      border-radius: 4px;
     }
 
     .buy-cost {
@@ -711,6 +800,9 @@ export default {
           .value {
             font-size: 30px;
             line-height: 35px;
+            &.En {
+              font-size: 22px;
+            }
           }
         }
 
@@ -852,12 +944,16 @@ export default {
           font-size: 24px;
           color: #ed6336;
           line-height: 28px;
+          white-space: nowrap;
 
           span {
             font-weight: bold;
             font-size: 30px;
             color: #000;
             line-height: 35px;
+            &.En {
+              font-size: 22px;
+            }
           }
         }
 
@@ -880,7 +976,11 @@ export default {
           text-align: center;
           background: #ed6336;
           border-radius: 4px 4px 4px 4px;
+          white-space: nowrap;
           cursor: pointer;
+          &.En {
+            font-size: 18px;
+          }
 
           &.disabled {
             cursor: not-allowed;
