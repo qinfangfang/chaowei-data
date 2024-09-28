@@ -1,68 +1,68 @@
 <template>
   <div class="register-module">
-    <div v-if="inputContentVis" class="title">注册</div>
+    <div v-if="inputContentVis" class="title">{{isZh ? '注册' : 'Register'}}</div>
     <div v-if="inputContentVis" class="register-wrap">
       <el-form
         :model="form"
         ref="registerForm"
-        label-width="80px"
+        :label-width="`${isZh ? '80px' : '180px'}`"
         class="demo-dynamic"
       >
         <el-form-item
           v-if="!form.emailCode"
-          label="昵称"
+          :label="`${isZh ? '昵称' : 'Nickname'}`"
           prop="nickname"
-          :rules="[{ required: true, message: '请输入昵称', trigger: 'blur' }]"
+          :rules="[{ required: true, message: isZh ? '请输入昵称' : 'Please enter a nickname', trigger: 'blur' }]"
         >
           <el-input
             v-model="form.nickname"
             autocomplete="off"
-            placeholder="请输入昵称"
+            :placeholder="`${isZh ? '请输入昵称' : 'Please enter a nickname'}`"
           ></el-input>
         </el-form-item>
         <el-form-item
           v-if="!form.emailCode"
           prop="email"
-          label="邮箱"
+          :label="`${isZh ? '邮箱' : 'Email'}`"
           :rules="[
-            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+            { required: true, message: isZh ? '请输入邮箱地址' : 'Please enter your email address', trigger: 'blur' },
           ]"
         >
-          <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
+          <el-input v-model="form.email" :placeholder="`${isZh ? '请输入邮箱' : 'Please enter your email address'}`"></el-input>
         </el-form-item>
         <el-form-item
           v-if="form.emailCode"
-          label="密码"
+          :label="`${isZh ? '密码' : 'Password'}`"
           prop="password"
-          :rules="[{ required: true, message: '请输入密码', trigger: 'blur' }]"
+          :rules="[{ required: true, message: isZh ? '请输入密码' : 'Please enter password', trigger: 'blur' }]"
         >
           <el-input
             type="password"
             v-model="form.password"
             autocomplete="off"
-            placeholder="请输入密码"
+            :placeholder="`${ isZh ? '请输入密码' : 'Please enter password'}`"
           ></el-input>
         </el-form-item>
         <el-form-item
           v-if="false && form.emailCode"
           prop="emailCode"
-          label="验证码"
+          :label="`${isZh ? '验证码' : 'Verification code'}`"
           :rules="[
-            { required: true, message: '请输入验证码', trigger: 'blur' },
+            { required: true, message: isZh ? '请输入验证码' : 'Please enter the verification code', trigger: 'blur' },
           ]"
         >
           <el-input
             v-model="form.emailCode"
-            placeholder="请输入验证码"
+            :placeholder="`${isZh ? '请输入验证码' : 'Please enter the verification code'}`"
             :autocomplete="true"
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <div class="submit-btn" @click="registerClick">注册</div>
+          <div class="submit-btn" @click="registerClick">{{isZh ? '注册' : 'Register' }}</div>
         </el-form-item>
       </el-form>
     </div>
-    <div v-else class="success-tip-wrap">已发送邮件！请前往邮箱注册账号</div>
+    <div v-else class="success-tip-wrap">{{isZh ? '已发送邮件！请前往邮箱注册账号' : 'Email sent!  Please go to email to register an account'}}</div>
   </div>
 </template>
 <script>
@@ -80,6 +80,14 @@ export default {
       },
       inputContentVis: true,
     };
+  },
+  computed: {
+    isZh() {
+      return this.$i18n.locale == "Eh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
   },
   methods: {
     async registerClick() {
@@ -136,7 +144,7 @@ export default {
   margin: 0 auto;
   padding-top: 150px;
   .title {
-    width: 480px;
+    width: 600px;
     margin: 0 auto;
     color: #000;
     font-size: 24px;
@@ -144,7 +152,7 @@ export default {
     text-align: center;
   }
   .register-wrap {
-    width: 480px;
+    width: 600px;
     margin: 60px auto 0;
     /deep/ .el-form-item {
       margin-bottom: 50px;

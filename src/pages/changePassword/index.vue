@@ -5,7 +5,7 @@
       <el-form
         :model="form"
         ref="registerForm"
-        label-width="80px"
+        :label-width="`${isZh ? '80px' : '180px'}`"
         class="demo-dynamic"
       >
         <el-form-item
@@ -99,7 +99,7 @@ export default {
   margin: 0 auto;
   padding-top: 100px;
   .title {
-    width: 480px;
+    width: 600px;
     margin: 0 auto;
     color: #000;
     font-size: 24px;
@@ -107,7 +107,7 @@ export default {
     text-align: center;
   }
   .register-wrap {
-    width: 480px;
+    width: 600px;
     margin: 60px auto 0;
     /deep/ .el-form-item {
       margin-bottom: 50px;
