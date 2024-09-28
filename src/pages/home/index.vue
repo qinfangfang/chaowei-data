@@ -54,7 +54,6 @@ import Home3 from "@/assets/imgs/home/home_3.png";
 import Home4 from "@/assets/imgs/home/home_4.png";
 import Home5 from "@/assets/imgs/home/home_5.png";
 import Login from "@/components/Login.vue";
-import { goLogin, getToken } from "@/utils/index.js";
 
 export default {
   name: "homePage",

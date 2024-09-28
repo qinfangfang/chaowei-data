@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-export { goLogin, closeLogin, goLoginNew } from './login.js';
+export {  closeLogin, goLoginNew } from './login.js';
 
 // 获取token
 export const getToken = () => {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken, getLocale, goLogin, goLoginNew } from "@/utils";
+import { getToken, getLocale, goLoginNew } from "@/utils";
 import Cookies from "js-cookie";
 
 const IS_DEV = process.env.NODE_ENV;

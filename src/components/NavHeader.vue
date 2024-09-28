@@ -72,7 +72,7 @@
 <script>
 import { getModelCategory } from "@/api/index.js";
 import { getUserInfo, logOut } from "@/api/user.js";
-import { goLogin, goLoginNew, getToken } from "@/utils/index.js";
+import { goLoginNew, getToken } from "@/utils/index.js";
 import Cookies from "js-cookie";
 
 const menuList = [

@@ -10,29 +10,27 @@
         >
           <el-form-item
             prop="email"
-            label="邮箱"
+            :label="`${isZh ? '邮箱' : 'Email'}`"
             :rules="[
-              { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+              { required: true, message: isZh ? '请输入邮箱地址' : 'Please enter your email address', trigger: 'blur' },
             ]"
           >
             <el-input
               v-model="form.email"
-              placeholder="请输入邮箱"
+              :placeholder="`${isZh ? '请输入邮箱' : 'Please enter your email address'}`"
               autocomplete="off"
             ></el-input>
           </el-form-item>
           <el-form-item
-            label="密码"
+            :label="`${isZh ? '密码' : 'Password'}`"
             prop="password"
-            :rules="[
-              { required: true, message: '请输入密码', trigger: 'blur' },
-            ]"
+            :rules="[{ required: true, message: isZh ? '请输入密码' : 'Please enter password', trigger: 'blur' }]"
           >
             <el-input
               type="password"
               v-model="form.password"
               autocomplete="off"
-              placeholder="请输入密码"
+              :placeholder="`${ isZh ? '请输入密码' : 'Please enter password'}`"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -43,11 +41,11 @@
           :class="`${loading ? 'disabled' : ''}`"
           @click="login"
         >
-          登录
+          {{ isZh ? '登录' : 'Login in'}}
         </div>
         <div class="forget-password">
-          <span class="password" @click="forgetPassword">忘记密码?</span>
-          <span class="register" @click="register">去注册>></span>
+          <span class="password" @click="forgetPassword">{{ isZh ? '忘记密码' : 'Forgot password'}}?</span>
+          <span class="register" @click="register">{{ isZh ? '去注册' : 'Go to Register'}}>></span>
         </div>
       </div>
     </el-dialog>
@@ -71,6 +69,12 @@ export default {
   },
   props: ["router", "id"],
   computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
     show() {
       console.log(11, this.visible);
       return this.visible;
@@ -87,7 +91,7 @@ export default {
       if (res?.token) {
         closeLogin();
         Cookies.set("token", res?.token, { expires: 10 });  // 10天过期
-        this.$message.success("登录成功");
+        this.$message.success( this.isZh ? "登录成功" : 'Login successful');
         window.location.reload();
       }
     },

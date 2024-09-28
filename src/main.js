@@ -7,26 +7,13 @@ import ElementUI from "element-ui";
 import "./assets/style/normalize.less";
 import "element-ui/lib/theme-chalk/index.css";
 import "./assets/style/reset.less";
+import zh from '@/language/zh';
+import en from '@/language/en';
 
 Vue.use(VueI18n);
 Vue.use(VueRouter);
 Vue.use(ElementUI);
 
-window.MessageBox = ElementUI.MessageBox;
-
-console.log("ElementUI>>>>>>>>>", ElementUI, window);
-// 1、创建中文语言包对象
-const zh = {
-  username: "用户名",
-  email: "邮箱",
-  mobile: "手机",
-};
-// 2、创建英文语言包对象
-const en = {
-  username: "Username",
-  email: "Email",
-  mobile: "Mobile",
-};
 // 3、组合语言包对象
 const messages = {
   Zh: zh,
@@ -35,7 +22,7 @@ const messages = {
 // 4、创建 VueI18n 实例，并为 messages 和 locale 属性赋值
 const i18n = new VueI18n({
   messages,
-  locale: "Zh",
+  locale: localStorage.getItem('locale') || "Zh",
 });
 
 Vue.config.productionTip = false;
