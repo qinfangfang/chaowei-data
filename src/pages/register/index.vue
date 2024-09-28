@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     isZh() {
-      return this.$i18n.locale == "Eh";
+      return this.$i18n.locale == "Zh";
     },
     lang() {
       return this.$i18n.locale;
