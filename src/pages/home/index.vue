@@ -1,19 +1,14 @@
 <template>
   <div class="chaowei-home">
     <div class="chaowei-video">
-      <video
-        src="@/assets/video/home_video.mp4"
-        autoplay="autoplay"
-        muted="muted"
-        loop="loop"
-      ></video>
+      <video src="@/assets/video/home_video.mp4" autoplay="autoplay" muted="muted" loop="loop"></video>
       <div class="video-desc">
         <div class="desc-title">PEOPLEGROUNDTRUTH</div>
         <div class="desc-sub">
           {{
             isZh
-              ? "多场景 · 多姿态 · 多民族 简单易用的扫描模型库"
-              : "Multi-scene - multi-gesture\neasy-to-use scanning model library"
+            ? "多场景 · 多姿态 · 多民族 简单易用的扫描模型库"
+            : "Multi-scene - multi-gesture\neasy-to-use scanning model library"
           }}
         </div>
         <div class="right-selected" @click="rightNowSelect">
@@ -31,12 +26,8 @@
             <div class="main-tilte" :class="`${lang}`">{{ item?.[`title${lang}`] }}</div>
             <div class="sub-tilte">{{ item?.[`subTitle${lang}`] }}</div>
             <div class="button-list">
-              <div
-                class="button-item"
-                v-for="btnItem in item?.buttonList"
-                :key="btnItem?.id"
-                :style="{ backgroundColor: btnItem?.bgColor }"
-              >
+              <div class="button-item" v-for="btnItem in item?.buttonList" :key="btnItem?.id"
+                :style="{ backgroundColor: btnItem?.bgColor }" @click="subClick(btnItem)">
                 {{ btnItem?.[`name${lang}`] }}
               </div>
             </div>
@@ -45,7 +36,7 @@
       </template>
     </div>
     <div class="chaowei-partner">
-      <div class="partner-title">{{ isZh ? '主要服务客户 （优质合作伙伴）' : 'Main Clients'}}</div>
+      <div class="partner-title">{{ isZh ? '主要服务客户 （优质合作伙伴）' : 'Main Clients' }}</div>
       <div class="partner-pic">
         <img src="@/assets/imgs/home/home_6.png" alt="" />
       </div>
@@ -82,7 +73,7 @@ export default {
           subTitleEn:
             "Realistic style modeling done by 3D data scanning team through\ninstantaneous 3D imaging system\nLarge number of materials, filterable and rich in poses that\nContains character data of different scenes, ages and styles.",
           buttonList: [
-            { id: "2.1", nameZh: "立即挑选！",nameEn: "BUY SCANNING MODEL", bgColor: "#ED6336" },
+            { id: "2.1", nameZh: "立即挑选！", nameEn: "BUY SCANNING MODEL", bgColor: "#ED6336", path: '/modelList?parentId=1&modelType=5' },
             { id: "2.2", nameZh: "下载免费模型", nameEn: "DOWNLOAD FREE MODEL", bgColor: "#A8A8A8" },
           ],
         },
@@ -94,9 +85,9 @@ export default {
           titleEn: "SCANNING EQUIPMENT",
           subTitleZh:
             "模型素材库的所有所有模型\n都是由超维生产的设备 按照真实人体1:1完成采集\n如需对采集设备感兴趣 可以前往设备网站",
-            subTitleEn:
+          subTitleEn:
             "All the models in the model material library\nAll models in the model library are captured 1:1 according to the real human body.\nIf you are interested in the acquisition equipment, you can go to the equipment website",
-          buttonList: [{ id: "5.1", nameZh: "点击跳转",nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8" }],
+          buttonList: [{ id: "5.1", nameZh: "点击跳转", nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8" }],
         },
       ],
     };
@@ -114,6 +105,13 @@ export default {
     },
   },
   methods: {
+    // 
+    subClick(item) {
+      // if (item?.path) {
+      //   this.$router.push(item?.path);
+      // }
+    },
+    // header 立即挑选
     rightNowSelect() {
       this.$router.push("/modelList");
     },
@@ -129,9 +127,11 @@ export default {
     position: relative;
     width: 100%;
     margin-bottom: -5px;
+
     video {
       width: 100%;
     }
+
     .video-desc {
       display: flex;
       flex-direction: column;
@@ -143,6 +143,7 @@ export default {
       transform: translate(0, -50%);
       color: #fff;
       z-index: 1;
+
       .desc-title {
         font-family: Kanit, Kanit;
         font-weight: bold;
@@ -150,6 +151,7 @@ export default {
         line-height: 75px;
         text-align: center;
       }
+
       .desc-sub {
         height: 52px;
         font-size: 18px;
@@ -158,6 +160,7 @@ export default {
         white-space: pre-wrap;
         text-align: center;
       }
+
       .right-selected {
         display: flex;
         align-items: center;
@@ -173,47 +176,57 @@ export default {
       }
     }
   }
+
   .model-list {
     .model-item {
       display: flex;
       justify-content: space-between;
       color: #000;
       background-color: #fff;
+
       &:nth-child(even) {
         background-color: #f3f3f3;
         flex-direction: row-reverse;
       }
+
       &:nth-child(1) {
         color: #000;
         background: #fff;
         // background: linear-gradient(180deg, #404040 6%, #000000 100%);
       }
+
       .model-item-pic {
         flex: 1;
+
         img {
           display: block;
           width: 100%;
         }
       }
+
       .model-item-explain {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         flex: 1;
+
         .main-tilte,
         .sub-tilte {
           white-space: pre;
         }
+
         .main-tilte {
           font-family: Inter, Inter;
           font-weight: bold;
           font-size: 48px;
           line-height: 56px;
+
           &.En {
             font-size: 38px;
           }
         }
+
         .sub-tilte {
           margin-top: 16px;
           font-family: Inter, Inter;
@@ -221,10 +234,12 @@ export default {
           line-height: 26px;
           text-align: center;
         }
+
         .button-list {
           display: flex;
           align-items: center;
           margin-top: 75px;
+
           .button-item {
             display: flex;
             align-items: center;
@@ -237,6 +252,7 @@ export default {
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
+
             &:nth-child(2) {
               margin-left: 68px;
             }
@@ -245,9 +261,11 @@ export default {
       }
     }
   }
+
   .chaowei-partner {
     padding: 80px 75px 45px;
     background-color: #fff;
+
     .partner-title {
       font-weight: bold;
       font-size: 40px;
@@ -255,13 +273,14 @@ export default {
       line-height: 56px;
       text-align: center;
     }
+
     .partner-pic {
       margin-top: 30px;
+
       img {
         display: block;
         width: 100%;
       }
     }
   }
-}
-</style>
+}</style>

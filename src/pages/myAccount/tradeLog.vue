@@ -1,20 +1,20 @@
 <template>
   <div class="trade-log">
-    <div class="page-title">{{isZh ? '交易 清单' : 'Transaction List'}}</div>
+    <div class="page-title">{{ isZh ? '交易 清单' : 'Transaction List' }}</div>
     <div class="trade-log-wrap" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
       <div class="all-products">
         <div class="prod-operate">
           <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange">{{isZh ? '全选' : 'Select All'}}</el-checkbox>
+            <el-checkbox v-model="selectAll" @change="checkChange">{{ isZh ? '全选' : 'Select All' }}</el-checkbox>
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected'}}</el-button>
+            <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected' }}</el-button>
             <!-- <el-button size="mini" @click="handleEdit()">删除所选</el-button> -->
             <!-- <el-button size="mini" @click="batchInvoice">所选开票</el-button> -->
           </div>
         </div>
         <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="100"></el-table-column>
+          <el-table-column type="selection" width="80"></el-table-column>
           <el-table-column :label="`${isZh ? '项目名称' : 'Project Name'}`">
             <template slot-scope="scope">
               <div class="product-info">
@@ -35,18 +35,18 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易状态' : 'Transaction Status'}`" width="100">
+          <el-table-column :label="`${isZh ? '交易状态' : 'Trade Status'}`" width="120">
             <template slot-scope="scope">
               <div class="trade-status">{{ getOrderStatus(scope?.row) }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易编号' : 'Transaction No.'}`" width="150">
+          <el-table-column :label="`${isZh ? '交易编号' : 'Trade No.'}`" width="150">
             <template slot-scope="scope">
               <div class="trade-id" @click="copyToClip({ content: `${scope?.row?.orderNo}` })">{{ scope?.row?.orderNo }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易时间' : 'Transaction Time'}`" width="100">
+          <el-table-column :label="`${isZh ? '交易时间' : 'Trade Time'}`" width="100">
             <template slot-scope="scope">
               <div class="trade-time">{{ formatDate(scope?.row?.createTime) }}</div>
             </template>
@@ -60,10 +60,10 @@
                 再次下载
               </div> -->
               <div class="get-invoice" @click="invoiceClick(scope?.row)" v-if="scope?.row?.receiptStatus == '1'">
-                {{ isZh ? '开具发票' : 'Issue an invoice'}}
+                {{ isZh ? '开具发票' : 'Issue an invoice' }}
               </div>
               <div class="delete-btn" @click="downloadClick(scope?.row)">
-                {{ isZh ? '下载' : 'Download'}}
+                {{ isZh ? '下载' : 'Download' }}
               </div>
             </template>
           </el-table-column>
@@ -137,7 +137,7 @@ export default {
       createInput.select();
       document.execCommand('Copy'); // document执行复制操作
       createInput.remove();
-      this.$message.success('复制成功');
+      this.$message.success(this.isZh ? '复制成功' : 'Successful replication');
     },
     // 交易时间格式化
     formatDate(val) {
@@ -169,7 +169,7 @@ export default {
       if (!res?.code) {
         this.invoiceVisible = false;
         this.queryOrderItemList();
-        this.$message.success("开票成功");
+        this.$message.success(this.isZh ? "开票成功" : 'Successful billing');
       } else {
         res?.msg && this.$message.error(res?.msg);
       }
@@ -189,11 +189,11 @@ export default {
     getOrderStatus(item) {
       // 开票状态 1:待开票 2:开票中 3: 开票完成
       const receiptStatus = {
-        1: "待开票",
-        2: "开票中",
-        3: "开票完成",
+        1: ["待开票", 'To be invoiced'],
+        2: ["开票中", 'invoicing'],
+        3: ["开票完成", 'Billing completed'],
       };
-      return receiptStatus[item?.receiptStatus] || "已购买";
+      return receiptStatus[item?.receiptStatus][this.isZh ? 0 : 1] || (this.isZh ? "待开票" : 'Pending invoicing');
     },
     // 获取图片展示
     getProdImageUrl(item) {
@@ -359,7 +359,7 @@ export default {
           padding: 0;
           font-family: Inter, Inter;
           font-weight: 400;
-          font-size: 18px;
+          font-size: 16px;
           color: #000;
           text-align: left;
           background: #ddd;
@@ -370,7 +370,7 @@ export default {
           }
 
           &:nth-child(2) {
-            padding-left: 145px;
+            padding-left: 120px;
           }
         }
       }
@@ -442,6 +442,10 @@ export default {
           color: #000;
           line-height: 28px;
           cursor: pointer;
+
+          &:hover {
+            color: #ed6336;
+          }
 
           .name {
             margin-top: 20px;
@@ -516,4 +520,5 @@ export default {
     background-color: #fff;
     border-radius: 4px;
   }
-}</style>
+}
+</style>
