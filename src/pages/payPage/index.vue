@@ -2,11 +2,11 @@
   <div class="pay-wrap-module">
     <div class="buy-product-info">
       <div class="product-item">
-        <span class="pay-label">购买商品：</span>
+        <span class="pay-label">{{isZh ? '购买商品' : 'Purchase goods'}}：</span>
         <span class="product-namelist">{{ productName }}</span>
       </div>
       <div class="product-item product-price">
-        <span class="pay-label">商品总价：</span>
+        <span class="pay-label">{{isZh ? '商品总价' : 'Total price of the product'}}：</span>
         <span class="price-num">{{ unit }}{{ totalMoney }}</span>
       </div>
     </div>
@@ -17,11 +17,11 @@
         marginheight="0" scrolling="no" width="200" height="200" style="overflow: hidden"></iframe>
     </div>
     <div class="count-down" v-if="count">
-      支付剩余时间：<span>{{ countDown.minutes }} </span>分 :
-      <span>{{ countDown.seconds }} </span>秒
+      {{ isZh ? '支付剩余时间' : 'Remaining time paid'}}：<span>{{ countDown.minutes }} </span>{{ isZh? '分' : 'mm'}} :
+      <span>{{ countDown.seconds }} </span>{{ isZh ? '秒' : 'ss' }}
     </div>
     <div class="count-down" v-if="count">
-      请尽快完成支付, 否则会影响您的购物体验~
+      {{  isZh ? '请尽快完成支付, 否则会影响您的购物体验~' : 'Please complete the payment as soon as possible, otherwise it will affect your shopping experience' }}
     </div>
   </div>
 </template>
@@ -49,6 +49,12 @@ export default {
     };
   },
   computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
     unit() {
       return this.$i18n.locale == "Zh" ? "¥ " : "$ ";
     },
@@ -190,7 +196,7 @@ export default {
   },
   beforeDestroy() {
     this.closeTimer();
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

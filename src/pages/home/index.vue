@@ -87,7 +87,7 @@ export default {
             "模型素材库的所有所有模型\n都是由超维生产的设备 按照真实人体1:1完成采集\n如需对采集设备感兴趣 可以前往设备网站",
           subTitleEn:
             "All the models in the model material library\nAll models in the model library are captured 1:1 according to the real human body.\nIf you are interested in the acquisition equipment, you can go to the equipment website",
-          buttonList: [{ id: "5.1", nameZh: "点击跳转", nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8" }],
+          buttonList: [{ id: "5.1", nameZh: "点击跳转", nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8", redirectUrl: 'https://www.superdimension.cn/' }],
         },
       ],
     };
@@ -107,6 +107,9 @@ export default {
   methods: {
     // 
     subClick(item) {
+      if(item?.redirectUrl) {
+        window.open(item?.redirectUrl, '_blank');
+      }
       // if (item?.path) {
       //   this.$router.push(item?.path);
       // }
