@@ -46,17 +46,17 @@
               class="operate-item"
               @click="downloadClick"
             >
-              下载模板
+              {{ isZh ? '下载模板' : 'Download template'}}
             </div>
             <div
               v-if="!showDownload"
               class="operate-item"
               @click="directPurchase"
             >
-              直接购买
+              {{ isZh ? '直接购买' : 'Outright purchase'}}
             </div>
             <div v-if="!showDownload" class="operate-item add-car" @click="addBuyCar">
-              加入购物车
+              {{ isZh ? '加入购物车' : 'Add to cart' }}
             </div>
           </div>
         </div>
@@ -186,6 +186,9 @@ export default {
     PayDialog,
   },
   computed: {
+    isZh() {
+      return this.$i18n.locale == 'Zh';
+    },
     showDownload() {
       return this.detail?.free === true
         ? true
@@ -275,7 +278,7 @@ export default {
       console.log("getModelDetailById>>>>>>>>", res);
       if (res?.code == "3000") {
         this.isExist = false;
-        this.description = res?.msg || "产品已下架或者不存在";
+        this.description = res?.msg || this.isZh ? "产品已下架或者不存在" : 'The product has been removed or does not exist';
         return;
       }
       this.detail = res || {};

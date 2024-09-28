@@ -6,10 +6,13 @@
     </div>
     <div class="pay-success">{{ payText }}</div>
     <div v-if="status == '2'" class="fail-text">
-      {{ $i18n?.locale == "Zh" ? "订单超时未支付" : "Order Timeout Unpaid" }}
+      {{ isZh ? "订单超时未支付" : "Order Timeout Unpaid" }}
     </div>
     <div v-if="errText && status == '3'" class="fail-text">{{ errText }}</div>
-    <div class="back-myaccount" @click="backHandler">{{ backText }}</div>
+    <div class="btn-list">
+      <div class="back-myaccount" @click="continueToBuy">{{ isZh ? '继续购买' : 'Continue to buy' }}</div>
+      <div class="trade-list"  v-if="status === '1'" @click="tradeList">{{ isZh ? '交易列表' : 'Trade List' }}</div>
+    </div>
   </div>
 </template>
 <script>
@@ -20,23 +23,20 @@ export default {
     };
   },
   computed: {
+    isZh() {
+      return this.$i18n.locale == "Zh";
+    },
+    lang() {
+      return this.$i18n.locale;
+    },
     payText() {
-      return this.$i18n?.locale == "Zh"
+      return this.isZh
         ? this.status == "1"
           ? "支付成功"
           : "支付失败"
         : this.status == "1"
         ? "Payment Successful"
         : "Payment Failed";
-    },
-    backText() {
-      return this.$i18n?.locale == "Zh"
-        ? this.status == "1"
-          ? "返回我的账户"
-          : "返回购物车"
-        : this.status == "1"
-        ? "Return to my account"
-        : "Return to shopping cart";
     },
     errText() {
       return this.$route?.query?.errMsg
@@ -45,17 +45,14 @@ export default {
     },
   },
   methods: {
-    backHandler() {
-      if (this.status == "1") {
-        this.$router.push("/myAccount");
-      } else {
-        if (this.$route?.query?.from == "buyCar") {
-          this.$router.back();
-        } else {
-          this.$router.push("/buyCar");
-        }
-      }
+    // 继续购买
+    continueToBuy() {
+      this.$router.push('/modelList');
     },
+    // 交易列表
+    tradeList() {
+      this.$router.push('/myAccount');
+    }
   },
   created() {
     this.status = this.$route?.query?.status || "1"; // 1-支付成功 2 - 超时未支付
@@ -85,7 +82,12 @@ export default {
     color: #f00;
     font-size: 14px;
   }
-  .back-myaccount {
+  .btn-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .back-myaccount, .trade-list {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,11 +95,17 @@ export default {
     background: #ed6336;
     border-radius: 18px;
     color: #fff;
-    padding: 0 18px;
+    padding: 0 20px;
     font-size: 14px;
     font-weight: 500;
     margin-top: 50px;
     cursor: pointer;
+  }
+  .trade-list {
+    margin-left: 20px;
+    color: #222;
+    background: transparent;
+    border: 1px solid #aaa;
   }
 }
 </style>

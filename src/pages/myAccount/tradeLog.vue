@@ -359,7 +359,7 @@ export default {
           padding: 0;
           font-family: Inter, Inter;
           font-weight: 400;
-          font-size: 16px;
+          font-size: 15px;
           color: #000;
           text-align: left;
           background: #ddd;
