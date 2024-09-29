@@ -70,10 +70,11 @@ export default {
   props: ["router", "id"],
   computed: {
     isZh() {
-      return this.$i18n.locale == "Zh";
+      console.log(1111, this)
+      return localStorage.getItem('locale') || 'Zh';
     },
     lang() {
-      return this.$i18n.locale;
+      return localStorage.getItem('locale');
     },
     show() {
       console.log(11, this.visible);
