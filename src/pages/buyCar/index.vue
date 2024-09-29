@@ -115,7 +115,7 @@
             <span class="label">购物节折扣</span>
             <span class="value">减 {{ unit }} 7.00</span>
           </div> -->
-          <div class="pay-wrap">
+          <div class="pay-wrap" v-if="$i18n?.locale == 'Zh'">
             <div class="pay-text">
               {{ $i18n?.locale == "Zh" ? "支付方式" : "Payment Methods" }}
             </div>
@@ -188,6 +188,7 @@
             <!-- <div class="discount-money">共减 {{ unit }} 17.00</div> -->
           </div>
           <div
+            v-if="$i18n?.locale == 'Zh'"
             class="submit-btn"
             :class="`${
               orderId || !selectedList.length ? 'disabled' : ''
@@ -196,6 +197,19 @@
           >
             {{ $i18n?.locale == "Zh" ? "结算" : "Settle Accounts" }}
           </div>
+        </div>
+        <div
+          class="paypal-btn-wrap"
+          v-if="$i18n?.locale == 'En'"
+        >
+          <paypal-buttons
+              :on-approve="onApprove"
+              :create-order="createOrder"
+              :on-shipping-address-change="onShippingAddressChange"
+              :on-shipping-options-change="onShippingOptionsChange"
+              :on-error="onError"
+              :style-object="style"
+            />
         </div>
       </div>
     </div>
@@ -963,7 +977,6 @@ export default {
           color: #ed6336;
           line-height: 18px;
         }
-
         .submit-btn {
           display: flex;
           align-items: center;
@@ -988,6 +1001,11 @@ export default {
           }
         }
       }
+      
+        .paypal-btn-wrap {
+          width: 300px;
+          margin: 10px auto;
+        } 
     }
   }
 }
