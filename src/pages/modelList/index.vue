@@ -124,8 +124,8 @@
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
             <div class="model-pic">
-              <img class="front-img" :src="getFrontviewUrl(item)" alt="" />
-              <img class="fortyfive-img" :src="getFortyFiveviewUrl(item)" alt="" />
+              <img class="front-img" :src="getFrontviewUrl(item)" oncontextmenu="return false;" />
+              <img class="fortyfive-img" :src="getFortyFiveviewUrl(item)" oncontextmenu="return false;" />
               <div class="tag-list">
                 <div
                   class="tag-item"
