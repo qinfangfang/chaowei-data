@@ -65,17 +65,19 @@ export default {
 <style lang="less" scoped>
 .contact-us {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   height: calc(100vh - 100px);
   padding: 60px 135px;
   background-color: #f3f3f3;
+  overflow: auto;
 
   .contact-us-left {
+    flex: 1;
     margin-right: 70px;
     padding: 15px 50px 30px;
-    background-color: #e5e5e5;
+    // background-color: #e5e5e5;
     border-radius: 44px;
+    // height: inherit;
 
     .contact-us-title {
       font-family: Inter, Inter;
