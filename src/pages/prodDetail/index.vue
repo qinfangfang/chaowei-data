@@ -46,7 +46,7 @@
               class="operate-item"
               @click="downloadClick"
             >
-              {{ isZh ? '下载模板' : 'Download template'}}
+              {{ isZh ? '下载模型' : 'Download Model'}}
             </div>
             <div
               v-if="!showDownload"
