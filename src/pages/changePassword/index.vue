@@ -5,7 +5,7 @@
       <el-form
         :model="form"
         ref="registerForm"
-        :label-width="`${isZh ? '80px' : '180px'}`"
+        :label-width="`${isZh ? '100px' : '200px'}`"
         class="demo-dynamic"
       >
         <el-form-item
@@ -46,6 +46,25 @@
             }`"
           ></el-input>
         </el-form-item>
+        <el-form-item
+          :label="`${isZh ? '确认新密码' : 'confirm New Password'}`"
+          prop="confirmnewPassword"
+          :rules="[
+            {
+              required: true,
+              message: isZh ? '请确认新密码' : 'Please confirm your new password',
+              trigger: 'blur',
+            },
+          ]"
+        >
+          <el-input
+            type="password"
+            v-model="form.confirmNewPassword"
+            :placeholder="`${
+              isZh ? '请确认新密码' : 'Please confirm your new password'
+            }`"
+          ></el-input>
+        </el-form-item>
         <el-form-item>
           <div class="submit-btn" @click="submit">
             {{ isZh ? "确认修改" : "Confirm Modification" }}
@@ -66,6 +85,7 @@ export default {
       form: {
         originalPassword: "",
         newPassword: "",
+        confirmNewPassword: ''
       },
     };
   },
@@ -80,6 +100,10 @@ export default {
   methods: {
     async submit() {
       // const { originalPassword, newPassword } = this.form;
+      if (this.form.newPassword !== this.form.confirmNewPassword) {
+        this.$message.error(this.isZh ? "'两次新密码输入不一致！请确认~'" : "new Password is diffrent from confirm password!")
+        return
+      }
       const res = await changePwd(this.form);
       if (res?.code) {
         res?.msg && this.$message.error(res?.msg);

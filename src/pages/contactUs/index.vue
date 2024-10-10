@@ -29,7 +29,7 @@
             </el-input>
           </div>
           <div class="input-item">
-            <el-button type="primary">{{ isZh ? '发送' : 'SEED MESSAGE'}}</el-button>
+            <el-button @click="submitForm" type="primary">{{ isZh ? '发送' : 'SEED MESSAGE'}}</el-button>
           </div>
         </div>
       </div>
@@ -41,6 +41,9 @@
 </template>
 
 <script>
+import {
+  customerTicket
+} from "@/api/user.js";
 export default {
   name: "contactUs",
   data() {
@@ -60,6 +63,21 @@ export default {
       return this.$i18n.locale;
     },
   },
+  methods: {
+    submitForm() {
+      const params = {
+        nickname: this.form.name,
+        content: this.form.linkWay,
+        email: this.form.desc
+      }
+      customerTicket(params).then(res => {
+        this.$message.success('提交成功~请等待我们工作人员和您联系！')
+        this.form.name = ''
+        this.form.linkWay = ''
+        this.form.desc = ''
+      })
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

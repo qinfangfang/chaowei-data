@@ -3,18 +3,18 @@
     <div class="page-title">{{ isZh ? '交易 清单' : 'Transaction List' }}</div>
     <div class="trade-log-wrap" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
       <div class="all-products">
-        <div class="prod-operate">
+        <!-- <div class="prod-operate">
           <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange">{{ isZh ? '全选' : 'Select All' }}</el-checkbox>
+            <el-checkbox v-model="selectAll" @change="checkChange">{{ isZh ? '全选' : 'Select All' }}</el-checkbox> 
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected' }}</el-button>
-            <!-- <el-button size="mini" @click="handleEdit()">删除所选</el-button> -->
-            <!-- <el-button size="mini" @click="batchInvoice">所选开票</el-button> -->
+            <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected' }}</el-button> 
+            <el-button size="mini" @click="handleEdit()">删除所选</el-button> 
+            <el-button size="mini" @click="batchInvoice">所选开票</el-button> 
           </div>
-        </div>
+        </div>-->
         <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="80"></el-table-column>
+          <!-- <el-table-column type="selection" width="80"></el-table-column> -->
           <el-table-column :label="`${isZh ? '项目名称' : 'Project Name'}`">
             <template slot-scope="scope">
               <div class="product-info">

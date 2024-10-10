@@ -332,7 +332,7 @@ export default {
       pagination: {
         show: false,
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 150,
         total: 0,
       },
     };

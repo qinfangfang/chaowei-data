@@ -90,3 +90,9 @@ export const emailLogin = (data = {}) => {
     data,
   });
 };
+export const customerTicket = (data = {}) => {
+  return request({
+    url: "/auth/customerTicket",
+    data,
+  });
+};

@@ -34,6 +34,12 @@
         <div class="product-price">
           <div class="name">{{ detail?.[`name${$i18n.locale}`] }}</div>
           <div class="code">{{ detail?.code }}</div>
+          <div class="origin-price">
+            {{ $i18n.locale == "Zh" ? "原价" : "original Price" }}：{{
+              $i18n.locale == "Zh" ? "¥ " : "$ "
+            }}
+            {{ detail?.[`originalPrice${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
+          </div>
           <div class="price">
             {{ $i18n.locale == "Zh" ? "售价" : "Price" }}：{{
               $i18n.locale == "Zh" ? "¥ " : "$ "
@@ -380,6 +386,13 @@ export default {
         color: #ed6336;
         line-height: 19px;
       }
+      .origin-price {
+        margin-top: 25px;
+        font-size: 22px;
+        color: #999;
+        line-height: 28px;
+        text-decoration: line-through
+      }
       .price {
         margin-top: 25px;
         font-size: 30px;
@@ -431,7 +444,7 @@ export default {
           margin-bottom: 8px;
           font-size: 20px;
           color: #666;
-          line-height: 28px;
+          // line-height: 28px;
           .value {
             font-size: 16px;
           }
