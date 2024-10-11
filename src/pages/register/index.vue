@@ -108,6 +108,7 @@ export default {
           gender: 0,
         });
         console.log("注册>>>>>>", res);
+        res?.token && Cookies.set("token", res?.token, { expires: 10 });
         this.$router.push("/home");
 
         // if (res?.code != "0") {
