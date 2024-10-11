@@ -59,7 +59,7 @@
       <div slot="footer" class="login-footer">
         <div
           class="login-btn"
-          :class="`${loading ? 'disabled' : ''}`"
+          :class="`${disabled ? 'disabled' : ''}`"
           @click="login"
         >
           {{ isZh ? "登录" : "Login in" }}
@@ -105,6 +105,9 @@ export default {
       console.log(11, this.visible);
       return this.visible;
     },
+    disabled() {
+      return this.loading || !this.form.email || !this.form.password;
+    }
   },
   methods: {
     close() {
@@ -134,6 +137,7 @@ export default {
             window.location.reload();
           }
         } else {
+          this.loading = false;
           console.log("error submit!!");
           return false;
         }
