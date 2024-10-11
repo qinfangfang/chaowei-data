@@ -1,6 +1,13 @@
 <template>
   <div class="login-module">
-    <el-dialog :visible="show" width="480px" center :show-close="true" :destroy-on-close="true" @close="close">
+    <el-dialog
+      :visible="show"
+      width="480px"
+      center
+      :show-close="true"
+      :destroy-on-close="true"
+      @close="close"
+    >
       <div class="login-wrap">
         <el-form
           :model="form"
@@ -12,25 +19,39 @@
             prop="email"
             :label="`${isZh ? '邮箱' : 'Email'}`"
             :rules="[
-              { required: true, message: isZh ? '请输入邮箱地址' : 'Please enter your email address', trigger: 'blur' },
+              {
+                required: true,
+                message: isZh
+                  ? '请输入邮箱地址'
+                  : 'Please enter your email address',
+                trigger: 'blur',
+              },
             ]"
           >
             <el-input
               v-model="form.email"
-              :placeholder="`${isZh ? '请输入邮箱' : 'Please enter your email address'}`"
-              autocomplete="off"
+              :placeholder="`${
+                isZh ? '请输入邮箱' : 'Please enter your email address'
+              }`"
+              @keydown.native="inputChange"
             ></el-input>
           </el-form-item>
           <el-form-item
             :label="`${isZh ? '密码' : 'Password'}`"
             prop="password"
-            :rules="[{ required: true, message: isZh ? '请输入密码' : 'Please enter password', trigger: 'blur' }]"
+            :rules="[
+              {
+                required: true,
+                message: isZh ? '请输入密码' : 'Please enter password',
+                trigger: 'blur',
+              },
+            ]"
           >
             <el-input
               type="password"
               v-model="form.password"
-              autocomplete="off"
-              :placeholder="`${ isZh ? '请输入密码' : 'Please enter password'}`"
+              :placeholder="`${isZh ? '请输入密码' : 'Please enter password'}`"
+              @keydown.native="inputChange"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -41,11 +62,15 @@
           :class="`${loading ? 'disabled' : ''}`"
           @click="login"
         >
-          {{ isZh ? '登录' : 'Login in'}}
+          {{ isZh ? "登录" : "Login in" }}
         </div>
         <div class="forget-password">
-          <span class="password" @click="forgetPassword">{{ isZh ? '忘记密码' : 'Forgot password'}}?</span>
-          <span class="register" @click="register">{{ isZh ? '去注册' : 'Go to Register'}}>></span>
+          <span class="password" @click="forgetPassword"
+            >{{ isZh ? "忘记密码" : "Forgot password" }}?</span
+          >
+          <span class="register" @click="register"
+            >{{ isZh ? "去注册" : "Go to Register" }}>></span
+          >
         </div>
       </div>
     </el-dialog>
@@ -70,11 +95,11 @@ export default {
   props: ["router", "id"],
   computed: {
     isZh() {
-      console.log(1111, this)
-      return localStorage.getItem('locale') || 'Zh';
+      console.log(1111, this);
+      return localStorage.getItem("locale") || "Zh";
     },
     lang() {
-      return localStorage.getItem('locale');
+      return localStorage.getItem("locale");
     },
     show() {
       console.log(11, this.visible);
@@ -85,16 +110,34 @@ export default {
     close() {
       closeLogin();
     },
-    async login() {
-      this.loading = true;
-      const res = await emailLogin(this.form).finally(() => (this.loading = false));
-      console.log("去登录>>>>>>", res);
-      if (res?.token) {
-        closeLogin();
-        Cookies.set("token", res?.token, { expires: 10 });  // 10天过期
-        this.$message.success( this.isZh ? "登录成功" : 'Login successful');
-        window.location.reload();
+    // 键盘输入
+    inputChange(event) {
+      const keyCode = event.keyCode || event.which;
+      if (keyCode == 13) {
+        this.login();
       }
+    },
+    // 登录
+    login() {
+      this.loading = true;
+      console.log('this.$refs' , this.$refs.loginForm)
+      this.$refs.loginForm.validate(async (valid) => {
+        if (valid) {
+          const res = await emailLogin(this.form).finally(
+            () => (this.loading = false)
+          );
+          console.log("去登录>>>>>>", res);
+          if (res?.token) {
+            closeLogin();
+            Cookies.set("token", res?.token, { expires: 10 }); // 10天过期
+            this.$message.success(this.isZh ? "登录成功" : "Login successful");
+            window.location.reload();
+          }
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
     register() {
       console.log("router>>>>>>>", window.instanceVue.$router);
