@@ -38,7 +38,9 @@
             {{ $i18n.locale == "Zh" ? "原价" : "original Price" }}：{{
               $i18n.locale == "Zh" ? "¥ " : "$ "
             }}
-            {{ detail?.[`originalPrice${$i18n.locale == "Zh" ? "Cny" : "Usd"}`] }}
+            {{
+              detail?.[`originalPrice${$i18n.locale == "Zh" ? "Cny" : "Usd"}`]
+            }}
           </div>
           <div class="price">
             {{ $i18n.locale == "Zh" ? "售价" : "Price" }}：{{
@@ -52,17 +54,21 @@
               class="operate-item"
               @click="downloadClick"
             >
-              {{ isZh ? '下载模型' : 'Download Model'}}
+              {{ isZh ? "下载模型" : "Download Model" }}
             </div>
             <div
               v-if="!showDownload"
               class="operate-item"
               @click="directPurchase"
             >
-              {{ isZh ? '直接购买' : 'Outright purchase'}}
+              {{ isZh ? "直接购买" : "Outright purchase" }}
             </div>
-            <div v-if="!showDownload" class="operate-item add-car" @click="addBuyCar">
-              {{ isZh ? '加入购物车' : 'Add to cart' }}
+            <div
+              v-if="!showDownload"
+              class="operate-item add-car"
+              @click="addBuyCar"
+            >
+              {{ isZh ? "加入购物车" : "Add to cart" }}
             </div>
           </div>
         </div>
@@ -76,9 +82,11 @@
             >
               <span>{{ item?.[`label${$i18n.locale}`] }}：</span>
               <template v-if="item?.tagList">
-                <a v-for="tag in detail?.tags" :key="tag?.id">{{
-                  tag?.[`name${$i18n.locale}`]
-                }}</a>
+                <div class="tag-list">
+                  <a v-for="tag in detail?.tags" :key="tag?.id">{{
+                    tag?.[`name${$i18n.locale}`]
+                  }}</a>
+                </div>
               </template>
               <span v-else class="value" :class="item?.class">{{
                 detail?.[`${item?.key}${$i18n.locale}`] ||
@@ -193,7 +201,7 @@ export default {
   },
   computed: {
     isZh() {
-      return this.$i18n.locale == 'Zh';
+      return this.$i18n.locale == "Zh";
     },
     showDownload() {
       return this.detail?.free === true
@@ -268,9 +276,9 @@ export default {
         } else if (imgArr.length > 1) {
           imgArr.forEach((imgItm, index) => {
             arr.push({
-            id: `${idx}_${index}`,
-            imageUrl: imgItm,
-          });
+              id: `${idx}_${index}`,
+              imageUrl: imgItm,
+            });
           });
         }
       });
@@ -284,7 +292,10 @@ export default {
       console.log("getModelDetailById>>>>>>>>", res);
       if (res?.code == "3000") {
         this.isExist = false;
-        this.description = res?.msg || this.isZh ? "产品已下架或者不存在" : 'The product has been removed or does not exist';
+        this.description =
+          res?.msg || this.isZh
+            ? "产品已下架或者不存在"
+            : "The product has been removed or does not exist";
         return;
       }
       this.detail = res || {};
@@ -391,7 +402,7 @@ export default {
         font-size: 22px;
         color: #999;
         line-height: 28px;
-        text-decoration: line-through
+        text-decoration: line-through;
       }
       .price {
         margin-top: 25px;
@@ -440,7 +451,6 @@ export default {
         padding: 25px 65px 0;
         .attributes-item {
           display: flex;
-          align-items: center;
           margin-bottom: 8px;
           font-size: 20px;
           color: #666;
@@ -452,6 +462,9 @@ export default {
             cursor: pointer;
             color: #ed6336;
           }
+          span {
+            white-space: nowrap;
+          }
           a {
             padding: 0 8px;
             margin-right: 10px;
@@ -460,14 +473,22 @@ export default {
             background: #ed6336;
             border-radius: 4px 4px 4px 4px;
             line-height: 24px;
+            white-space: nowrap;
             &:last-child {
               margin-right: 0;
+            }
+          }
+          .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            a {
+              margin-bottom: 10px;
             }
           }
         }
       }
       .product-desc {
-        margin-top: 40px;
+        margin-top: 30px;
         padding: 0 65px 50px;
         font-size: 16px;
         color: #666;

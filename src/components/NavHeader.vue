@@ -4,7 +4,7 @@
       <img src="@/assets/imgs/navOrFooter/header_logo.png" alt="" />
     </div>
     <div class="nav-center">
-      <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click.stop="mainJumpTo(item, index)">
+      <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click="mainJumpTo(item, index)">
         <span :class="`${activeTab == index ? 'active' : ''} ${locale}`">{{ item?.[`name${$i18n?.locale}`] }}</span>
         <div class="sub-menu-wrap" v-if="item?.subMenuList" :style="{ width: item?.with }">
           <!-- <div

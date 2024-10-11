@@ -4,7 +4,6 @@
       <div class="contact-us-title">{{ isZh ? '网站支持' : 'Contact Us'}}</div>
       <div class="contact-us-text">
         {{ isZh ? '如果您遇到的问题未能在“常见问题”或我们的教程中未找到答案。我们非常乐意帮您解决问题。' : 'If you have a question that is not answered in the FAQ or in one of our tutorials, please feel free to contact us. We are always happy to help!' }}
-        
       </div>
       <div class="contact-us-form">
         <div class="form-left">
