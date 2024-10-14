@@ -12,9 +12,26 @@
             @change="changeSlide"
           >
             <el-carousel-item v-for="item in previewList" :key="item?.id">
-              <div class="slider-item">
+              <div class="slider-item" v-if="!Array.isArray(item)">
                 <img :src="item?.imageUrl" alt="" />
               </div>
+              <template v-else>
+                <el-carousel
+                  :interval="300"
+                  :autoplay="true"
+                  indicator-position="none"
+                  class="detail-sub-swiper"
+                >
+                  <el-carousel-item
+                    v-for="(subItem, index) in item"
+                    :key="subItem?.id"
+                  >
+                    <div class="slider-item">
+                      <img :src="subItem?.imageUrl" alt="" />
+                    </div>
+                  </el-carousel-item>
+                </el-carousel>
+              </template>
             </el-carousel-item>
           </el-carousel>
         </div>
@@ -26,7 +43,24 @@
             @click="previewClick(item, idx)"
             :class="`${idx === index ? 'active' : ''}`"
           >
-            <img :src="item?.imageUrl" alt="" />
+            <img :src="item?.imageUrl" alt="" v-if="!Array.isArray(item)" />
+            <template v-else>
+              <el-carousel
+                :interval="200"
+                :autoplay="true"
+                indicator-position="none"
+                class="detail-sub-swiper"
+              >
+                <el-carousel-item
+                  v-for="(subItem, index) in item"
+                  :key="subItem?.id"
+                >
+                  <div class="slider-item">
+                    <img :src="subItem?.imageUrl" alt="" />
+                  </div>
+                </el-carousel-item>
+              </el-carousel>
+            </template>
           </div>
         </div>
       </div>
@@ -76,11 +110,16 @@
           <div class="title">文件属性</div>
           <div class="attributes-list">
             <div
-              :class="{'attributes-item': true, 'special-attr': item?.tagList}"
+              :class="{
+                'attributes-item': true,
+                'special-attr': item?.tagList,
+              }"
               v-for="item in attributesList"
               :key="item?.id"
             >
-              <span style="line-height: 20px">{{ item?.[`label${$i18n.locale}`] }}：</span>
+              <span style="line-height: 20px"
+                >{{ item?.[`label${$i18n.locale}`] }}：</span
+              >
               <template v-if="item?.tagList">
                 <div class="tag-list">
                   <a v-for="tag in detail?.tags" :key="tag?.id">{{
@@ -275,12 +314,14 @@ export default {
             imageUrl: imgArr[0],
           });
         } else if (imgArr.length > 1) {
+          const newArr = [];
           imgArr.forEach((imgItm, index) => {
-            arr.push({
+            newArr.push({
               id: `${idx}_${index}`,
               imageUrl: imgItm,
             });
           });
+          arr.push(newArr);
         }
       });
       this.previewList = arr;
@@ -351,6 +392,21 @@ export default {
           font-size: 24px;
         }
       }
+    }
+  }
+  .detail-sub-swiper {
+    /* 在你的组件的<style>标签中或者单独的CSS文件中 */
+    .el-carousel__item {
+      transition: opacity 0.3s; /* 设置淡入淡出的时间 */
+    }
+
+    .el-carousel__item.el-carousel__item--active {
+      opacity: 1;
+    }
+
+    .el-carousel__item.el-carousel__item--left,
+    .el-carousel__item.el-carousel__item--right {
+      opacity: 0;
     }
   }
   .preview-list {
