@@ -211,6 +211,12 @@
               :style-object="style"
             />
         </div>
+        
+        <div class="no-pay-type-tip">
+          {{ $i18n?.locale == "Zh" ? 
+          "如果没有你期望的支付方式，请联系：service@peoplegroundtruth.com" : 
+          "If there's no proper listed payment option for you,please feel free to contact us: service@peoplegroundtruth.com" }}
+        </div>
       </div>
     </div>
   </div>
@@ -1002,10 +1008,15 @@ export default {
         }
       }
       
-        .paypal-btn-wrap {
-          width: 300px;
-          margin: 10px auto;
-        } 
+      .paypal-btn-wrap {
+        width: 300px;
+        margin: 10px auto;
+      } 
+      .no-pay-type-tip {
+        text-align: center;
+        padding: 10px 0 30px;
+        font-size: 12px;
+      }
     }
   }
 }

@@ -3,18 +3,18 @@
     <div class="page-title">{{ isZh ? '交易 清单' : 'Transaction List' }}</div>
     <div class="trade-log-wrap" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
       <div class="all-products">
-        <!-- <div class="prod-operate">
+        <div class="prod-operate">
           <div class="selected-all">
             <el-checkbox v-model="selectAll" @change="checkChange">{{ isZh ? '全选' : 'Select All' }}</el-checkbox> 
           </div>
           <div class="delete-selected">
             <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected' }}</el-button> 
-            <el-button size="mini" @click="handleEdit()">删除所选</el-button> 
-            <el-button size="mini" @click="batchInvoice">所选开票</el-button> 
+            <!-- <el-button size="mini" @click="handleEdit()">删除所选</el-button>  -->
+            <!-- <el-button size="mini" @click="batchInvoice">所选开票</el-button>  -->
           </div>
-        </div>-->
+        </div>
         <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
-          <!-- <el-table-column type="selection" width="80"></el-table-column> -->
+          <el-table-column type="selection" width="80"></el-table-column>
           <el-table-column :label="`${isZh ? '项目名称' : 'Project Name'}`">
             <template slot-scope="scope">
               <div class="product-info">
@@ -59,11 +59,19 @@
               >
                 再次下载
               </div> -->
-              <div class="get-invoice" @click="invoiceClick(scope?.row)" v-if="scope?.row?.receiptStatus == '1'">
-                {{ isZh ? '开具发票' : 'Issue an invoice' }}
-              </div>
-              <div class="delete-btn" @click="downloadClick(scope?.row)">
-                {{ isZh ? '下载' : 'Download' }}
+              <div class="option-btn-wrap">
+                <div class="get-invoice" @click="invoiceClick(scope?.row)" v-if="scope?.row?.receiptStatus == '1'">
+                  {{ isZh ? '开具发票' : 'Issue an invoice' }}
+                </div>
+                <div class="geted-invoice" v-if="scope?.row?.receiptStatus == '2'">
+                  {{ isZh ? '开票中' : 'invoiceing' }}
+                </div>
+                <div class="geted-invoice" v-if="scope?.row?.receiptStatus == '3'">
+                  {{ isZh ? '已开票' : 'invoiceed' }}
+                </div>
+                <div class="delete-btn" @click="downloadClick(scope?.row)">
+                  {{ isZh ? '下载' : 'Download' }}
+                </div>
               </div>
             </template>
           </el-table-column>
@@ -80,7 +88,7 @@
   </div>
 </template>
 <script>
-import { orderItemList, orderItemReceipt } from "@/api/order.js";
+import { orderItemList, orderreceipt } from "@/api/order.js";
 import { getModelDownloadUrlById } from "@/api/index.js";
 import InvoiceDialog from "./components/invoiceDialog.vue";
 import dayjs from 'dayjs';
@@ -159,11 +167,11 @@ export default {
     },
     // 开发票弹窗确认
     async invoiceHanlder(val = {}) {
-      const orderItemIds = this.selectedList.map((item) => item?.orderItemId);
-      const res = await orderItemReceipt({
-        orderItemIds: this.isBatchInvoice
+      const orderItemIds = this.selectedList.map((item) => item?.orderNo);
+      const res = await orderreceipt({
+        orderNoList: this.isBatchInvoice
           ? orderItemIds
-          : [this.invoiceData?.orderItemId],
+          : [this.invoiceData?.orderNo],
         ...val,
       });
       if (!res?.code) {
@@ -215,7 +223,19 @@ export default {
       this.pagination.pageSize = val;
       this.queryOrderItemList();
     },
-    handleEdit() { },
+    handleEdit() {
+      const modelIds = this.selectedList.map((item) => item.model.id);
+      modelIds.forEach(id => {
+        const res = getModelDownloadUrlById({
+          id
+        }).then(res => {
+          if (!res.code && res?.url) {
+            window.open(res?.url, "_blank");
+          }
+        });
+        this.$refs.multipleTable.clearSelection();
+      })
+    },
     checkChange(val) {
       console.log("checkChange>>>>>>>>", val);
       if (val) {
@@ -478,16 +498,16 @@ export default {
           color: #ed6336;
         }
       }
-
+      .option-btn-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
       .moveto-favorites,
       .get-invoice {
-        color: #000;
+        color: #ed6336;
         font-size: 14px;
         cursor: pointer;
-
-        &:hover {
-          color: #ed6336;
-        }
       }
 
       // .get-invoice {

@@ -76,11 +76,11 @@
           <div class="title">文件属性</div>
           <div class="attributes-list">
             <div
-              class="attributes-item"
+              :class="{'attributes-item': true, 'special-attr': item?.tagList}"
               v-for="item in attributesList"
               :key="item?.id"
             >
-              <span>{{ item?.[`label${$i18n.locale}`] }}：</span>
+              <span style="line-height: 20px">{{ item?.[`label${$i18n.locale}`] }}：</span>
               <template v-if="item?.tagList">
                 <div class="tag-list">
                   <a v-for="tag in detail?.tags" :key="tag?.id">{{
@@ -95,7 +95,8 @@
               }}</span>
             </div>
           </div>
-          <div class="product-desc">{{ detail?.[`desc${$i18n.locale}`] }}</div>
+          <div class="product-desc"></div>
+          <!-- <div class="product-desc">{{ detail?.[`desc${$i18n.locale}`] }}</div> -->
         </div>
       </div>
     </div>
@@ -454,9 +455,14 @@ export default {
           margin-bottom: 8px;
           font-size: 20px;
           color: #666;
+          align-items: flex-end;
+          &.special-attr {
+            align-items: flex-start;
+          }
           // line-height: 28px;
           .value {
             font-size: 16px;
+            line-height: 16px;
           }
           .color-ed6336 {
             cursor: pointer;
