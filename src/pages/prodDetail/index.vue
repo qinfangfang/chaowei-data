@@ -19,6 +19,7 @@
                 <el-carousel
                   :interval="200"
                   :autoplay="true"
+                  arrow="never"
                   indicator-position="none"
                   class="detail-sub-swiper"
                 >
@@ -48,6 +49,8 @@
               <el-carousel
                 :interval="200"
                 :autoplay="true"
+                  arrow="never"
+                  :hover-stop="false"
                 indicator-position="none"
                 class="detail-sub-swiper"
               >

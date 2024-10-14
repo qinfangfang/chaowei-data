@@ -121,10 +121,10 @@ const menuList = [
         nameZh: "场景分类",
         nameEn: "Scene Categories",
         list: [
-          { id: "1.2.1", nameEn: "Casual", nameZh: "休闲", tagId: '13', redirect: true, path: '/modelList?tagId=13' },
-          { id: "1.2.2", nameEn: "Business", nameZh: "商务", tagId: '14', redirect: true,  path: '/modelList?tagId=14' },
+          { id: "1.2.1", nameEn: "Casual", nameZh: "休闲", tagId: '14', redirect: true, path: '/modelList?tagId=14' },
+          { id: "1.2.2", nameEn: "Business", nameZh: "商务", tagId: '13', redirect: true,  path: '/modelList?tagId=13' },
           { id: "1.2.3", nameEn: "Movement", nameZh: "运动", tagId: '17', redirect: true,  path: '/modelList?tagId=17' },
-          { id: "1.2.4", nameEn: "Shopping", nameZh: "购物", tagId: '18', redirect: true,  path: '/modelList?tagId=18' }, // 暂定
+          { id: "1.2.4", nameEn: "Shopping", nameZh: "购物", tagId: '32', redirect: true,  path: '/modelList?tagId=32' }, // 暂定
         ],
       },
     ],
