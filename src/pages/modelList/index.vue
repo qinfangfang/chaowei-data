@@ -484,8 +484,8 @@ export default {
     getAllTagsFilterNew() {
       let tagIds = [];
       this.tagKeys.forEach((item) => {
-        if (this.form[item]) {
-          tagIds = tagIds.concat(this.form[item]);
+        if (this.form[item] && this.form[item]?.length) {
+          tagIds.push(this.form[item]);
         }
       });
       return tagIds;
