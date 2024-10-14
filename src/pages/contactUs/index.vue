@@ -1,12 +1,12 @@
 <template>
   <div class="contact-us">
     <div class="contact-us-left">
-      <div class="contact-us-title">{{ isZh ? '网站支持' : 'Contact Us'}}</div>
-      <div class="contact-us-text">
-        {{ isZh ? '如果您遇到的问题未能在“常见问题”或我们的教程中未找到答案。我们非常乐意帮您解决问题。' : 'If you have a question that is not answered in the FAQ or in one of our tutorials, please feel free to contact us. We are always happy to help!' }}
-      </div>
       <div class="contact-us-form">
         <div class="form-left">
+          <div class="contact-us-title">{{ isZh ? '网站支持' : 'Contact Us'}}</div>
+          <div class="contact-us-text">
+            {{ isZh ? '如果您遇到的问题未能在“常见问题”或我们的教程中未找到答案。我们非常乐意帮您解决问题。' : 'If you have a question that is not answered in the FAQ or in one of our tutorials, please feel free to contact us. We are always happy to help!' }}
+          </div>
           <div class="title">{{ isZh ? '商务联系、模型定制' : 'Business contact\nModel customization'}}</div>
           <div class="info-item" :class="`${lang}`"><span>{{ isZh ? '联系人' : 'Contact'}}：</span>{{ isZh ? '张先生' : 'Mr. Zhang'}}</div>
           <div class="info-item" :class="`${lang}`"><span>Email：</span>service@peoplegroundtruth.com</div>
@@ -18,7 +18,7 @@
         <div class="form-right">
           <div class="title">{{ isZh ?  '填写工单' : 'WORK ORDER'}}</div>
           <div class="input-item">
-            <el-input v-model="form.name" :placeholder="`${isZh ? '你的姓名' : 'Namw'}`"></el-input>
+            <el-input v-model="form.name" :placeholder="`${isZh ? '你的姓名' : 'Name'}`"></el-input>
           </div>
           <div class="input-item">
             <el-input v-model="form.linkWay" placeholder="Email"></el-input>
@@ -33,9 +33,9 @@
         </div>
       </div>
     </div>
-    <div class="contact-us-right">
+    <!-- <div class="contact-us-right">
       <img src="http://gips3.baidu.com/it/u=3419425165,837936650&fm=3028&app=3028&f=JPEG&fmt=auto?w=1024&h=1024" alt="" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -84,7 +84,7 @@ export default {
   display: flex;
   justify-content: space-between;
   height: calc(100vh - 100px);
-  padding: 60px 135px;
+  padding: 0px 100px;
   background-color: #f3f3f3;
   overflow: auto;
 

@@ -472,7 +472,16 @@ export default {
       this.getModelListData();
     },
     // 获取所有tags筛选集合
-    getAllTagsFilter() {
+    // getAllTagsFilter() {
+    //   let tagIds = [];
+    //   this.tagKeys.forEach((item) => {
+    //     if (this.form[item]) {
+    //       tagIds = tagIds.concat(this.form[item]);
+    //     }
+    //   });
+    //   return tagIds;
+    // },
+    getAllTagsFilterNew() {
       let tagIds = [];
       this.tagKeys.forEach((item) => {
         if (this.form[item]) {
@@ -494,7 +503,8 @@ export default {
           pageNum: this.pagination.pageNum,
           pageSize: this.pagination.pageSize,
           categoryId: this.form.categoryId,
-          tagIds: this.getAllTagsFilter(),
+          // tagIds: this.getAllTagsFilter(),
+          groupTagIds	: this.getAllTagsFilterNew(),
           ...config,
         });
       } else {
@@ -503,7 +513,8 @@ export default {
           pageNum: this.pagination.pageNum,
           pageSize: this.pagination.pageSize,
           categoryId: this.form.categoryId,
-          tagIds: this.getAllTagsFilter(),
+          // tagIds: this.getAllTagsFilter(),
+          groupTagIds	: this.getAllTagsFilterNew(),
           ...config,
         });
       }

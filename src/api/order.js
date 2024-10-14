@@ -51,6 +51,12 @@ export const orderItemReceipt = (data = {}) => {
     data,
   });
 };
+export const orderreceipt = (data = {}) => {
+  return request({
+    url: `/order/receipt`,
+    data,
+  });
+};
 
 /**
  * 订单行分页查询

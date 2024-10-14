@@ -510,7 +510,7 @@ export default {
       position: relative;
       display: flex;
       align-items: center;
-      margin-right: 32px;
+      margin-right: 20px;
       height: 100%;
 
       &:last-child {
@@ -521,15 +521,15 @@ export default {
         width: 50px;
 
         img {
-          width: 38px;
-          height: 38px;
+          width: 30px;
+          height: 30px;
         }
       }
 
       &.personal-icon {
         img {
-          width: 36px;
-          height: 35px;
+          width: 30px;
+          height: 32px;
         }
 
         .personal-menu {
@@ -577,14 +577,16 @@ export default {
       &.buy-car {
         height: auto;
         line-height: 38px;
-
+        margin-top: -5px;
+        display: flex;
+        align-items: center;
         img {
-          width: 40px;
-          height: 40px;
+          width: 55px;
+          height: 55px;
         }
 
         span {
-          // margin-left: 5px;
+          margin-left: -10px;
           padding: 0 8px 0;
           background: #ed6336;
           border-radius: 12px 12px 12px 12px;
