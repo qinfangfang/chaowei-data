@@ -17,7 +17,7 @@
               </div>
               <template v-else>
                 <el-carousel
-                  :interval="300"
+                  :interval="200"
                   :autoplay="true"
                   indicator-position="none"
                   class="detail-sub-swiper"
