@@ -73,7 +73,7 @@ export default {
             "Realistic style modeling done by 3D data scanning team through\ninstantaneous 3D imaging system\nLarge number of materials, filterable and rich in poses that\nContains character data of different scenes, ages and styles.",
           buttonList: [
             { id: "2.1", nameZh: "立即挑选！", nameEn: "BUY SCANNING MODEL", bgColor: "#ED6336", path: '/modelList?parentId=1&modelType=5' },
-            { id: "2.2", nameZh: "下载免费模型", nameEn: "DOWNLOAD FREE MODEL", bgColor: "#A8A8A8" },
+            { id: "2.2", nameZh: "下载免费模型", nameEn: "DOWNLOAD FREE MODEL", bgColor: "#A8A8A8", path: '/freeModel' },
           ],
         },
         {
@@ -109,9 +109,9 @@ export default {
       if(item?.redirectUrl) {
         window.open(item?.redirectUrl, '_blank');
       }
-      // if (item?.path) {
-      //   this.$router.push(item?.path);
-      // }
+      if (item?.path) {
+        this.$router.push(item?.path);
+      }
     },
     // header 立即挑选
     rightNowSelect() {
