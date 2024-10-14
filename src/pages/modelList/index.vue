@@ -324,7 +324,7 @@ export default {
         gender: [],
         age: [],
         activity: [],
-        clothing: [],
+        clothing: ['13'],
         accessorise: [],
         area: [],
       },
@@ -345,7 +345,8 @@ export default {
       this.form.modelType = to.query?.modelType || "";
       this.form.categoryId = to.query?.modelType || "";
       this.initSlectedModel();
-      this.getModelListData(true);
+      this.showDefaultTag();
+      !to.query?.tagId && this.getModelListData(true);
     },
     form: {
       handler(val) {
@@ -437,13 +438,26 @@ export default {
       this.activeModelNames = val;
     },
     handleChange(val) {
-      console.log("val>>>>>>>>>>", val);
+      console.log("val>>>>>>>>>>activeTagsNames", val);
       this.activeTagsNames = val;
     },
     initPageQuery() {
       const query = this.$route.query;
       this.form.modelType = query?.modelType || "";
       this.form.categoryId = query?.modelType || "";
+    },
+
+    // 默认展示tagId
+    showDefaultTag() {
+      // 默认指定Tag
+      const query = this.$route.query;
+      if(query.tagId) {
+        this.activeTagsNames = ['5'];
+        this.$set(this.form,'clothing', [query.tagId]);
+      } else {
+        this.activeTagsNames = [];
+        this.$set(this.form,'clothing', []);
+      }
     },
     // 处理筛选条件
     initFilter(res = []) {
@@ -454,6 +468,7 @@ export default {
         this.tagKeys.push(_key);
         this.$set(this.form, _key, []);
       });
+      this.showDefaultTag();
     },
     // 获取标签列表
     async getModelTagGroupData() {
