@@ -25,8 +25,7 @@
             v-for="(item, idx) in modelTypeList"
             :key="item?.id"
             :class="`style-item ${
-              activeModelNames.includes(`${idx + 1}`) &&
-              modelForm?.[item?.id]
+              activeModelNames.includes(`${idx + 1}`) && modelForm?.[item?.id]
                 ? 'active'
                 : ''
             }`"
@@ -87,7 +86,7 @@
                 :name="`${item?.id}`"
                 :key="item?.id"
               >
-              <!-- {{  item?.uniqueKey }} -->
+                <!-- {{  item?.uniqueKey }} -->
                 <el-checkbox-group v-model="form[item?.uniqueKey]">
                   <el-checkbox
                     v-for="child in item?.tags"
@@ -124,16 +123,19 @@
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
             <div class="model-pic">
-              <img class="front-img" :src="getFrontviewUrl(item)" oncontextmenu="return false;" />
-              <img class="fortyfive-img" :src="getFortyFiveviewUrl(item)" oncontextmenu="return false;" />
-              <div class="tag-list">
-                <div
-                  class="tag-item"
-                  v-for="tag in item?.tags"
-                  :class="`${tag === '折' ? 'discount' : ''}`"
-                >
-                  {{ tag }}
-                </div>
+              <img
+                class="front-img"
+                :src="getFrontviewUrl(item)"
+                oncontextmenu="return false;"
+              />
+              <img
+                class="fortyfive-img"
+                :src="getFortyFiveviewUrl(item)"
+                oncontextmenu="return false;"
+              />
+              <div class="tag-list" v-if="item?.newArrival">
+                <!-- :class="`${tag === '折' ? 'discount' : ''}`" -->
+                <div class="tag-item":class="`${$i18n.locale}`">{{$i18n.locale == "Zh" ? '新' : 'New'}}</div>
               </div>
             </div>
             <div class="model-product">
@@ -308,10 +310,10 @@ export default {
         ],
       },
       modelForm: {
-        1: '',
-        2: '',
-        3: '',
-        4: '',
+        1: "",
+        2: "",
+        3: "",
+        4: "",
       },
       form: {
         // searchVal: "",
@@ -370,7 +372,7 @@ export default {
     radioChange(val, id) {
       console.log(111, val, this.activeModelNames, id);
       Object.entries(this.modelForm).forEach(([key, values]) => {
-        this.$set(this.modelForm, `${key}`, '');
+        this.$set(this.modelForm, `${key}`, "");
       });
       this.$set(this.modelForm, id, val);
       this.form.categoryId = val;
@@ -390,10 +392,10 @@ export default {
         area: [],
       };
       this.modelForm = {
-        1: '',
-        2: '',
-        3: '',
-        4: '',
+        1: "",
+        2: "",
+        3: "",
+        4: "",
       };
       this.activeModelNames = [];
       this.activeTagsNames = [];
@@ -401,19 +403,19 @@ export default {
     },
     // 获取图片展示
     getFrontviewUrl(item) {
-      const splitTar = item.frontView && item.frontView.split(',')
+      const splitTar = item.frontView && item.frontView.split(",");
       if (splitTar && splitTar.length > 0) {
-        return splitTar[0]
+        return splitTar[0];
       } else {
-        return ''
+        return "";
       }
     },
     getFortyFiveviewUrl(item) {
-      const splitTar = item.fortyFiveView && item.fortyFiveView.split(',')
+      const splitTar = item.fortyFiveView && item.fortyFiveView.split(",");
       if (splitTar && splitTar.length > 0) {
-        return splitTar[0]
+        return splitTar[0];
       } else {
-        return ''
+        return "";
       }
     },
     // 去商品详情
@@ -517,7 +519,7 @@ export default {
       if (modelCategory_data) {
         this.modelTypeList = JSON.parse(modelCategory_data);
         this.modelTypeList.forEach((item) => {
-          this.$set(this.modelForm, item?.id, '');
+          this.$set(this.modelForm, item?.id, "");
         });
       }
       this.initSlectedModel();
@@ -525,14 +527,14 @@ export default {
     // 初始化选择设置
     initSlectedModel() {
       const query = this.$route.query;
-      if(query.parentId) {
+      if (query.parentId) {
         this.activeModelNames = [query.parentId];
       }
-      if(query.parentId && query.modelType) {
+      if (query.parentId && query.modelType) {
         this.$set(this.modelForm, `${query.parentId}`, query.modelType);
       }
       console.log("this.modelForm>>>>>>", this.modelForm);
-    }
+    },
   },
   created() {
     this.initPageQuery();
@@ -839,12 +841,15 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             color: #fff;
             font-size: 14px;
-            background-color: #ababaa;
+            background-color: #ed6336;
             border-radius: 28px;
+            &.En {
+              font-size: 12px;
+            }
             &.discount {
               margin-right: 6px;
               background-color: #ed8337;
