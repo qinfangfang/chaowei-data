@@ -56,6 +56,10 @@ export default {
   },
   created() {
     this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
+    if (this.$route.query.fromPage === 'legal') {
+      this.tabActive = "6"
+      this.activeNames = "6-1"
+    }
   }
 };
 </script>

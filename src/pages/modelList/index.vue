@@ -157,6 +157,7 @@
           :current-page="pagination.pageNum"
           layout="prev, pager, next"
           :total="pagination.total"
+          :page-size="150"
           @current-change="curPageChange"
         >
           <!-- layout="prev, pager, next, jumper" -->

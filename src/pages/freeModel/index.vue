@@ -114,7 +114,7 @@
         }}
       </div>
       <div class="more-pic">
-        <img :src="imgUrl" alt="" />
+        <img :src="footerImg" alt="" />
       </div>
     </div>
   </div>
@@ -123,12 +123,14 @@
 <script>
 import Img1 from "@/assets/imgs/test/1.jpg";
 import Img2 from "@/assets/imgs/freeModel/free_01.png";
+import Img3 from "@/assets/imgs/freeModel/footer.png";
 
 export default {
   data() {
     return {
       imgUrl: Img1,
       headerImg: Img2,
+      footerImg: Img3,
       activeTab: 0,
       tabList: [
         {
@@ -501,32 +503,41 @@ export default {
     }
   }
   .more-model {
-    padding-top: 50px;
+    // padding-top: 50px;
     color: #000;
     background-color: #ddd;
+    position: relative;
     .title {
-      padding-left: 150px;
+      // padding-left: 150px;
       font-weight: bold;
       font-size: 50px;
-      line-height: 60px;
+      line-height: 50px;
       letter-spacing: 3px;
       white-space: pre-wrap;
+      position: absolute;
+      left: 130px;
+      top: 50px;
     }
     .more-desc {
-      padding-left: 150px;
-      margin-top: 20px;
+      top: 120px;
+      left: 150px;
+      // padding-left: 150px;
+      // margin-top: 20px;
       font-size: 16px;
       line-height: 28px;
       white-space: pre-wrap;
+      position: absolute;
     }
     .more-pic {
       display: flex;
       justify-content: center;
-      height: 300px;
-      margin-top: 20px;
+      // height: 300px;
+      // margin-top: 20px;
       img {
         display: block;
-        height: 100%;
+        // height: 100%;
+        object-fit: contain;
+        width: 100%;
       }
     }
   }

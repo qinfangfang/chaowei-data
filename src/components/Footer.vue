@@ -123,7 +123,7 @@ export default {
                 id: "list-3-2",
                 nameZh: "常见问题",
                 nameEn: "FAQ",
-                path: "//questionList",
+                path: "/questionList",
               },
               // {
               //   id: "list-3-3",

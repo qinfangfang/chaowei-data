@@ -5,7 +5,7 @@
         <div class="preview-swiper">
           <el-carousel
             ref="previewSwiper"
-            :interval="5000"
+            :interval="8000"
             :autoplay="true"
             indicator-position="none"
             arrow="always"
@@ -17,7 +17,7 @@
               </div>
               <template v-else>
                 <el-carousel
-                  :interval="200"
+                  :interval="1000"
                   :autoplay="true"
                   arrow="never"
                   indicator-position="none"
@@ -47,7 +47,7 @@
             <img :src="item?.imageUrl" alt="" v-if="!Array.isArray(item)" />
             <template v-else>
               <el-carousel
-                :interval="200"
+                :interval="1000"
                 :autoplay="true"
                   arrow="never"
                   :hover-stop="false"
@@ -130,14 +130,14 @@
                   }}</a>
                 </div>
               </template>
-              <span v-else class="value" :class="item?.class">{{
+              <span v-else class="value" :class="item?.class" @click="openLegal(item.id)">{{
                 detail?.[`${item?.key}${$i18n.locale}`] ||
                 detail?.[item?.uniqueKey] ||
                 item?.text
               }}</span>
             </div>
           </div>
-          <div class="product-desc"></div>
+          <!-- <div class="product-desc"></div> -->
           <!-- <div class="product-desc">{{ detail?.[`desc${$i18n.locale}`] }}</div> -->
         </div>
       </div>
@@ -222,7 +222,7 @@ export default {
         {
           id: "10",
           labelZh: "法律信息",
-          labelEn: "法律信息",
+          labelEn: "Legal Information",
           text: "点击查看授权信息",
           class: "color-ed6336",
         },
@@ -284,7 +284,23 @@ export default {
       const params = this.$route.params;
       const res = await addModelToCarById({ id: params?.id });
       if (!res?.code) {
-        this.$message.success("添加成功");
+        // this.$message.success("添加成功");
+        this.$confirm(
+          this.isZh
+            ? "模型已成功添加到购物车内"
+            : "Successfully add to The buy car",
+          this.isZh ? "提示" : "Tips",
+          {
+            confirmButtonText: this.isZh ? "去购物车" : "go buy car",
+            cancelButtonText: this.isZh ? "继续浏览" : "continue browsing",
+            type: "success",
+            customClass: "global-messag0eBox",
+          }
+        )
+          .then(async () => {
+            this.$router.push('/buyCar')
+          })
+          .catch(() => {});
       } else {
         res?.msg && this.$message.error(res?.msg);
       }
@@ -298,7 +314,11 @@ export default {
       this.index = index;
       this.$refs.previewSwiper.setActiveItem(index);
     },
-
+    openLegal(id) {
+      if (id === '10') {
+        window.open('/questionList?fromPage=legal', "_blank")
+      }
+    },
     // 处理轮播图展示
     handleSwiperData(data = {}) {
       const keyList = [
@@ -310,21 +330,25 @@ export default {
       ];
       const arr = [];
       this.previewList = keyList.forEach((item, idx) => {
-        const imgArr = data?.[item]?.split(",") || [];
-        if (imgArr.length == 1) {
-          arr.push({
-            id: idx,
-            imageUrl: imgArr[0],
-          });
-        } else if (imgArr.length > 1) {
-          const newArr = [];
-          imgArr.forEach((imgItm, index) => {
-            newArr.push({
-              id: `${idx}_${index}`,
-              imageUrl: imgItm,
+        if (data.categoryCode === 'full-micromotion' && item === 'frontView') {
+
+        } else {
+          const imgArr = data?.[item]?.split(",") || [];
+          if (imgArr.length == 1) {
+            arr.push({
+              id: idx,
+              imageUrl: imgArr[0],
             });
-          });
-          arr.push(newArr);
+          } else if (imgArr.length > 1) {
+            const newArr = [];
+            imgArr.forEach((imgItm, index) => {
+              newArr.push({
+                id: `${idx}_${index}`,
+                imageUrl: imgItm,
+              });
+            });
+            arr.push(newArr);
+          }
         }
       });
       this.previewList = arr;
@@ -508,10 +532,10 @@ export default {
         border-bottom: 1px solid #ddd;
       }
       .attributes-list {
-        padding: 25px 65px 0;
+        padding: 25px 65px 25px;
         .attributes-item {
           display: flex;
-          margin-bottom: 8px;
+          margin-bottom: 15px;
           font-size: 20px;
           color: #666;
           align-items: flex-end;
@@ -553,8 +577,8 @@ export default {
         }
       }
       .product-desc {
-        margin-top: 30px;
-        padding: 0 65px 50px;
+        // margin-top: 30px;
+        padding: 0 25px 50px;
         font-size: 16px;
         color: #666;
         line-height: 28px;
