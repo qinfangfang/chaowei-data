@@ -12,7 +12,7 @@
         <el-form
           :model="form"
           ref="loginForm"
-          label-width="50px"
+          :label-width="`${isZh ? '50px' : '80px'}`"
           class="demo-dynamic"
         >
           <el-form-item
@@ -95,8 +95,8 @@ export default {
   props: ["router", "id"],
   computed: {
     isZh() {
-      console.log(1111, this);
-      return localStorage.getItem("locale") || "Zh";
+      console.log(1111, this, localStorage.getItem("locale") || "Zh");
+      return (localStorage.getItem("locale") || "Zh") === 'Zh';
     },
     lang() {
       return localStorage.getItem("locale");
