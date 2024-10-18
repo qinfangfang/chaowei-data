@@ -127,11 +127,14 @@ export default {
 .chaowei-home {
   .chaowei-video {
     position: relative;
+    display: flex;
     width: 100%;
+    justify-content: center;
     margin-bottom: -5px;
-
+    background: linear-gradient(to bottom, #2d2d2d, #040404);
+    outline: none;
     video {
-      width: 100%;
+      height: 500px;
     }
 
     .video-desc {
