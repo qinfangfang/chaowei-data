@@ -808,12 +808,13 @@ export default {
       cursor: pointer;
       .list-item {
         position: relative;
-        background-color: #d9d9d9;
+        background-color: #e8e8e8;
         border-radius: 15px;
         overflow: hidden;
         .model-pic {
           position: relative;
           overflow: hidden;
+          min-height: 360px;
           &:hover {
             img.front-img {
               display: none;
