@@ -1,6 +1,6 @@
 <template>
   <div class="chaowei-home">
-    <div class="chaowei-video">
+    <div class="chaowei-video" :style="{height: firstScreenHeight}">
       <video src="@/assets/video/home_video.mp4" autoplay="autoplay" muted="muted" loop="loop"></video>
       <div class="video-desc">
         <div class="desc-title">PEOPLEGROUNDTRUTH</div>
@@ -60,6 +60,7 @@ export default {
   data() {
     return {
       visible: true,
+      firstScreenHeight: '600px',
       modelList: [
         {
           id: "1",
@@ -120,7 +121,9 @@ export default {
   },
   created() {
     console.log("this.$router", this.$router);
+    this.firstScreenHeight = (window.innerHeight - 80) + 'px'
   },
+  // mounted
 };
 </script>
 <style lang="less" scoped>
@@ -134,7 +137,8 @@ export default {
     background: linear-gradient(to bottom, #2d2d2d, #040404);
     outline: none;
     video {
-      height: 500px;
+      // height: 500px;
+      height: 100%;
     }
 
     .video-desc {

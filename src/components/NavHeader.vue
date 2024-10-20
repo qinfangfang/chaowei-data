@@ -307,7 +307,7 @@ export default {
   top: 0;
   align-items: center;
   width: 100%;
-  height: 100px;
+  height: 80px;
   background: #1e1e1e;
   border-radius: 0px 0px 0px 0px;
   font-family: Inter, Inter;
