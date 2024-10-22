@@ -149,6 +149,11 @@ export default {
       return this.$i18n.locale || "En";
     },
   },
+  watch: {
+    '$i18n.locale'(val) {
+      this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
+    }
+  },
   methods: {
     //
     subClick(item) {
