@@ -15,6 +15,7 @@ export const goLoginNew = (config) => {
 
 // 关闭登录弹窗
 export const closeLogin = () => {
+  document.body.classList.remove('el-popup-parent--hidden');  // 去除隐藏不能滚动
   const modal = document.getElementsByClassName("v-modal")[0];
   const wrapper = document.getElementsByClassName('login-module')[0];
   document.body.removeChild(modal);

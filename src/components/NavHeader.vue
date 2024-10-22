@@ -172,8 +172,14 @@ export default {
       menuList,
       language: localStorage.getItem("lang") || "En",
       activeChildId: "",
-      activeTab: 0,
+      activeTab: -1,
     };
+  },
+  watch: {
+    $route(to, from) {
+      // console.log('to>>>>>>>>>>>', to)
+      this.watchRoute();
+    }
   },
   computed: {
     locale() {
@@ -288,6 +294,17 @@ export default {
       this.userInfo = await getUserInfo();
       console.log("用户信息>>>>>>>>", this.userInfo, this.$route);
     },
+    watchRoute() {
+      console.log('this.$route', this.$route)
+      const menuItem = menuList.filter(item => {
+        return this.$route.path == item?.path;
+      });
+      if(menuItem.length) {
+        this.activeTab = menuItem[0]?.id - 1;
+      } else {
+        this.activeTab = -1;
+      }
+    }
   },
   created() {
     this.getUserInfoData();
@@ -296,6 +313,9 @@ export default {
       this.showMenu = false;
     });
   },
+  mounted() {
+    this.watchRoute();
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -402,7 +422,7 @@ export default {
       .sub-menu-wrap {
         position: absolute;
         left: 50%;
-        top: 95px;
+        top: 80px;
         display: none;
         flex: 1;
         padding: 30px 26px 30px;
