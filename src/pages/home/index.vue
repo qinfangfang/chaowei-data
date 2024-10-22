@@ -20,7 +20,7 @@
       <template v-for="item in modelList">
         <div class="model-item" :key="item.id">
           <div class="model-item-pic">
-            <img :src="item?.imgUrl" alt="" />
+            <img :class="`img_${item.id}`" :src="item?.imgUrl" alt="" />
           </div>
           <div class="model-item-explain">
             <div class="main-tilte" :class="`${lang}`">{{ item?.[`title${lang}`] }}</div>
@@ -38,7 +38,32 @@
     <div class="chaowei-partner">
       <div class="partner-title">{{ isZh ? '主要服务客户 （优质合作伙伴）' : 'Main Clients' }}</div>
       <div class="partner-pic">
-        <img src="@/assets/imgs/home/home_6.png" alt="" />
+        <!-- <img src="@/assets/imgs/home/home_6.png" alt="" /> -->
+        <div class="img-inner-wrap" v-for="item in partnerList" :key="item">
+          <img :src="item" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="chaowei-partner">
+      <div class="partner-title">{{ isZh ? '常见问题' : 'F&A' }}</div>
+      <div class="partner-faq">
+        <el-tabs v-model="tabActive">
+          <template v-for="item in questionList">
+            <el-tab-pane :key="item?.id" :label="item?.name" :name="item?.id">
+              <el-collapse v-model="activeNames">
+                <template v-for="child in item?.list">
+                  <el-collapse-item
+                    :key="child?.id"
+                    :title="child?.title"
+                    :name="child?.id"
+                  >
+                    <div v-html="child?.content"></div>
+                  </el-collapse-item>
+                </template>
+              </el-collapse>
+            </el-tab-pane>
+          </template>
+        </el-tabs>
       </div>
     </div>
     <Footer></Footer>
@@ -54,6 +79,22 @@ import Home3 from "@/assets/imgs/home/home_3.png";
 import Home4 from "@/assets/imgs/home/home_4.png";
 import Home5 from "@/assets/imgs/home/home_5.png";
 import Login from "@/components/Login.vue";
+import partner1 from "@/assets/imgs/partner/partner1.png";
+import partner2 from "@/assets/imgs/partner/partner2.png";
+import partner3 from "@/assets/imgs/partner/partner3.png";
+import partner4 from "@/assets/imgs/partner/partner4.png";
+import partner5 from "@/assets/imgs/partner/partner5.png";
+import partner6 from "@/assets/imgs/partner/partner6.png";
+import partner7 from "@/assets/imgs/partner/partner7.png";
+import partner8 from "@/assets/imgs/partner/partner8.png";
+import partner9 from "@/assets/imgs/partner/partner9.png";
+import partner10 from "@/assets/imgs/partner/partner10.png";
+import partner11 from "@/assets/imgs/partner/partner11.png";
+import partner12 from "@/assets/imgs/partner/partner12.png";
+import partner13 from "@/assets/imgs/partner/partner13.png";
+import partner14 from "@/assets/imgs/partner/partner14.png";
+import partner15 from "@/assets/imgs/partner/partner15.png";
+import { questionZh, questionEn } from '../questionList/constant';
 
 export default {
   name: "homePage",
@@ -61,6 +102,9 @@ export default {
     return {
       visible: true,
       firstScreenHeight: '600px',
+      tabActive: "1",
+      activeNames: "1-1",
+      questionList: questionZh,
       modelList: [
         {
           id: "1",
@@ -90,6 +134,7 @@ export default {
           buttonList: [{ id: "5.1", nameZh: "点击跳转", nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8", redirectUrl: 'https://www.superdimension.cn/' }],
         },
       ],
+      partnerList: [partner1,partner2,partner3,partner4,partner5,partner6,partner7,partner8,partner9,partner10,partner11,partner12,partner13,partner14,partner15]
     };
   },
   components: {
@@ -122,6 +167,7 @@ export default {
   created() {
     console.log("this.$router", this.$router);
     this.firstScreenHeight = (window.innerHeight - 80) + 'px'
+    this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
   },
   // mounted
 };
@@ -206,10 +252,16 @@ export default {
 
       .model-item-pic {
         flex: 1;
-
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 600px;
         img {
-          display: block;
-          width: 100%;
+          // display: block;
+          height: 450px;
+          &.img_1 {
+            height: 600px;
+          }
         }
       }
 
@@ -272,7 +324,7 @@ export default {
   }
 
   .chaowei-partner {
-    padding: 80px 75px 45px;
+    padding: 10px 75px 45px;
     background-color: #fff;
 
     .partner-title {
@@ -280,16 +332,31 @@ export default {
       font-size: 40px;
       color: #000;
       line-height: 56px;
+      margin: 20px 0;
       text-align: center;
     }
 
     .partner-pic {
       margin-top: 30px;
-
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      .img-inner-wrap {
+        width: 20%;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       img {
         display: block;
-        width: 100%;
+        width: 150px;
       }
+    }
+    .partner-faq {
+      width: 100%;
     }
   }
 }</style>

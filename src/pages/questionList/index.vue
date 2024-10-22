@@ -3,7 +3,7 @@
     <div class="question-wrap">
       <div class="title">{{ isZh ? '常见问题' : 'F&A'}}</div>
       <div class="question-tabs">
-        <el-tabs v-model="tabActive" @tab-click="handleClick">
+        <el-tabs v-model="tabActive">
           <template v-for="item in questionList">
             <el-tab-pane :key="item?.id" :label="item?.name" :name="item?.id">
               <el-collapse v-model="activeNames">
