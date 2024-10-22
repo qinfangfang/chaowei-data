@@ -3,10 +3,10 @@
     <div class="chaowei-info footer-item">
       <div class="footer-item-wrap">
         <div class="chaowei-logo">
-          <img :src="footer.logoUrl" alt="" />
+          <img :src="Logo" alt="" />
         </div>
         <div class="chaowei-title">{{ footer?.title }}</div>
-        <div class="info-desc">
+        <!-- <div class="info-desc">
           <div class="desc-label">备案号：</div>
           {{ footer?.recordCode }}
         </div>
@@ -17,7 +17,7 @@
         <div class="info-desc">
           <div class="desc-label">网案：</div>
           {{ footer?.netCaseCode }}
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="footer-item" v-for="item in footer?.list" :key="item?.id">
@@ -39,12 +39,14 @@
 </template>
 
 <script>
-import Logo from "@/assets/imgs/navOrFooter/footer_logo.png";
+import Logo from "@/assets/imgs/favicon.png";
+// import Logo from "@/assets/imgs/navOrFooter/footer_logo.png";
 export default {
   data() {
     return {
+      Logo,
       footer: {
-        logoUrl: Logo,
+        // logoUrl: Logo,
         title: "3D扫描人物超市",
         recordCode: "备案号XXXXXXXXXXX",
         licenceCode: "许可证XXXXXXXXXXX",
@@ -175,11 +177,12 @@ export default {
 
   .chaowei-info {
     .chaowei-logo {
-      width: 278px;
-      height: 137px;
+      text-align: center;
+      width: 180px;
+      // height: 137px;
       img {
-        display: block;
-        width: 100%;
+        // display: block;
+        width: 128px;
       }
     }
     .chaowei-title {
