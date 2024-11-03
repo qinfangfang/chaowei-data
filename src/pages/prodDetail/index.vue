@@ -378,8 +378,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .prod-detail {
-  height: calc(100vh - 100px);
-  padding-top: 40px;
+  height: calc(100vh - 56px);
+  padding-top: 20px;
   background-color: #f3f3f3;
   overflow: auto;
   .empty-wrap {
@@ -387,15 +387,19 @@ export default {
   }
   .prod-detail-wrap {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
     max-width: 1200px;
     margin: 0 auto;
   }
   .preview-module {
-    width: 540px;
+    // width: 540px;
+    width: 380px;
     .preview-swiper {
-      height: 930px;
+      // height: 930px;
+      height: 650px;
+      width: 380px;
+      margin: 0 auto;
       background-color: #ddd;
       border-radius: 7px;
       overflow: hidden;
@@ -406,7 +410,7 @@ export default {
         height: 100%;
       }
       .slider-item {
-        height: 930px;
+        height: 650px;
         img {
           display: block;
           width: 100%;
@@ -439,12 +443,15 @@ export default {
   .preview-list {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 30px;
+    margin-top: 20px;
+    margin-left: 3px;
     .preview-item {
       flex-shrink: 0;
-      width: 120px;
-      height: 210px;
-      margin: 0 20px 20px 0;
+      width: 90px;
+      height: 156px;
+      // width: 120px;
+      // height: 210px;
+      margin: 0 5px 5px 0;
       border-radius: 4px;
       cursor: pointer;
       overflow: hidden;
@@ -462,37 +469,38 @@ export default {
     }
   }
   .product-info {
-    flex: 1;
+    // flex: 1;
     margin-left: 30px;
     .product-price {
-      padding: 30px 65px 40px;
+      padding: 15px 20px 30px;
+      width: 460px;
       background-color: #fff;
       box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
       border-radius: 20px;
       font-weight: 400;
       .name {
-        font-size: 24px;
+        font-size: 20px;
         color: #000;
-        line-height: 28px;
+        // line-height: 28px;
       }
       .code {
         margin-top: 10px;
-        font-size: 16px;
+        font-size: 14px;
         color: #ed6336;
-        line-height: 19px;
+        // line-height: 16px;
       }
       .origin-price {
-        margin-top: 25px;
-        font-size: 22px;
+        margin-top: 15px;
+        font-size: 18px;
         color: #999;
-        line-height: 28px;
+        // line-height: 20px;
         text-decoration: line-through;
       }
       .price {
-        margin-top: 25px;
-        font-size: 30px;
+        margin-top: 10px;
+        font-size: 26px;
         color: #000;
-        line-height: 35px;
+        // line-height: 35px;
       }
       .operate-btn {
         display: flex;
@@ -504,7 +512,7 @@ export default {
           align-items: center;
           justify-content: center;
           flex: 1;
-          height: 56px;
+          height: 43px;
           font-size: 20px;
           color: #fff;
           background: #ed6336;
@@ -518,25 +526,26 @@ export default {
       }
     }
     .product-attributes {
-      margin-top: 30px;
+      width: 460px;
+      margin-top: 20px;
       box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
       border-radius: 20px;
       background-color: #fff;
       .title {
         display: flex;
         align-items: center;
-        height: 60px;
-        padding: 0 65px;
+        height: 48px;
+        padding: 0 20px;
         font-size: 24px;
         color: #ed6336;
         border-bottom: 1px solid #ddd;
       }
       .attributes-list {
-        padding: 25px 65px 25px;
+        padding: 15px 20px;
         .attributes-item {
           display: flex;
           margin-bottom: 15px;
-          font-size: 20px;
+          font-size: 18px;
           color: #666;
           align-items: flex-end;
           &.special-attr {
@@ -545,7 +554,7 @@ export default {
           // line-height: 28px;
           .value {
             font-size: 16px;
-            line-height: 16px;
+            line-height: 14px;
           }
           .color-ed6336 {
             cursor: pointer;

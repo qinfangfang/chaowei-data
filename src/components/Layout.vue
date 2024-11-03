@@ -5,7 +5,7 @@
     </div>
     <div
       class="page-content"
-      :style="{ paddingTop: showHeader ? '80px' : 0 }"
+      :style="{ paddingTop: showHeader ? '3.5rem' : 0 }"
     >
       <router-view />
     </div>

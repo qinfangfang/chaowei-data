@@ -19,7 +19,7 @@
     <div class="model-list">
       <template v-for="item in modelList">
         <div class="model-item" :key="item.id">
-          <div class="model-item-pic">
+          <div class="model-item-pic" :class="`img_par_${item.id}`" >
             <img :class="`img_${item.id}`" :src="item?.imgUrl" alt="" />
           </div>
           <div class="model-item-explain">
@@ -44,7 +44,7 @@
         </div>
       </div>
     </div>
-    <div class="chaowei-partner">
+    <div class="chaowei-partner ques-part">
       <div class="partner-title">{{ isZh ? '常见问题' : 'F&A' }}</div>
       <div class="partner-faq">
         <el-tabs v-model="tabActive">
@@ -171,7 +171,7 @@ export default {
   },
   created() {
     console.log("this.$router", this.$router);
-    this.firstScreenHeight = (window.innerHeight - 80) + 'px'
+    this.firstScreenHeight = (window.innerHeight - 56) + 'px'
     this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
   },
   // mounted
@@ -199,7 +199,7 @@ export default {
       position: absolute;
       width: 50vw;
       top: 50%;
-      left: 5%;
+      left: 8%;
       transform: translate(0, -50%);
       color: #fff;
       z-index: 1;
@@ -261,12 +261,15 @@ export default {
         align-items: center;
         justify-content: center;
         height: 600px;
+        &.img_par_1 {
+          height: 800px;
+          .img_1 {
+            height: 800px;
+          }
+        }
         img {
           // display: block;
           height: 450px;
-          &.img_1 {
-            height: 600px;
-          }
         }
       }
 
@@ -362,6 +365,25 @@ export default {
     }
     .partner-faq {
       width: 100%;
+      /deep/ .el-collapse-item__header {
+        padding-left: 15px;
+        color: #000;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      /deep/ .el-collapse-item__content {
+        padding: 10px 30px;
+        color: #666;
+        font-size: 14px;
+        white-space: pre-wrap;
+        a {
+          color: #ed6336;
+          cursor: pointer;
+        }
+      }
+    }
+    &.ques-part {
+        background-color: #f3f3f3;
     }
   }
 }</style>

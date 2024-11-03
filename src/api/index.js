@@ -81,3 +81,13 @@ export const getModelDownloadUrlById = (data = {}) => {
     data,
   });
 };
+/**
+ * 获取模型临时下载链接
+ * id
+ */
+export const freeDownloadUrl = (data = {}) => {
+  return request({
+    url: `/model/freeDownloadUrl`,
+    data,
+  });
+};

@@ -535,7 +535,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .buy-car {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 56px);
   padding: 30px 45px;
   background-color: #f3f3f3;
   overflow: auto;

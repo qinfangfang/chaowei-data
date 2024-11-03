@@ -2,7 +2,6 @@
   <div class="login-module">
     <el-dialog
       :visible="show"
-      width="480px"
       center
       :show-close="true"
       :destroy-on-close="true"
@@ -12,7 +11,6 @@
         <el-form
           :model="form"
           ref="loginForm"
-          :label-width="`${isZh ? '50px' : '80px'}`"
           class="demo-dynamic"
         >
           <el-form-item
@@ -175,6 +173,7 @@ export default {
     border-radius: 12px;
     background-color: #f3f3f3;
     z-index: 999;
+    width: 480px;
   }
   /deep/ .el-dialog__body {
     padding-bottom: 0;
@@ -184,10 +183,14 @@ export default {
   }
   /deep/ .el-form-item__label {
     color: #000;
+    width: 80px;
     &::before {
       content: "";
       display: none;
     }
+  }
+  /deep/ .el-input {
+    width: 320px;
   }
   /deep/ .el-input__inner:focus {
     border-color: #dcdfe6;

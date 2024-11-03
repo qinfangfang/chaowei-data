@@ -30,6 +30,10 @@ Vue.config.productionTip = false;
 Vue.prototype.$globalState = Vue.observable({
   productTotalMoney: 0,
 });
+	// main.js
+import { setDomFontSize } from './utils/pxToRem'
+// 执行方法，相当于全局挂载了
+setDomFontSize()
 
 // 5、挂载 i18n
 window.instanceVue = new Vue({

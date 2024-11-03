@@ -1,6 +1,5 @@
 <template>
   <el-dialog
-    width="520px"
     center
     :visible="visible"
     :show-close="true"
@@ -14,7 +13,6 @@
         :model="form"
         :rules="rules"
         ref="form"
-        label-width="120px"
         class="invoice-form"
       >
         <el-form-item label="公司抬头" prop="title">
@@ -43,7 +41,7 @@
         >
           <el-input type="textarea" v-model="form.content"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item style="text-align: center;">
           <el-button
             class="submit-btn"
             type="primary"
@@ -99,11 +97,21 @@ export default {
 
 <style lang="less" scoped>
 .invoice-dialog {
-  /dedp/ .el-dialog {
+  /deep/ .el-dialog {
     border-radius: 10px;
+    width: 680px;
   }
   /deep/ .el-dialog__headerbtn .el-dialog__close:hover {
     color: #ed6336;
+  }
+  /deep/ .el-form-item__label {
+    width: 160px;
+  }
+  /deep/ .el-input {
+    width: 380px;
+  }
+  /deep/ .el-textarea {
+    width: 380px;
   }
   .submit-btn {
     width: 60%;

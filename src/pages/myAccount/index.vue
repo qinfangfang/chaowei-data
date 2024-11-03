@@ -95,13 +95,13 @@ export default {
 .my-account {
   display: flex;
   justify-content: space-between;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 56px);
   padding: 0 15px 0 30px;
   background-color: #f3f3f3;
   overflow: hidden;
   .menu-wrap {
     width: 280px;
-    margin-right: 100px;
+    margin-right: 60px;
     flex-shrink: 0;
     padding: 0 15px;
     background-color: #fff;

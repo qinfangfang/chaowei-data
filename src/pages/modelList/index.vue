@@ -546,6 +546,9 @@ export default {
       if (modelCategory_data) {
         this.modelTypeList = JSON.parse(modelCategory_data);
         this.modelTypeList.forEach((item) => {
+          item.childCategories = item.childCategories.filter(itemChild => {
+            return itemChild.modelSize > 0
+          })
           this.$set(this.modelForm, item?.id, "");
         });
       }
@@ -576,7 +579,7 @@ export default {
 <style lang="less" scoped>
 .model-list-wrapper {
   display: flex;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 56px);
   .model-sidebar {
     width: 350px;
     padding: 30px 17px;
@@ -891,6 +894,7 @@ export default {
           .product-code {
             font-size: 14px;
             color: #222;
+            height: 40px;
             // text-overflow: ellipsis;
             // overflow: hidden;
             // white-space: nowrap;

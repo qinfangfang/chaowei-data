@@ -1,12 +1,14 @@
 <template>
   <div class="nav-header">
     <div class="nav-left" @click="goHome">
-      <img src="@/assets/imgs/navOrFooter/header_logo.png" alt="" />
+      <!-- <img src="@/assets/imgs/navOrFooter/header_logo.png" alt="" /> -->
+      <img src="@/assets/imgs/favicon.png" alt="" />
     </div>
     <div class="nav-center">
       <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click="mainJumpTo(item, index)">
         <span :class="`${activeTab == index ? 'active' : ''} ${locale}`">{{ item?.[`name${$i18n?.locale}`] }}</span>
-        <div class="sub-menu-wrap" v-if="item?.subMenuList" :style="{ width: item?.with }">
+        <div class="sub-menu-wrap" v-if="item?.subMenuList">
+        <!-- <div class="sub-menu-wrap" v-if="item?.subMenuList" :style="{ width: item?.with }"> -->
           <!-- <div
           class="sub-menu-wrap"
           v-if="item?.subMenuList"
@@ -159,7 +161,7 @@ const menuList = [
     // ],
   },
   { id: 3, nameZh: "常见问题", nameEn: "FAQ", redirect: true, path: "/questionList" },
-  { id: 4, nameZh: "教程", nameEn: "TUTORIALS", redirect: true, path: "" },
+  // { id: 4, nameZh: "教程", nameEn: "TUTORIALS", redirect: true, path: "" },
   { id: 5, nameZh: "联系我们", nameEn: "CONTACT US", redirect: true, path: "/contactUs" },
 ];
 
@@ -285,8 +287,14 @@ export default {
     async getModelCategoryData() {
       const res = await getModelCategory();
       console.log("getModelCategory>>>>>>>", res);
-      this.getModelSubMenu(res || []);
-      localStorage.setItem("modelCategory_data", JSON.stringify(res || []));
+      const filterNo = res.filter(item => {
+        item.childCategories = item.childCategories.filter(itemInner => {
+          return itemInner.modelSize > 0
+        })
+        return item.modelSize > 0
+      })
+      this.getModelSubMenu(filterNo || []);
+      localStorage.setItem("modelCategory_data", JSON.stringify(filterNo || []));
     },
     // 获取用户信息
     async getUserInfoData() {
@@ -327,7 +335,7 @@ export default {
   top: 0;
   align-items: center;
   width: 100%;
-  height: 80px;
+  height: 56px;
   background: #1e1e1e;
   border-radius: 0px 0px 0px 0px;
   font-family: Inter, Inter;
@@ -340,8 +348,8 @@ export default {
     display: flex;
     flex-shrink: 0;
     align-items: center;
-    width: 152px;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     margin-left: 88px;
     cursor: pointer;
     white-space: nowrap;
@@ -355,22 +363,22 @@ export default {
   .nav-center {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    // justify-content: space-around;
     height: 100%;
     flex: 1;
-    margin: 0 20px 0 50px;
+    margin: 0 20px 0 150px;
 
     .menu-item {
       position: relative;
       display: flex;
       align-items: center;
-      // margin-right: 50px;
+      margin-right: 50px;
       height: 100%;
       cursor: pointer;
 
       span {
-        font-size: 26px;
-        padding: 5px 20px;
+        font-size: 18px;
+        padding: 0px 20px;
         white-space: nowrap;
         border-radius: 6px;
         &.En {
@@ -392,7 +400,7 @@ export default {
 
       @media screen and (max-width: 1420px) {
         span {
-          font-size: 22px;
+          font-size: 18px;
         }
       }
 
@@ -422,11 +430,11 @@ export default {
       .sub-menu-wrap {
         position: absolute;
         left: 50%;
-        top: 80px;
+        top: 56px;
         display: none;
         flex: 1;
         padding: 30px 26px 30px;
-        // width: 493px;
+        width: 490px;
         // height: 359px;
         background: rgba(236, 236, 236, 0.98);
         border-radius: 9px 9px 9px 9px;
@@ -555,7 +563,7 @@ export default {
           display: none;
           position: absolute;
           width: 150px;
-          top: 80px;
+          top: 56px;
           left: 50%;
           padding: 10px 0;
           border-radius: 4px;

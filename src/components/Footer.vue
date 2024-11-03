@@ -148,7 +148,22 @@ export default {
   methods: {
     // 跳转
     jumpTo(item) {
-      item?.path && this.$router.push(item?.path);
+      console.log(item, 'item====' )
+      if (item.path) {
+        this.$router.push(item?.path)
+      } else {
+        const numberMap = item.childCategories.map(itemInner => {
+          return itemInner.modelSize
+        })
+        const maxNum = Math.max(...numberMap)
+        let maxId = ''
+        item.childCategories.forEach(itemLast => {
+          if (itemLast.modelSize === maxNum) {
+            maxId = itemLast.id
+          }
+        })
+        this.$router.push(`/modelList?parentId=${item.id}&modelType=${maxId}`)
+      }
     },
     // 模型分类
     modelTypeHandler() {

@@ -15,7 +15,7 @@
         </div>
         <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="80"></el-table-column>
-          <el-table-column :label="`${isZh ? '项目名称' : 'Project Name'}`">
+          <el-table-column :label="`${isZh ? '项目名称' : 'Project Name'}`" class-name="column-my-1" flex="2" width="350">
             <template slot-scope="scope">
               <div class="product-info">
                 <div class="prodcut-pic">
@@ -28,30 +28,30 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '价格' : 'Price'}`" width="100">
+          <el-table-column :label="`${isZh ? '价格' : 'Price'}`" class-name="column-my-2"  flex="1">
             <template slot-scope="scope">
               <div class="product-price">
                 {{ $i18n.locale == "Zh" ? "¥ " : "$ " }}{{ scope?.row?.price }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易状态' : 'Trade Status'}`" width="120">
+          <el-table-column :label="`${isZh ? '交易状态' : 'Trade Status'}`" class-name="column-my-3">
             <template slot-scope="scope">
               <div class="trade-status">{{ getOrderStatus(scope?.row) }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易编号' : 'Trade No.'}`" width="150">
+          <el-table-column :label="`${isZh ? '交易编号' : 'Trade No.'}`" class-name="column-my-4">
             <template slot-scope="scope">
               <div class="trade-id" @click="copyToClip({ content: `${scope?.row?.orderNo}` })">{{ scope?.row?.orderNo }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易时间' : 'Trade Time'}`" width="100">
+          <el-table-column :label="`${isZh ? '交易时间' : 'Trade Time'}`" class-name="column-my-5">
             <template slot-scope="scope">
               <div class="trade-time">{{ formatDate(scope?.row?.createTime) }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '操作' : 'Operation'}`" width="150">
+          <el-table-column :label="`${isZh ? '操作' : 'Operation'}`" class-name="column-my-6">
             <template slot-scope="scope">
               <!-- <div
                 class="moveto-favorites"
@@ -541,4 +541,19 @@ export default {
     border-radius: 4px;
   }
 }
+// .column-my-1 {
+//   width: 20rem;
+// }
+// .column-my-2 {
+//   width: 120px;
+// }
+// .column-my-3 {
+//   width: 120px;
+// }
+// .column-my-4 {
+//   width: 150px;
+// }
+// .column-my-5 {
+//   width: 150px;
+// }
 </style>
