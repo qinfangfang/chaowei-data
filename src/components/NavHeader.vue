@@ -2,7 +2,8 @@
   <div class="nav-header">
     <div class="nav-left" @click="goHome">
       <!-- <img src="@/assets/imgs/navOrFooter/header_logo.png" alt="" /> -->
-      <img src="@/assets/imgs/favicon.png" alt="" />
+<!--      <img src="@/assets/imgs/squLogo.png" alt="" />-->
+       <img src="@/assets/imgs/favicon.png" alt="" />
     </div>
     <div class="nav-center">
       <div class="menu-item" v-for="(item, index) in menuList" :key="item.id" @click="mainJumpTo(item, index)">
@@ -41,9 +42,10 @@
       </div>
     </div>
     <div class="nav-right">
-      <div class="right-item language-icon" @click="changeLangEvent">
-        {{ locale === "Zh" ? "中文" : ""
-        }}<img v-if="locale === 'En'" src="@/assets/imgs/navOrFooter/language_icon.png" alt="" />
+      <div class="right-item language-icon" @click="changeLangEvent" style="width: 4.4rem;">
+        <img src="@/assets/imgs/navOrFooter/language_icon.png" alt="" />
+        {{ locale === "En" ? "中文" : " EN"
+        }}
       </div>
       <div class="right-item personal-icon" @click.stop="showPersonalMenu">
         <img src="@/assets/imgs/navOrFooter/personal_icon.png" alt="" />
@@ -81,7 +83,7 @@ const menuList = [
   {
     id: 1,
     nameZh: "模型库",
-    nameEn: "MODEL LIBRARY",
+    nameEn: "MODEL SHOP",
     with: "490px",
     redirect: true,
     path: "/modelList",
@@ -89,7 +91,7 @@ const menuList = [
       {
         id: "1.1",
         nameZh: "模型分类",
-        nameEn: "Model Categories",
+        nameEn: "BY MODEL TYPE",
         list: [
           {
             id: "1.1.1",
@@ -121,7 +123,7 @@ const menuList = [
       {
         id: "1.2",
         nameZh: "场景分类",
-        nameEn: "Scene Categories",
+        nameEn: "BY TOPIC",
         list: [
           { id: "1.2.1", nameEn: "Casual", nameZh: "休闲", tagId: '14', redirect: true, path: '/modelList?tagId=14' },
           { id: "1.2.2", nameEn: "Business", nameZh: "商务", tagId: '13', redirect: true,  path: '/modelList?tagId=13' },
@@ -134,7 +136,7 @@ const menuList = [
   {
     id: 2,
     nameZh: "免费案例",
-    nameEn: "FREE MODLE",
+    nameEn: "FREE MODEL",
     with: "188px",
     redirect: true,
     path: "/freeModel",
@@ -161,7 +163,7 @@ const menuList = [
     // ],
   },
   { id: 3, nameZh: "常见问题", nameEn: "FAQ", redirect: true, path: "/questionList" },
-  // { id: 4, nameZh: "教程", nameEn: "TUTORIALS", redirect: true, path: "" },
+  { id: 4, nameZh: "设备介绍", nameEn: "DEVICE", redirect: true, path: "/deviceDesc" },
   { id: 5, nameZh: "联系我们", nameEn: "CONTACT US", redirect: true, path: "/contactUs" },
 ];
 
@@ -173,7 +175,7 @@ export default {
       userInfo: {},
       menuList,
       language: localStorage.getItem("lang") || "En",
-      activeChildId: "",
+      activeChildId: "1",
       activeTab: -1,
     };
   },
@@ -356,7 +358,7 @@ export default {
 
     img {
       display: block;
-      width: 100%;
+      height: 100%;
     }
   }
 

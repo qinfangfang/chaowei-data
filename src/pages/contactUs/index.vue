@@ -9,8 +9,9 @@
           </div>
           <div class="inner-wrap">
             <div class="inner-left">
-              <div class="title">{{ isZh ? '商务联系、模型定制' : 'Business contact\nModel customization'}}</div>
-              <div class="info-item" :class="`${lang}`"><span>{{ isZh ? '联系人' : 'Contact'}}：</span>{{ isZh ? '张先生' : 'Mr. Zhang'}}</div>
+              <div class="title">{{ isZh ? '商务联系、模型定制' : 'Contact\nModel customization'}}</div>
+              <div class="info-item first-child" :class="`${lang}`"><span>{{ isZh ? '如果你需要更多的:人体扫描模型、头脸部PBR模型、人物重光照、4D动态模型，或者需要将模型用于AI训练的。 \n可以与我们联系。'
+                                                                    : 'If you need :3D scan models, HD PBR face scan models, Character Relighting dataset, 4D facial dynamic, or use the models for Al training \ncontact us.'}}</span></div>
               <div class="info-item" :class="`${lang}`"><span>Email：</span>service@peoplegroundtruth.com</div>
               <div class="info-item" :class="`${lang}`"><span>Tel：</span>+86 18217172515</div>
               <div class="info-item" :class="`${lang}`">
@@ -18,19 +19,19 @@
               </div>
             </div>
             <div class="inner-right">
-              <div class="title">{{ isZh ?  '填写工单' : 'WORK ORDER'}}</div>
+              <div class="title">{{ isZh ?  '填写工单' : 'Feedback'}}</div>
               <div class="input-item">
                 <el-input v-model="form.name" :placeholder="`${isZh ? '你的姓名' : 'Name'}`"></el-input>
               </div>
               <div class="input-item">
-                <el-input v-model="form.linkWay" placeholder="Email"></el-input>
+                <el-input v-model="form.linkWay" :placeholder="`${isZh ? '联系方式Email或者电话' : 'Email'}`"></el-input>
               </div>
               <div class="input-item textarea">
                 <el-input type="textarea" :placeholder="`${isZh ? '请简单描述你的问题' : 'MESSAGE'}`" v-model="form.desc">
                 </el-input>
               </div>
               <div class="input-item">
-                <el-button @click="submitForm" type="primary">{{ isZh ? '发送' : 'SEED MESSAGE'}}</el-button>
+                <el-button @click="submitForm" type="primary">{{ isZh ? '发送' : 'SEND'}}</el-button>
               </div>
             </div>
           </div>
@@ -88,12 +89,12 @@ export default {
 </script>
 <style lang="less" scoped>
 .contact-us {
-  display: flex;
+  display: inline-flex;
   justify-content: space-between;
   height: calc(100vh - 56px);
-  padding: 20px;
   // background-color: #f3f3f3;
   overflow: auto;
+  padding: 20px 20px 20px 10%;
 
   .contact-us-left {
     flex: 1;
@@ -144,7 +145,7 @@ export default {
         padding: 0 80px 60px 80px;
         border-radius: 20px;
         .title {
-          margin-bottom: 100px;
+          margin-bottom: 50px;
           white-space: pre-wrap;
         }
 
@@ -157,7 +158,11 @@ export default {
           line-height: 28px;
           white-space: pre-wrap;
           &.En {
-            font-size: 13px;
+
+           font-size: 13px;
+          }
+          &.first-child {
+            margin-bottom: 50px;
           }
           &:last-child {
             margin-top: 30px;

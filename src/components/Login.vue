@@ -133,6 +133,8 @@ export default {
             Cookies.set("token", res?.token, { expires: 10 }); // 10天过期
             this.$message.success(this.isZh ? "登录成功" : "Login successful");
             window.location.reload();
+          } else {
+            this.$message.error(res.msg);
           }
         } else {
           this.loading = false;

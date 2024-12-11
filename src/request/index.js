@@ -75,7 +75,7 @@ service.interceptors.response.use(
     if ([2001, 2002, 2003].includes(resCode)) {
       // 2001(其他地方登录被挤掉)、2002(token已过期)、2003(token无效)都需要重新登录
       Cookies.set("token", ""); // 清除token
-      goLoginNew(); // 登录弹窗
+      // goLoginNew(); // 登录弹窗
     }
     if (resCode == "0") {
       return resData;

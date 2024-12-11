@@ -55,45 +55,52 @@ export default {
           {
             id: "list-1",
             titleZh: "模型分类",
-            titleEn: 'Model Classification',
+            titleEn: 'MODEL BY TYPE',
             menuList: [
               {
-                id: "list-1-1",
-                nameEn: "所有全身模型",
-                nameZh: "所有全身模型",
+                id: "5",
+                nameEn: "Whole Body Posture Model",
+                nameZh: "全身姿态模型",
+                path: "/modelList?parentId=1&modelType=5",
               },
               {
-                id: "list-1-2",
-                nameEn: "全身姿态 A类模型",
-                nameZh: "全身姿态 A类模型",
+                id: "6",
+                nameEn: "HD Model of Whole Body Model",
+                nameZh: "全身姿态 高精度模型",
+                path: "/modelList?parentId=1&modelType=6",
               },
               {
-                id: "list-1-3",
-                nameEn: "全身姿态 B类模型",
-                nameZh: "全身姿态 B类模型",
+                id: "8",
+                nameEn: "Whole Body Micromotion Model",
+                nameZh: "全身微动模型",
+                path: "/modelList?parentId=1&modelType=8",
               },
-              {
-                id: "list-1-4",
-                nameEn: "全身 A-pose模型",
-                nameZh: "全身 A-pose模型",
-              },
-              { id: "list-1-5", nameEn: "4D动态模型", nameZh: "4D动态模型" },
-              {
-                id: "list-1-6",
-                nameEn: "PBR头脸部模型",
-                nameZh: "PBR头脸部模型",
-              },
+              // {
+              //   id: "list-1-4",
+              //   nameEn: "全身 A-pose模型",
+              //   nameZh: "全身 A-pose模型",
+              // },
+              // {
+              //   id: "list-1-5",
+              //   nameEn: "4D动态模型",
+              //   nameZh: "4D动态模型"
+              // },
+              // {
+              //   id: "list-1-6",
+              //   nameEn: "PBR头脸部模型",
+              //   nameZh: "PBR头脸部模型",
+              // },
             ],
           },
           {
             id: "list-2",
             titleZh: "会员页面",
-            titleEn: "Member's page",
+            titleEn: "MY ACCOUNT",
             menuList: [
               {
                 id: "list-2-1",
                 nameZh: "交易记录",
-                nameEn: "Transaction Record",
+                nameEn: "My Orders",
                 path: "/myAccount",
               },
               // {
@@ -113,7 +120,7 @@ export default {
           {
             id: "list-3",
             titleZh: "网站支持",
-            titleEn: "Website Support",
+            titleEn: "SUPPORT",
             menuList: [
               {
                 id: "list-3-1",
@@ -133,11 +140,17 @@ export default {
               //   nameEn: "Legal documents",
               //   path: "/home",
               // },
+              // {
+              //   id: "list-3-4",
+              //   nameZh: "教程",
+              //   nameEn: "Tutorials",
+              //   path: "/home",
+              // },
               {
-                id: "list-3-4",
-                nameZh: "教程",
-                nameEn: "Tutorials",
-                path: "/home",
+                id: "list-3-5",
+                nameZh: "设备介绍",
+                nameEn: "Device",
+                path: "/deviceDesc",
               },
             ],
           },
@@ -167,13 +180,13 @@ export default {
     },
     // 模型分类
     modelTypeHandler() {
-      setTimeout(() => {
-        const modelCategory_data = localStorage.getItem("modelCategory_data");
-        if (modelCategory_data) {
-          const modelTypeList = JSON.parse(modelCategory_data);
-          this.$set(this.footer.list[0], "menuList", modelTypeList);
-        }
-      }, 1000);
+      // setTimeout(() => {
+      //   const modelCategory_data = localStorage.getItem("modelCategory_data");
+      //   if (modelCategory_data) {
+      //     const modelTypeList = JSON.parse(modelCategory_data);
+      //     this.$set(this.footer.list[0], "menuList", modelTypeList);
+      //   }
+      // }, 1000);
     },
   },
   mounted() {

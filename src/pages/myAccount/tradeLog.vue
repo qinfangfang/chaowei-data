@@ -1,21 +1,21 @@
 <template>
   <div class="trade-log">
-    <div class="page-title">{{ isZh ? '交易 清单' : 'Transaction List' }}</div>
+    <div class="page-title">{{ isZh ? '交易 清单' : 'Order List' }}</div>
     <div class="trade-log-wrap" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
       <div class="all-products">
         <div class="prod-operate">
           <div class="selected-all">
-            <el-checkbox v-model="selectAll" @change="checkChange">{{ isZh ? '全选' : 'Select All' }}</el-checkbox> 
+            <el-checkbox v-model="selectAll" @change="checkChange">{{ isZh ? '全选' : 'Select All' }}</el-checkbox>
           </div>
           <div class="delete-selected">
-            <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected' }}</el-button> 
+            <el-button size="mini" @click="handleEdit()">{{ isZh ? '下载所选' : 'Download Selected' }}</el-button>
             <!-- <el-button size="mini" @click="handleEdit()">删除所选</el-button>  -->
             <!-- <el-button size="mini" @click="batchInvoice">所选开票</el-button>  -->
           </div>
         </div>
         <el-table ref="multipleTable" :data="prodList" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="80"></el-table-column>
-          <el-table-column :label="`${isZh ? '项目名称' : 'Project Name'}`" class-name="column-my-1" flex="2" width="350">
+          <el-table-column :label="`${isZh ? '项目名称' : 'Name'}`" class-name="column-my-1" flex="2" width="350">
             <template slot-scope="scope">
               <div class="product-info">
                 <div class="prodcut-pic">
@@ -35,23 +35,23 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易状态' : 'Trade Status'}`" class-name="column-my-3">
+          <el-table-column :label="`${isZh ? '交易状态' : 'Status'}`" class-name="column-my-3">
             <template slot-scope="scope">
               <div class="trade-status">{{ getOrderStatus(scope?.row) }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易编号' : 'Trade No.'}`" class-name="column-my-4">
+          <el-table-column :label="`${isZh ? '交易编号' : 'Order No.'}`" class-name="column-my-4">
             <template slot-scope="scope">
               <div class="trade-id" @click="copyToClip({ content: `${scope?.row?.orderNo}` })">{{ scope?.row?.orderNo }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '交易时间' : 'Trade Time'}`" class-name="column-my-5">
+          <el-table-column :label="`${isZh ? '交易时间' : 'Time'}`" class-name="column-my-5">
             <template slot-scope="scope">
               <div class="trade-time">{{ formatDate(scope?.row?.createTime) }}</div>
             </template>
           </el-table-column>
-          <el-table-column :label="`${isZh ? '操作' : 'Operation'}`" class-name="column-my-6">
+          <el-table-column :label="`${isZh ? '操作' : 'Action'}`" class-name="column-my-6">
             <template slot-scope="scope">
               <!-- <div
                 class="moveto-favorites"

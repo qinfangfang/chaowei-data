@@ -20,6 +20,14 @@ export default new VueRouter({
       },
     },
     {
+      path: "/deviceDesc",
+      name: "deviceDesc",
+      component: () => import("../pages/deviceDesc/index.vue"),
+      meta: {
+        title: "设备介绍",
+      },
+    },
+    {
       path: "/modelList",
       name: "ModelList",
       component: () => import("../pages/modelList/index.vue"),

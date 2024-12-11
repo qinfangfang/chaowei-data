@@ -2,11 +2,11 @@
   <div class="model-list-wrapper">
     <div class="model-sidebar">
       <div class="reset-btn" @click="resetSelect">
-        {{ isZh ? "复位选项" : "Reset Options" }}
+        {{ isZh ? "复位选项" : "RESET" }}
       </div>
       <div class="model-type-list">
         <div class="model-type-title">
-          {{ isZh ? "模型种类" : "Model Categories" }}
+          {{ isZh ? "模型种类" : "MODEL TYPE" }}
         </div>
         <!-- <div
           v-for="(item, idx) in modelTypeList"
@@ -119,7 +119,8 @@
           >
         </el-input>
       </div> -->
-      <div class="model-list">
+      <div class="model-list" 
+      ref="modelListWrap">
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
             <div class="model-pic">
@@ -157,7 +158,7 @@
           :current-page="pagination.pageNum"
           layout="prev, pager, next"
           :total="pagination.total"
-          :page-size="150"
+          :page-size="60"
           @current-change="curPageChange"
         >
           <!-- layout="prev, pager, next, jumper" -->
@@ -300,7 +301,7 @@ export default {
       ],
       styleInfo: {
         titleZh: "风格筛选",
-        titleEn: "Style filtering",
+        titleEn: "MODEL STYLE",
         list: [
           { id: "1", value: "1", name: "群组", filters: [] },
           { id: "2", value: "2", name: "性别", filters: [] },
@@ -335,7 +336,7 @@ export default {
       pagination: {
         show: false,
         pageNum: 1,
-        pageSize: 150,
+        pageSize: 60,
         total: 0,
       },
     };
@@ -538,6 +539,9 @@ export default {
         res?.total != 0 && res?.total / this.pagination.pageSize > 1;
       this.pagination.total = res?.total || 0;
       this.modelList = res?.data || [];
+      this.$nextTick(() => {
+        this.$refs.modelListWrap.scrollTop = 0
+      })
       console.log("getModelListData>>>>>>>", res);
     },
     // 模型分类

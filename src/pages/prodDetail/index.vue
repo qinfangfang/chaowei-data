@@ -72,7 +72,7 @@
           <div class="name">{{ detail?.[`name${$i18n.locale}`] }}</div>
           <div class="code">{{ detail?.code }}</div>
           <div class="origin-price">
-            {{ $i18n.locale == "Zh" ? "原价" : "original Price" }}：{{
+            {{ $i18n.locale == "Zh" ? "原价" : "Regular Price" }}：{{
               $i18n.locale == "Zh" ? "¥ " : "$ "
             }}
             {{
@@ -98,19 +98,19 @@
               class="operate-item"
               @click="directPurchase"
             >
-              {{ isZh ? "直接购买" : "Outright purchase" }}
+              {{ isZh ? "直接购买" : "Buy Now" }}
             </div>
             <div
               v-if="!showDownload"
               class="operate-item add-car"
               @click="addBuyCar"
             >
-              {{ isZh ? "加入购物车" : "Add to cart" }}
+              {{ isZh ? "加入购物车" : "Add to Cart" }}
             </div>
           </div>
         </div>
         <div class="product-attributes">
-          <div class="title">文件属性</div>
+          <div class="title">{{ isZh ? "文件属性" : "Properties" }}</div>
           <div class="attributes-list">
             <div
               :class="{
@@ -152,6 +152,7 @@
 import { getModelDetailById, getModelDownloadUrlById } from "@/api/index.js";
 import { addModelToCarById } from "@/api/buyCar.js";
 import PayDialog from "@/components/payDialog.vue";
+import { goLoginNew, getToken } from "@/utils/index.js";
 
 export default {
   data() {
@@ -223,7 +224,7 @@ export default {
           id: "10",
           labelZh: "法律信息",
           labelEn: "Legal Information",
-          text: "点击查看授权信息",
+          text: this.$i18n.locale === "Zh" ? "点击查看授权信息" : "Click to view license",
           class: "color-ed6336",
         },
         {
@@ -271,6 +272,10 @@ export default {
   methods: {
     // 直接购买 TODO
     async directPurchase() {
+      if (!getToken()) {
+        goLoginNew({ router: this.$router }); // TODO
+        return;
+      }
       await this.addBuyCar();
       this.$router.push(`/buyCar?modelId=${this.detail?.id}`);
       // this.visible = true;
@@ -281,6 +286,10 @@ export default {
     },
     // 添加购物车
     async addBuyCar() {
+      if (!getToken()) {
+        goLoginNew({ router: this.$router }); // TODO
+        return;
+      }
       const params = this.$route.params;
       const res = await addModelToCarById({ id: params?.id });
       if (!res?.code) {
@@ -288,11 +297,11 @@ export default {
         this.$confirm(
           this.isZh
             ? "模型已成功添加到购物车内"
-            : "Successfully add to The buy car",
+            : "Added to Cart",
           this.isZh ? "提示" : "Tips",
           {
-            confirmButtonText: this.isZh ? "去购物车" : "go buy car",
-            cancelButtonText: this.isZh ? "继续浏览" : "continue browsing",
+            confirmButtonText: this.isZh ? "去购物车" : "Go to Cart",
+            cancelButtonText: this.isZh ? "继续浏览" : "Continue Browsing",
             type: "success",
             customClass: "global-messag0eBox",
           }

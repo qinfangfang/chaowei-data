@@ -8,7 +8,7 @@
           :class="`${type === '1' ? 'active' : ''}`"
           @click="tabClick('1')"
         >
-          <span>{{isZh ? '交易记录' : 'Transaction records'}}</span><span v-if="tradeCount">{{ tradeCount }}</span>
+          <span>{{isZh ? '交易记录' : 'My Orders'}}</span><span v-if="tradeCount">{{ tradeCount }}</span>
         </div>
         <!-- <div
           class="menu-item"

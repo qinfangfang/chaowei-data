@@ -1,6 +1,6 @@
 <template>
   <div class="buy-car">
-    <div class="page-title">{{ isZh ? "项目 清单" : "Item List" }}</div>
+    <div class="page-title">{{ isZh ? "项目清单" : "Item List" }}</div>
     <div class="buy-car-wrap">
       <div class="all-products-wrap">
         <div class="all-products" :class="`${pagination.total > pagination.pageSize ? 'pagination' : ''}`">
@@ -26,13 +26,13 @@
             <el-table-column label="" width="130">
               <template slot-scope="scope">
                 <div class="product-info">
-                  <div class="prodcut-pic">
-                    <img :src="scope?.row?.fortyFiveView" alt="" />
+                  <div class="prodcut-pic" @click="goDetail(scope?.row)">
+                    <img :src="scope?.row?.frontView" alt="" />
                   </div>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column :label="`${isZh ? '项目名称' : 'Project name'}`">
+            <el-table-column :label="`${isZh ? '模型名称' : 'Model Name'}`">
               <template slot-scope="scope">
                 <div class="product-info">
                   <div class="product-name" @click="goDetail(scope?.row)">
@@ -42,7 +42,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column :label="`${isZh ? '价格' : 'Price'}`" width="100">
+            <el-table-column :label="`${isZh ? '价格' : 'Price'}`" width="200">
               <template slot-scope="scope">
                 <div class="product-price">
                   {{ unit }}
@@ -53,7 +53,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              :label="`${isZh ? '操作' : 'Operation'}`"
+              :label="`${isZh ? '操作' : 'Action'}`"
               width="200"
             >
               <template slot-scope="scope">
@@ -73,31 +73,30 @@
           v-if="pagination.total > pagination.pageSize"
         >
           <el-pagination
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             background
             align="right"
             :current-page="pagination.pageNum"
-            :page-sizes="pagination.pageSizes"
             :page-size="pagination.pageSize"
             layout="total, sizes, prev, pager, next"
             :total="pagination.total"
           >
+            <!-- @size-change="handleSizeChange" -->
+            <!-- :page-sizes="pagination.pageSizes" -->
           </el-pagination>
         </div>
       </div>
       <div class="buy-cost">
         <div class="title" :class="`${$i18n?.locale}`">
-          {{ $i18n?.locale == "Zh" ? "结算清单" : "Settlement List" }}
+          {{ $i18n?.locale == "Zh" ? "结算清单" : "Checkout" }}
           <span
             >{{ $i18n?.locale == "Zh" ? "已选" : "Selected" }} {{ totalCount }}
-            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span
-          >
+            {{ $i18n?.locale == "Zh" ? "项" : "term" }}</span>
         </div>
         <div class="coupon-discount">
           <div class="discount-item total-money">
             <span class="label">{{
-              $i18n?.locale == "Zh" ? "商品总价" : "Total price of the product"
+              $i18n?.locale == "Zh" ? "商品总价" : "Order total"
             }}</span>
             <span class="value" :class="`${lang}`"
               >{{ unit }} {{ productTotalMoney }}</span
@@ -211,10 +210,10 @@
               :style-object="style"
             />
         </div>
-        
+
         <div class="no-pay-type-tip">
-          {{ $i18n?.locale == "Zh" ? 
-          "如果没有你期望的支付方式，请联系：service@peoplegroundtruth.com" : 
+          {{ $i18n?.locale == "Zh" ?
+          "如果没有你期望的支付方式，请联系：service@peoplegroundtruth.com" :
           "If there's no proper listed payment option for you,please feel free to contact us: service@peoplegroundtruth.com" }}
         </div>
       </div>
@@ -250,8 +249,8 @@ export default {
       pagination: {
         total: 0,
         pageNum: 1,
-        pageSize: 20,
-        pageSizes: [5, 10, 20],
+        pageSize: 100,
+        // pageSizes: [5, 10, 20],
       },
     };
   },
@@ -276,14 +275,15 @@ export default {
         return pre + cur?.[`price${this.$i18n.locale == "Zh" ? "Cny" : "Usd"}`];
       }, 0);
       // console.log('1111>>>>>>>>>>>', this.$globalState);
-      this.$globalState.productTotalMoney = price;
-      return price;
+      const fixPrice = price.toFixed(2)
+      this.$globalState.productTotalMoney = fixPrice;
+      return fixPrice;
     },
     totalMoney() {
       const price = this.selectedList.reduce((pre, cur) => {
         return pre + cur?.[`price${this.$i18n.locale == "Zh" ? "Cny" : "Usd"}`];
       }, 0);
-      return price;
+      return price.toFixed(2);
     },
     countDown() {
       let minutes = parseInt(this.count / 60);
@@ -349,10 +349,10 @@ export default {
       this.getOrderList();
     },
     // 修改pageSize
-    handleSizeChange(val) {
-      this.pagination.pageSize = val;
-      this.getOrderList();
-    },
+    // handleSizeChange(val) {
+    //   this.pagination.pageSize = val;
+    //   this.getOrderList();
+    // },
     // 跳转详情页
     goDetail(data = {}) {
       window.open(`/prodDetail/${data?.modelId}`, "_blank");
@@ -1007,11 +1007,11 @@ export default {
           }
         }
       }
-      
+
       .paypal-btn-wrap {
         width: 300px;
         margin: 10px auto;
-      } 
+      }
       .no-pay-type-tip {
         text-align: center;
         padding: 10px 0 30px;

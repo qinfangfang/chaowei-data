@@ -1,7 +1,7 @@
 <template>
   <div class="question-list">
     <div class="question-wrap">
-      <div class="title">{{ isZh ? '常见问题' : 'F&A'}}</div>
+      <div class="title">{{ isZh ? '常见问题' : 'FAQ'}}</div>
       <div class="question-tabs">
         <el-tabs v-model="tabActive">
           <template v-for="item in questionList">
@@ -37,7 +37,7 @@ export default {
   },
   watch: {
     '$i18n.locale'(val) {
-      this.questionList = val == 'Zh' ? questionZh : questionEn; 
+      this.questionList = val == 'Zh' ? questionZh : questionEn;
     }
   },
   computed: {
@@ -55,7 +55,7 @@ export default {
     },
   },
   created() {
-    this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
+    this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn;
     if (this.$route.query.fromPage === 'legal') {
       this.tabActive = "6"
       this.activeNames = "6-1"

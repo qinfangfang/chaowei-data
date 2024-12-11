@@ -1,7 +1,8 @@
 <template>
   <div class="chaowei-home">
     <div class="chaowei-video" :style="{height: firstScreenHeight}">
-      <video src="@/assets/video/home_video.mp4" autoplay="autoplay" muted="muted" loop="loop"></video>
+      <video src="https://chaowei-public-prd-1328304824.cos.ap-hongkong.myqcloud.com/static/intro.mp4" autoplay="autoplay" muted="muted" loop="loop"></video>
+      <!-- <video src="@/assets/video/home_video.mp4" autoplay="autoplay" muted="muted" loop="loop"></video> -->
       <div class="video-desc">
         <div class="desc-title">PEOPLEGROUNDTRUTH</div>
         <div class="desc-sub">
@@ -25,6 +26,8 @@
           <div class="model-item-explain">
             <div class="main-tilte" :class="`${lang}`">{{ item?.[`title${lang}`] }}</div>
             <div class="sub-tilte">{{ item?.[`subTitle${lang}`] }}</div>
+            <div class="sub-sub-tilte">{{ item?.[`subSubTitle${lang}`] }}</div>
+            <div class="sub-sub-sub-tilte">{{ item?.[`subSubSubTitle${lang}`] }}</div>
             <div class="button-list">
               <div class="button-item" v-for="btnItem in item?.buttonList" :key="btnItem?.id"
                 :style="{ backgroundColor: btnItem?.bgColor }" @click="subClick(btnItem)">
@@ -45,7 +48,7 @@
       </div>
     </div>
     <div class="chaowei-partner ques-part">
-      <div class="partner-title">{{ isZh ? '常见问题' : 'F&A' }}</div>
+      <div class="partner-title">{{ isZh ? '常见问题' : 'FAQ' }}</div>
       <div class="partner-faq">
         <el-tabs v-model="tabActive">
           <template v-for="item in questionList">
@@ -118,21 +121,35 @@ export default {
             "Realistic style modeling done by 3D data scanning team through\ninstantaneous 3D imaging system\nLarge number of materials, filterable and rich in poses that\nContains character data of different scenes, ages and styles.",
           buttonList: [
             { id: "2.1", nameZh: "立即挑选！", nameEn: "BUY SCANNING MODEL", bgColor: "#ED6336", path: '/modelList' },
-            { id: "2.2", nameZh: "下载免费模型", nameEn: "DOWNLOAD FREE MODEL", bgColor: "#A8A8A8", path: '/freeModel' },
+            { id: "2.2", nameZh: "下载免费模型", nameEn: "DOWNLOAD FREE MODEL", bgColor: "#A8A8A8", path: '/freeModel?scrollBtn=true' },
           ],
         },
         {
           id: "2",
           imgUrl: Home5,
           height: "754px",
-          titleZh: "模型扫描设备介绍",
-          titleEn: "SCANNING EQUIPMENT",
-          subTitleZh:
-            "模型素材库的所有所有模型\n都是由超维生产的设备 按照真实人体1:1完成采集\n如需对采集设备感兴趣 可以前往设备网站",
-          subTitleEn:
-            "All the models in the model material library\nAll models in the model library are captured 1:1 according to the real human body.\nIf you are interested in the acquisition equipment, you can go to the equipment website",
-          buttonList: [{ id: "5.1", nameZh: "点击跳转", nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8", redirectUrl: 'https://www.superdimension.cn/' }],
+          titleZh: "采集设备介绍",
+          titleEn: "Scanning Equipment",
+          subSubTitleZh:
+            "PGT团队自2013年以来专注于人体及周边数字资产三\n维重建技术的研究与开发，基于自主研发的扫描设备",
+          subSubTitleEn:
+            "Since 2013,the PGT team has focused on developing 3D \n reconstruction technology for human bodies and digital assets using \n proprietary scanning equipment, All models on the website are \n captured with the company's own equipment, achieving 1:1 real \n human body accuracy.",
+          subSubSubTitleZh: '网站所有模型都是由公司自己研发的扫描设备，按照真\n实人体1:1完成采集。',
+          subSubSubTitleEn: "",
+          buttonList: [{ id: "5.1", nameZh: "了解更多", nameEn: 'Learn more', bgColor: "#A8A8A8", path: '/deviceDesc' }],
         },
+        // {
+        //   id: "2",
+        //   imgUrl: Home5,
+        //   height: "754px",
+        //   titleZh: "模型扫描设备介绍",
+        //   titleEn: "SCANNING EQUIPMENT",
+        //   subTitleZh:
+        //     "模型素材库的所有所有模型\n都是由超维生产的设备 按照真实人体1:1完成采集\n如需对采集设备感兴趣 可以前往设备网站",
+        //   subTitleEn:
+        //     "All the models in the model material library\nAll models in the model library are captured 1:1 according to the real human body.\nIf you are interested in the acquisition equipment, you can go to the equipment website",
+        //   buttonList: [{ id: "5.1", nameZh: "点击跳转", nameEn: 'CLICK TO LINK', bgColor: "#A8A8A8", redirectUrl: 'https://www.superdimension.cn/' }],
+        // },
       ],
       partnerList: [partner1,partner2,partner3,partner4,partner5,partner6,partner7,partner8,partner9,partner10,partner11,partner12,partner13,partner14,partner15]
     };
@@ -151,7 +168,7 @@ export default {
   },
   watch: {
     '$i18n.locale'(val) {
-      this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
+      this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn;
     }
   },
   methods: {
@@ -172,7 +189,7 @@ export default {
   created() {
     console.log("this.$router", this.$router);
     this.firstScreenHeight = (window.innerHeight - 56) + 'px'
-    this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn; 
+    this.questionList = this.$i18n.locale == 'Zh' ? questionZh : questionEn;
   },
   // mounted
 };
@@ -281,7 +298,9 @@ export default {
         flex: 1;
 
         .main-tilte,
-        .sub-tilte {
+        .sub-tilte,
+        .sub-sub-tilte,
+        .sub-sub-sub-tilte, {
           white-space: pre;
         }
 
@@ -302,6 +321,18 @@ export default {
           font-size: 16px;
           line-height: 26px;
           text-align: center;
+          width: 600px;
+          text-indent: 4ch;
+          // word-wrap:break-word;
+        }
+        .sub-sub-tilte, .sub-sub-sub-tilte {
+          font-family: Inter, Inter;
+          font-size: 16px;
+          line-height: 26px;
+          text-align: center;
+          width: 450px;
+          text-indent: 4ch;
+          text-align: left;
         }
 
         .button-list {
