@@ -5,7 +5,7 @@
         <div class="chaowei-logo">
           <img :src="Logo" alt="" />
         </div>
-        <div class="chaowei-title">{{ footer?.title }}</div>
+        <div class="chaowei-title">{{ footer?.[`title${$i18n.locale}`] }}</div>
         <!-- <div class="info-desc">
           <div class="desc-label">备案号：</div>
           {{ footer?.recordCode }}
@@ -47,7 +47,8 @@ export default {
       Logo,
       footer: {
         // logoUrl: Logo,
-        title: "3D扫描人物超市",
+        titleZh: "3D扫描人物超市",
+        titleEn: "3D Scanning Model Shop",
         recordCode: "备案号XXXXXXXXXXX",
         licenceCode: "许可证XXXXXXXXXXX",
         netCaseCode: "网案XXXXXXXXXXXXX",
@@ -59,19 +60,19 @@ export default {
             menuList: [
               {
                 id: "5",
-                nameEn: "Whole Body Posture Model",
+                nameEn: "Full Body Posture Model",
                 nameZh: "全身姿态模型",
                 path: "/modelList?parentId=1&modelType=5",
               },
               {
                 id: "6",
-                nameEn: "HD Model of Whole Body Model",
+                nameEn: "HD Model of Full Body Model",
                 nameZh: "全身姿态 高精度模型",
                 path: "/modelList?parentId=1&modelType=6",
               },
               {
                 id: "8",
-                nameEn: "Whole Body Micromotion Model",
+                nameEn: "Full Body Micromotion Model",
                 nameZh: "全身微动模型",
                 path: "/modelList?parentId=1&modelType=8",
               },

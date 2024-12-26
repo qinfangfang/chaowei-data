@@ -11,6 +11,7 @@ export const goLoginNew = (config) => {
   window.instanceMessageBox = instance;
   instance.$mount();
   document.body.appendChild(instance.$el);
+  document.body.style="paddingRight: 0;"
 };
 
 // 关闭登录弹窗
@@ -21,4 +22,5 @@ export const closeLogin = () => {
   document.body.removeChild(modal);
   document.body.removeChild(wrapper);
   window.instanceMessageBox = null;
+  document.body?.classList?.remove("el-popup-parent--hidden");
 };

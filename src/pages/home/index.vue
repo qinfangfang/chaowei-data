@@ -114,7 +114,7 @@ export default {
           imgUrl: Home2,
           height: "754px",
           titleZh: "3D全身姿态模型",
-          titleEn: "3D WHOLE BODY POSTURE MODEL",
+          titleEn: "3D FULL BODY POSTURE MODEL",
           subTitleZh:
             "由3D数据扫描团队通过瞬时三维成像系统完成的写实风格模型\n素材数量多、可筛选、姿势丰富， \n包含不同场景、年龄、风格的人物数据。",
           subTitleEn:
@@ -131,10 +131,10 @@ export default {
           titleZh: "采集设备介绍",
           titleEn: "Scanning Equipment",
           subSubTitleZh:
-            "PGT团队自2013年以来专注于人体及周边数字资产三\n维重建技术的研究与开发，基于自主研发的扫描设备",
+            "PGT团队自2013年以来专注于人体及周边数字资产三\n维重建技术的研究与开发。网站所有模型资产都基于自主研发的\n扫描设备，按照真实人体1:1采集。",
           subSubTitleEn:
             "Since 2013,the PGT team has focused on developing 3D \n reconstruction technology for human bodies and digital assets using \n proprietary scanning equipment, All models on the website are \n captured with the company's own equipment, achieving 1:1 real \n human body accuracy.",
-          subSubSubTitleZh: '网站所有模型都是由公司自己研发的扫描设备，按照真\n实人体1:1完成采集。',
+          subSubSubTitleZh: "",
           subSubSubTitleEn: "",
           buttonList: [{ id: "5.1", nameZh: "了解更多", nameEn: 'Learn more', bgColor: "#A8A8A8", path: '/deviceDesc' }],
         },

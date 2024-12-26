@@ -139,7 +139,7 @@ export default {
     padding: 30px 45px 30px 0;
     overflow: auto;
     &::-webkit-scrollbar {
-      width: 0;
+      //width: 0;
     }
   }
 }

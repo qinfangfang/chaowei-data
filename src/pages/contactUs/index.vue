@@ -5,12 +5,12 @@
         <div class="form-left">
           <div class="contact-us-title">{{ isZh ? '网站支持' : 'Contact Us'}}</div>
           <div class="contact-us-text">
-            {{ isZh ? '如果您遇到的问题未能在“常见问题”或我们的教程中未找到答案。我们非常乐意帮您解决问题。' : 'If you have a question that is not answered in the FAQ or in one of our tutorials, please feel free to contact us. We are always happy to help!' }}
+            {{ isZh ? '如果您遇到的问题未能在“常见问题”或我们的教程中未找到答案。请联系我们，我们非常乐意帮您解决问题。' : 'If you have a question that is not answered in the FAQ or in one of our tutorials, please feel free to contact us. We are always happy to help!' }}
           </div>
           <div class="inner-wrap">
             <div class="inner-left">
               <div class="title">{{ isZh ? '商务联系、模型定制' : 'Contact\nModel customization'}}</div>
-              <div class="info-item first-child" :class="`${lang}`"><span>{{ isZh ? '如果你需要更多的:人体扫描模型、头脸部PBR模型、人物重光照、4D动态模型，或者需要将模型用于AI训练的。 \n可以与我们联系。'
+              <div class="info-item first-child" :class="`${lang}`"><span>{{ isZh ? '如果您需要更多的:人体扫描模型、头脸部PBR模型、人物重光照、4D动态模型，或者需要将模型用于AI训练的。 \n可以与我们联系。'
                                                                     : 'If you need :3D scan models, HD PBR face scan models, Character Relighting dataset, 4D facial dynamic, or use the models for Al training \ncontact us.'}}</span></div>
               <div class="info-item" :class="`${lang}`"><span>Email：</span>service@peoplegroundtruth.com</div>
               <div class="info-item" :class="`${lang}`"><span>Tel：</span>+86 18217172515</div>
@@ -24,10 +24,10 @@
                 <el-input v-model="form.name" :placeholder="`${isZh ? '你的姓名' : 'Name'}`"></el-input>
               </div>
               <div class="input-item">
-                <el-input v-model="form.linkWay" :placeholder="`${isZh ? '联系方式Email或者电话' : 'Email'}`"></el-input>
+                <el-input v-model="form.linkWay" :placeholder="`${isZh ? '联系方式Email或者电话' : 'Email or phone number'}`"></el-input>
               </div>
               <div class="input-item textarea">
-                <el-input type="textarea" :placeholder="`${isZh ? '请简单描述你的问题' : 'MESSAGE'}`" v-model="form.desc">
+                <el-input type="textarea" :placeholder="`${isZh ? '请简单描述你的问题' : 'Message'}`" v-model="form.desc">
                 </el-input>
               </div>
               <div class="input-item">
@@ -72,16 +72,41 @@ export default {
   },
   methods: {
     submitForm() {
+
+      if (!this.form.name) {
+        this.$message.error(this.isZh ? '请输入姓名' : 'Please enter your name');
+        return;
+      }
+      if (!this.form.linkWay) {
+        this.$message.error(this.isZh ? '请输入联系方式' : 'Please enter your contact information');
+        return;
+      }
+      if (!this.form.desc) {
+        this.$message.error(this.isZh ? '请输入描述' : 'Please enter a description');
+        return;
+      }
+
       const params = {
         nickname: this.form.name,
-        content: this.form.linkWay,
-        email: this.form.desc
+        email: this.form.linkWay,
+        content: this.form.desc
       }
       customerTicket(params).then(res => {
-        this.$message.success('提交成功~请等待我们工作人员和您联系！')
+
+        this.$message.success(this.isZh ? '提交成功，请等待我们工作人员和您联系！': 'We have received your message, and we will contact you as soon as possible!')
         this.form.name = ''
         this.form.linkWay = ''
         this.form.desc = ''
+
+        console.log("工单>>>>>>", res)
+        // if (res?.code === 0) {
+        //   this.$message.success(this.isZh ? '提交成功，请等待我们工作人员和您联系！': 'We have received your message, and we will contact you as soon as possible!')
+        //   this.form.name = ''
+        //   this.form.linkWay = ''
+        //   this.form.desc = ''
+        // } else {
+        //   this.$message.error(res.msg);
+        // }
       })
     }
   }

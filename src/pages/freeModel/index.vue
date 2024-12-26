@@ -10,7 +10,7 @@
         </div>
         <div class="banner-subtitle">{{
             isZh
-              ? "向你推荐次时代\n超写实扫描人物模型"
+              ? "向您推荐次世代\n超写实扫描人物模型"
               : "Recommended for next-gen\nUltra-Realistic Scanning\nCharacter Models"
           }}
         </div>
@@ -25,7 +25,7 @@
       </div>
       <div class="sub-title">{{
           isZh
-            ? "网站包含大量3D扫描模特数据素材数量多、姿势丰富，可根据您的需求进行筛选。\n包含不同场景 年龄 风格的人物数据"
+            ? "网站包含大量3D扫描模特数据，素材量多、姿势丰富，可根据您的需求进行筛选。\n包含不同场景 年龄 风格的人物数据"
             : "Includes a large number of 3D scanned model data with a large number of\nposes, which can be filtered according to your needs.\nContains character data for different scenes, ages and styles."
         }}
       </div>
@@ -93,6 +93,16 @@
         </div>
       </div>
     </div>
+    <div class="free-model-2">
+      <img :src="imgUrl" alt="">
+      <div class="model-title">{{ isZh ? "全身姿态模型" : "" }}</div>
+      <div class="model-sub-title">{{ isZh ? "网站呈现的的全身模型、由两百多台单反相机的单反相机阵列扫描完成。扫描阵列微秒级别的拍摄同步时间，保证了生成原始模型的细节、完整性。扫描完成后，每个模型都经过建模师精心处理，还包含法线贴图，让模型能够真实还原模特原本的神态。" 
+                                        : "" }}</div>
+      <div class="download-btn" @click="downloadFreeModal2" id="downloadBtn">
+        {{ isZh ? "点击下载 免费样例" : "Click to download free samples" }}
+      </div>
+    </div>
+    <div class="free-model-3"></div>
     <div class="more-model">
       <div :class="{title: true, 'zh-title': isZh}">
         {{
@@ -103,7 +113,7 @@
       </div>
       <div class="more-desc">{{
           isZh
-            ? "拥有超过8000个模型资源， 涵盖不同年龄 不同场景不同风格的人物数据。根据\n您的需求正在不断更新中……"
+            ? "拥有超过8000个模型资源， 涵盖不同年龄、不同场景、不同风格的人物数据。根据\n您的需求正在不断更新中……"
             : "There are more than 8000 models covering different ages, different scenes and different\nstyles of characters. According to your demand is constantly updating ......"
         }}
       </div>
@@ -226,7 +236,7 @@ export default {
             "--",
           ],
           EnList: [
-            "Whole body posture model\n$ 19.9",
+            "Full body posture model\n$ 19.9",
             "30K mesh",
             "4K Tex",
             "Diffuse Mapping、 Normal Mapping",
@@ -243,7 +253,7 @@ export default {
             "Mask 遮罩贴图",
           ],
           EnList: [
-            "HD model of whole body model\n$ 29.9",
+            "HD model of full body model\n$ 29.9",
             "30K & 100K mesh",
             "4K 8K Tex",
             "Diffuse Mapping × 3 \nNormal Mapping",
@@ -300,7 +310,10 @@ export default {
           window.open(res.url, "_blank")
         }
       })
-    }
+    },
+    downloadFreeModal2() {
+
+    },
   },
   created() {
     this.activeList = [...this.tabList?.[0].list];

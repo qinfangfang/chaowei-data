@@ -119,7 +119,7 @@
           >
         </el-input>
       </div> -->
-      <div class="model-list" 
+      <div class="model-list"
       ref="modelListWrap">
         <div class="list-item-wrap" v-for="item in modelList" :key="item?.id">
           <div class="list-item" @click="goDetail(item)">
@@ -374,6 +374,11 @@ export default {
     // 模型种类单选切换
     radioChange(val, id) {
       console.log(111, val, this.activeModelNames, id);
+      if(this.form.categoryId === val)
+      {
+        this.resetSelect();
+        return;
+      }
       Object.entries(this.modelForm).forEach(([key, values]) => {
         this.$set(this.modelForm, `${key}`, "");
       });
@@ -501,6 +506,7 @@ export default {
     getAllTagsFilterNew() {
       let tagIds = [];
       this.tagKeys.forEach((item) => {
+        // console.log(this.form[item], 'tagKeys--------')
         if (this.form[item] && this.form[item]?.length) {
           tagIds.push(this.form[item]);
         }
@@ -593,7 +599,7 @@ export default {
     background-color: #f3f3f3;
     overflow: auto;
     &::-webkit-scrollbar {
-      width: 0;
+      //width: 0;
     }
     .reset-btn {
       display: flex;
@@ -805,7 +811,7 @@ export default {
       margin: 0 auto;
     }
     &::-webkit-scrollbar {
-      width: 0;
+      //width: 0;
     }
     .list-item-wrap {
       flex: 0 0 20%;
@@ -821,7 +827,7 @@ export default {
         .model-pic {
           position: relative;
           overflow: hidden;
-          min-height: 360px;
+          min-height: 428.32px;
           &:hover {
             img.front-img {
               display: none;

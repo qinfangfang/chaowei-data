@@ -562,7 +562,7 @@ export default {
       background-color: #fff;
       &::-webkit-scrollbar {
         // 隐藏滚动条
-        width: 0;
+        //width: 0;
       }
       &.pagination {
         height: calc(100vh - 100px - 30px - 30px - 40px - 15px - 40px - 10px); // 去除分页

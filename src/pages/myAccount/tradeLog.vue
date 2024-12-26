@@ -301,7 +301,7 @@ export default {
 
     &::-webkit-scrollbar {
       // 隐藏滚动条
-      width: 0;
+      //width: 0;
     }
 
     .all-products {
