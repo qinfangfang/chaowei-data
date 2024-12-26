@@ -49,6 +49,8 @@
                     v-for="child in item?.childCategories"
                     :key="child?.id"
                     :label="`${child?.id}`"
+                    :class="{'active': child.active}"
+                    @click.native="radioClick(child, item?.childCategories)"
                     >{{ child?.[`name${$i18n.locale}`] }}</el-radio
                   >
                 </el-radio-group>
@@ -174,6 +176,7 @@ import {
   getModelList,
   getModelFreeList,
 } from "@/api/index.js";
+import {debounce}  from 'lodash'
 export default {
   data() {
     return {
@@ -379,6 +382,22 @@ export default {
       this.$set(this.modelForm, id, val);
       this.form.categoryId = val;
     },
+    radioClick: debounce(function(val, list) {
+        // console.log("radioClick>>>>1111", val.active);
+        if(val.active) {
+          val.active = !val.active;
+        } else {
+          list.forEach(item => {
+            item.active = false;
+          })
+          val.active = !val.active;
+        }
+        console.log("radioClick>>>>",val,  val.active);
+        if(val.active === false) {
+          this.activeModelNames = [];
+        }
+        this.$forceUpdate();
+    }, 300),
     // 重置筛选项
     resetSelect() {
       this.form = {
@@ -547,6 +566,7 @@ export default {
         this.modelTypeList = JSON.parse(modelCategory_data);
         this.modelTypeList.forEach((item) => {
           item.childCategories = item.childCategories.filter(itemChild => {
+            itemChild.active = false;
             return itemChild.modelSize > 0
           })
           this.$set(this.modelForm, item?.id, "");
@@ -646,15 +666,24 @@ export default {
         display: flex;
         margin-right: 0;
         height: 28px;
+        color: #606266;
+        .el-radio__input + .el-radio__label {
+          color: #606266;
+        }
         .el-radio__input {
           width: 0;
           overflow: hidden;
         }
-        .el-radio__input.is-checked + .el-radio__label {
-          color: #ed6336;
-        }
+        // .el-radio__input.is-checked + .el-radio__label {
+        //   color: #ed6336;
+        // }
         .el-radio__label {
           padding-left: 5px;
+        }
+        &.active {
+          .el-radio__input.is-checked + .el-radio__label {
+            color: #ed6336;
+          }
         }
       }
     }
