@@ -38,7 +38,22 @@
         >
           <el-input
             type="password"
+            show-password
             v-model="form.password"
+            autocomplete="off"
+            :placeholder="`${ isZh ? '请输入密码' : 'Please enter password'}`"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="form.emailCode"
+          :label="`${isZh ? '确认新密码' : 'confirm Password'}`"
+          prop="password"
+          :rules="[{ required: true, message: isZh ? '请输入密码' : 'Please enter password', trigger: 'blur' }]"
+        >
+          <el-input
+            type="password"
+            show-password
+            v-model="form.confirmpassword"
             autocomplete="off"
             :placeholder="`${ isZh ? '请输入密码' : 'Please enter password'}`"
           ></el-input>
@@ -76,6 +91,7 @@ export default {
         email: "",
         nickname: "",
         password: "",
+        confirmpassword: "",
         emailCode: "",
       },
       inputContentVis: true,
@@ -102,6 +118,10 @@ export default {
         this.inputContentVis = false;
         // localStorage.setItem("email", email);
       } else if (this.form.emailCode) {
+        if (this.form.confirmpassword !== this.form.password) {
+          this.$message.error(this.isZh ? "'两次新密码输入不一致！请确认~" : "new Password is diffrent from confirm password!")
+          return
+        }
         const res = await emailRegister({
           password,
           emailCode,

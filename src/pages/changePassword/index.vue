@@ -40,6 +40,7 @@
         >
           <el-input
             type="password"
+            show-password
             v-model="form.newPassword"
             :placeholder="`${
               isZh ? '请输入新密码' : 'Please enter your new password'
@@ -59,6 +60,7 @@
         >
           <el-input
             type="password"
+            show-password
             v-model="form.confirmNewPassword"
             :placeholder="`${
               isZh ? '请确认新密码' : 'Please confirm your new password'
@@ -101,7 +103,7 @@ export default {
     async submit() {
       // const { originalPassword, newPassword } = this.form;
       if (this.form.newPassword !== this.form.confirmNewPassword) {
-        this.$message.error(this.isZh ? "'两次新密码输入不一致！请确认~'" : "new Password is diffrent from confirm password!")
+        this.$message.error(this.isZh ? "两次新密码输入不一致！请确认~" : "new Password is diffrent from confirm password!")
         return
       }
       const res = await changePwd(this.form);
