@@ -283,12 +283,12 @@ export default {
     getModelSubMenu(data = []) {
       const list = data || [];
       this.$set(this.menuList?.[0]?.subMenuList?.[0], "list", list);
-      console.log("menuList>>>>>>>>", this.menuList);
+      // console.log("menuList>>>>>>>>", this.menuList);
       // this.$forceUpdate();
     },
     async getModelCategoryData() {
       const res = await getModelCategory();
-      console.log("getModelCategory>>>>>>>", res);
+      // console.log("getModelCategory>>>>>>>", res);
       const filterNo = res.filter(item => {
         item.childCategories = item.childCategories.filter(itemInner => {
           return itemInner.modelSize > 0
@@ -302,10 +302,10 @@ export default {
     async getUserInfoData() {
       // if (!getToken()) return;
       this.userInfo = await getUserInfo();
-      console.log("用户信息>>>>>>>>", this.userInfo, this.$route);
+      // console.log("用户信息>>>>>>>>", this.userInfo, this.$route);
     },
     watchRoute() {
-      console.log('this.$route', this.$route)
+      // console.log('this.$route', this.$route)
       const menuItem = menuList.filter(item => {
         return this.$route.path == item?.path;
       });

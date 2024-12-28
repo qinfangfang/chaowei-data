@@ -49,6 +49,8 @@
                     v-for="child in item?.childCategories"
                     :key="child?.id"
                     :label="`${child?.id}`"
+                    :class="{'active': child.active}"
+                    @click.native="(e) => radioClick(e, child, item?.childCategories)"
                     >{{ child?.[`name${$i18n.locale}`] }}</el-radio
                   >
                 </el-radio-group>
@@ -175,6 +177,8 @@ import {
   getModelList,
   getModelFreeList,
 } from "@/api/index.js";
+import { throttle } from "lodash";
+import {debounce}  from 'lodash'
 export default {
   data() {
     return {
@@ -322,7 +326,7 @@ export default {
         filterSearch: "",
         modelType: "",
         categoryId: "",
-        tpye: [],
+        type: [],
         gender: [],
         age: [],
         activity: [],
@@ -343,7 +347,7 @@ export default {
   },
   watch: {
     $route(to) {
-      console.log("to>>>>>>", to);
+      // console.log("to>>>>>>", to);
       this.form.modelType = to.query?.modelType || "";
       this.form.categoryId = to.query?.modelType || "";
       this.initSlectedModel();
@@ -352,7 +356,7 @@ export default {
     },
     form: {
       handler(val) {
-        console.log("this.form>>>>", val);
+        // console.log("this.form>>>>", val);
         this.getModelListData(1);
       },
       deep: true,
@@ -360,7 +364,7 @@ export default {
     modelForm: {
       handler(val) {
         this.getModelListData(1);
-        console.log("this.modelForm>>>>", val);
+        // console.log("this.modelForm>>>>", val);
       },
       deep: true,
     },
@@ -373,40 +377,48 @@ export default {
   methods: {
     // 模型种类单选切换
     radioChange(val, id) {
-      console.log(111, val, this.activeModelNames, id);
-      if(this.form.categoryId === val)
-      {
-        this.resetSelect();
-        return;
-      }
+      // console.log(111, val, this.activeModelNames, id);
       Object.entries(this.modelForm).forEach(([key, values]) => {
         this.$set(this.modelForm, `${key}`, "");
       });
       this.$set(this.modelForm, id, val);
       this.form.categoryId = val;
     },
+    radioClick: debounce(function(e, val, list) {
+        if(val.active === false) {
+          list.forEach(item => {
+            item.active = false;
+          })
+        }
+        val.active = !val.active;
+        // 样式追加稍微快一点
+        let parentElement = e?.target?.parentElement?.parentElement;
+        val.active ?  parentElement.classList.add('active') : parentElement.classList.remove('active');
+        // 更新数据(更新modelForm, form.categoryId的值)
+        if(val.active === false) {
+          this.radioChange('', val.rootId);
+        }
+    }, 300),
     // 重置筛选项
     resetSelect() {
-      this.form = {
-        filterSearch: "",
-        modelType: "",
-        categoryId: "",
-        tpye: [],
-        gender: [],
-        age: [],
-        activity: [],
-        clothing: [],
-        accessorise: [],
-        area: [],
-      };
-      this.modelForm = {
-        1: "",
-        2: "",
-        3: "",
-        4: "",
-      };
-      this.activeModelNames = [];
-      this.activeTagsNames = [];
+      // 重置方式调整
+      this.$set(this.form, "filterSearch", "");
+      this.$set(this.form, "modelType", "");
+      this.$set(this.form, "categoryId", "");
+      this.$set(this.form, "type", []);
+      this.$set(this.form, "gender", []);
+      this.$set(this.form, "age", []);
+      this.$set(this.form, "activity", []);
+      this.$set(this.form, "clothing", []);
+      this.$set(this.form, "accessorise", []);
+      this.$set(this.form, "area", []);
+
+      let keys = Object.keys(this.modelForm);
+      for(let val of keys) {
+        this.$set(this.modelForm, `${val}`, "");
+      }
+      this.activeModelNames = []; // 折叠面板-模型种类
+      this.activeTagsNames = [];  // 风格筛选-标签分类
       this.getModelListData(1);
     },
     // 获取图片展示
@@ -435,17 +447,17 @@ export default {
     modelClick(item) {
       if (item?.categoryId == this.form.modelType) return;
       this.form.modelType = item?.categoryId;
-      console.log("curModelType", item, item?.name);
+      // console.log("curModelType", item, item?.name);
     },
     searchClick() {
-      console.log("搜索点击");
+      // console.log("搜索点击");
     },
     handleModelChange(val) {
-      console.log("val>>>>>>>>>>", val);
+      // console.log("val>>>>>>>>>>", val);
       this.activeModelNames = val;
     },
     handleChange(val) {
-      console.log("val>>>>>>>>>>activeTagsNames", val);
+      // console.log("val>>>>>>>>>>activeTagsNames", val);
       this.activeTagsNames = val;
     },
     initPageQuery() {
@@ -482,7 +494,7 @@ export default {
       const res = await getModelTagGroup();
       this.styleInfo.list = [...res];
       this.initFilter(res);
-      console.log("getModelTagGroup>>>>>>>", res);
+      // console.log("getModelTagGroup>>>>>>>", res);
     },
     // 重置pageNum
     resetPageConfig() {
@@ -514,7 +526,7 @@ export default {
       return tagIds;
     },
     // 获取模型列表(收费or免费)
-    async getModelListData(flag, config = {}) {
+     getModelListData: debounce(async function(flag, config = {}) {
       if (flag) {
         this.resetPageConfig();
       }
@@ -545,11 +557,8 @@ export default {
         res?.total != 0 && res?.total / this.pagination.pageSize > 1;
       this.pagination.total = res?.total || 0;
       this.modelList = res?.data || [];
-      this.$nextTick(() => {
-        this.$refs.modelListWrap.scrollTop = 0
-      })
-      console.log("getModelListData>>>>>>>", res);
-    },
+      // console.log("getModelListData>>>>>>>", res);
+    }, 300) ,
     // 模型分类
     modelTypeHandler() {
       const modelCategory_data = localStorage.getItem("modelCategory_data");
@@ -557,6 +566,7 @@ export default {
         this.modelTypeList = JSON.parse(modelCategory_data);
         this.modelTypeList.forEach((item) => {
           item.childCategories = item.childCategories.filter(itemChild => {
+            itemChild.active = false;
             return itemChild.modelSize > 0
           })
           this.$set(this.modelForm, item?.id, "");
@@ -573,7 +583,7 @@ export default {
       if (query.parentId && query.modelType) {
         this.$set(this.modelForm, `${query.parentId}`, query.modelType);
       }
-      console.log("this.modelForm>>>>>>", this.modelForm);
+      // console.log("this.modelForm>>>>>>", this.modelForm);
     },
   },
   created() {
@@ -652,19 +662,31 @@ export default {
           }
         }
       }
+      /deep/ .el-radio-group {
+        width: 100%;
+      }
       /deep/ .el-radio {
         display: flex;
         margin-right: 0;
         height: 28px;
+        color: #606266;
+        .el-radio__input + .el-radio__label {
+          color: #606266;
+        }
         .el-radio__input {
           width: 0;
           overflow: hidden;
         }
-        .el-radio__input.is-checked + .el-radio__label {
-          color: #ed6336;
-        }
+        // .el-radio__input.is-checked + .el-radio__label {
+        //   color: #ed6336;
+        // }
         .el-radio__label {
           padding-left: 5px;
+        }
+        &.active {
+          .el-radio__input.is-checked + .el-radio__label {
+            color: #ed6336;
+          }
         }
       }
     }
