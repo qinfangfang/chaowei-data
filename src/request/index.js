@@ -49,7 +49,7 @@ const request = ({
  */
 service.interceptors.request.use(
   (config) => {
-    console.log("request--start", config, config.url, config.data);
+    // console.log("request--start", config, config.url, config.data);
     config.headers["X-Token"] = getToken();
     config.headers["X-Language"] =  config?.headers['X-Language'] || getLocale();
     return config;
